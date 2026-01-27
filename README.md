@@ -34,3 +34,88 @@ workflow <- yaml::read_yaml(yaml_path)
 ```
 
 Replace the placeholder example with your workflow definitions.
+
+## Cookbook
+
+Run the example workflows using YAML definitions.
+
+### 1) Hello world workflow
+
+Workflow file: [inst/workflows/helloworld.yaml](inst/workflows/helloworld.yaml)
+
+```yaml
+meta:
+  Type: demo
+  ID: helloworld
+steps:
+  - name: sum_step
+    output: result
+    params:
+      lData: lData
+      "y": value
+```
+
+```r
+sum_step <- function(lData, y) lData$value + y
+lData <- list(value = 2)
+
+wf <- yaml::read_yaml(system.file("workflows", "helloworld.yaml", package = "workr"))
+RunWorkflow(wf, lData)
+```
+
+### 2) Two-step workflow
+
+Workflow file: [inst/workflows/two_steps.yaml](inst/workflows/two_steps.yaml)
+
+```yaml
+meta:
+  Type: demo
+  ID: two_steps
+steps:
+  - name: sum_step
+    output: intermediate
+    params:
+      lData: lData
+      "y": value
+  - name: sum_step
+    output: result
+    params:
+      lData: lData
+      "y": value
+```
+
+```r
+sum_step <- function(lData, y) lData$value + y
+lData <- list(value = 2)
+
+wf <- yaml::read_yaml(system.file("workflows", "two_steps.yaml", package = "workr"))
+RunWorkflow(wf, lData)
+```
+
+### 3) Cars regression workflow
+
+Workflow file: [inst/workflows/cars.yaml](inst/workflows/cars.yaml)
+
+```yaml
+meta:
+  Type: demo
+  ID: cars
+steps:
+  - name: stats::as.formula
+    output: model_formula
+    params:
+      object: "dist ~ speed"
+  - name: stats::lm
+    output: model
+    params:
+      formula: model_formula
+      data: cars
+```
+
+```r
+lData <- list(cars = cars)
+
+wf <- yaml::read_yaml(system.file("workflows", "cars.yaml", package = "workr"))
+model <- RunWorkflow(wf, lData)
+summary(model)
+```

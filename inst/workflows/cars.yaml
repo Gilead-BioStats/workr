@@ -1,0 +1,13 @@
+meta:
+  Type: demo
+  ID: cars
+steps:
+  - name: stats::as.formula
+    output: model_formula
+    params:
+      object: "dist ~ speed"
+  - name: stats::lm
+    output: model
+    params:
+      formula: model_formula
+      data: cars

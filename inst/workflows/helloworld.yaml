@@ -1,0 +1,9 @@
+meta:
+  Type: demo
+  ID: helloworld
+steps:
+  - name: sum_step
+    output: result
+    params:
+      lData: lData
+      "y": value

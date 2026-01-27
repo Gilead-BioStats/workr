@@ -1,0 +1,14 @@
+meta:
+  Type: demo
+  ID: two_steps
+steps:
+  - name: sum_step
+    output: intermediate
+    params:
+      lData: lData
+      "y": value
+  - name: sum_step
+    output: result
+    params:
+      lData: lData
+      "y": value

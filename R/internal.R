@@ -83,3 +83,14 @@ CheckSpec <- function(lData, lSpec) {
 `%||%` <- function(x, y) {
   if (!is.null(x)) x else y
 }
+
+#' Simple conditional stop helper
+#'
+#' @keywords internal
+#' @noRd
+stop_if <- function(cnd, message) {
+  if (isTRUE(cnd)) {
+    stop(message, call. = FALSE)
+  }
+  invisible(TRUE)
+}

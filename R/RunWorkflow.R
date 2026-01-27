@@ -1,9 +1,10 @@
-#' Run a workflow via its specification.
+#' Run a workflow via it's YAML specification.
 #'
-#' @description
+#' @description `r lifecycle::badge("stable")`
+#'
 #' Attempts to run a single assessment (`lWorkflow`) using shared data (`lData`)
 #' and metadata (`lMapping`). Calls `RunStep` for each item in
-#' `lWorkflow$steps` and saves the results to `lWorkflow`.
+#' `lWorkflow$workflow` and saves the results to `lWorkflow`.
 #'
 #' @param lWorkflow `list` A named list of metadata defining how the workflow
 #'   should be run.
@@ -19,19 +20,38 @@
 #'   `lResults`) is returned. Default is `TRUE`.
 #'
 #' @return Object containing the results of the workflow's last step (if
-#'   `bReturnResult` is `TRUE`) or the full workflow object (if `bReturnResult`
-#'   is `FALSE`).
+#'   `bLastResult` is `TRUE`) or the full workflow object (if `bReturnResults`
+#'   is `TRUE`) or the full workflow object (if `bReturnResults` is `FALSE`).
 #'
 #' @examples
-#' sum_step <- function(x, y) x + y
-#' lWorkflow <- list(
-#'   meta = list(Type = "demo", ID = "001"),
-#'   steps = list(
-#'     list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
-#'   )
+#' # Generate mapped input data to metric workflow.
+#' lMappingWorkflows <- MakeWorkflowList(
+#'   strNames = c("AE", "SUBJ"),
+#'   strPath = "example_workflow/1_mappings",
+#'   strPackage = "workr",
+#'   bExact = TRUE
 #' )
-#' lData <- list(value = 2)
-#' RunWorkflow(lWorkflow, lData)
+#' lRawData <- list(
+#'   Raw_SUBJ = workr::lSource$Raw_SUBJ,
+#'   Raw_AE = workr::lSource$Raw_AE
+#' )
+#'
+#' lMappedData <- RunWorkflows(
+#'   lMappingWorkflows,
+#'   lRawData
+#' )
+#'
+#' # Run the metric workflow.
+#' lMetricWorkflow <- MakeWorkflowList(
+#'   strPath = "example_workflow/2_metrics",
+#'   strNames = c("kri0001", "kri0002"),
+#'   strPackage = "workr"
+#' )$kri0001
+#' lMetricOutput <- RunWorkflow(
+#'   lMetricWorkflow,
+#'   lMappedData
+#' )
+#' @return `list` contains just lData if `bReturnData` is `TRUE`, otherwise returns the full `lWorkflow` object.
 #'
 #' @export
 
@@ -42,9 +62,11 @@ RunWorkflow <- function(
   bReturnResult = TRUE,
   bKeepInputData = TRUE
 ) {
+  # Create a unique identifier for the workflow
   uid <- paste0(lWorkflow$meta$Type, "_", lWorkflow$meta$ID)
   LogMessage(level = "info", message = "Initializing `{uid}` Workflow", cli_detail = "h1")
 
+  # check that the workflow has steps
   if (length(lWorkflow$steps) == 0) {
     LogMessage(level = "info", message = "Workflow `{uid}` has no `steps` property.", cli_detail = "alert")
   }
@@ -53,6 +75,7 @@ RunWorkflow <- function(
     LogMessage(level = "info", message = "Workflow `{uid}` has no `meta` property.", cli_detail = "alert")
   }
 
+  # Load data with configuration object.
   if (!is.null(lConfig)) {
     if (
       exists("LoadData", lConfig) &&
@@ -76,14 +99,17 @@ RunWorkflow <- function(
 
   lWorkflow$lData <- lData
 
+  # If the workflow has a spec, check that the data and spec are compatible
   if ("spec" %in% names(lWorkflow)) {
     LogMessage(level = "info", message = "Checking data against spec", cli_detail = "h3")
+    # TODO: verify domain names in [ lData ] exist in [ lWorkflow$spec ]
     CheckSpec(lData, lWorkflow$spec)
   } else {
     lWorkflow$spec <- NULL
     LogMessage(level = "info", message = "No spec found in workflow. Proceeding without checking data.", cli_detail = "h3")
   }
 
+  # Run through each step in lWorkflow$workflow
   stepCount <- 1
   for (step in lWorkflow$steps) {
     LogMessage(
@@ -122,6 +148,7 @@ RunWorkflow <- function(
     stepCount <- stepCount + 1
   }
 
+  # Return the result of the last step (the default) or the full workflow
   if (bReturnResult) {
     if (is.data.frame(lWorkflow$lResult)) {
       LogMessage(
@@ -136,7 +163,7 @@ RunWorkflow <- function(
         cli_detail = "h2"
       )
     }
-
+    # Save data with configuration object.
     if (!is.null(lConfig)) {
       if (
         exists("SaveData", lConfig) &&
@@ -164,28 +191,28 @@ RunWorkflow <- function(
     LogMessage(level = "info", message = "Completed `{uid}` Workflow", cli_detail = "h1")
 
     return(lWorkflow$lResult)
-  }
-
-  if (!bKeepInputData) {
-    outputs <- purrr::map_chr(lWorkflow$steps, ~ .x$output)
-    lWorkflow$lData <- lWorkflow$lData[outputs]
-    LogMessage(
-      level = "info",
-      message = "Keeping only workflow outputs in $lData: {names(lWorkflow$lData)}",
-      cli_detail = "alert_info"
-    )
   } else {
+    if (!bKeepInputData) {
+      outputs <- lWorkflow$steps %>% purrr::map_chr(~ .x$output)
+      lWorkflow$lData <- lWorkflow$lData[outputs]
+      LogMessage(
+        level = "info",
+        message = "Keeping only workflow outputs in $lData: {names(lWorkflow$lData)}",
+        cli_detail = "alert_info"
+      )
+    } else {
+      LogMessage(
+        level = "info",
+        message = "Keeping workflow inputs and outputs in $lData: {names(lWorkflow$lData)}",
+        cli_detail = "alert_info"
+      )
+    }
     LogMessage(
       level = "info",
-      message = "Keeping workflow inputs and outputs in $lData: {names(lWorkflow$lData)}",
-      cli_detail = "alert_info"
+      message = "Returning full workflow object.",
+      cli_detail = "h2"
     )
+    LogMessage(level = "info", message = "Completed `{uid}` Workflow", cli_detail = "h1")
+    return(lWorkflow)
   }
-  LogMessage(
-    level = "info",
-    message = "Returning full workflow object.",
-    cli_detail = "h2"
-  )
-  LogMessage(level = "info", message = "Completed `{uid}` Workflow", cli_detail = "h1")
-  return(lWorkflow)
 }

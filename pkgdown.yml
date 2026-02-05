@@ -1,8 +1,12 @@
 pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
-articles: {}
-last_built: 2026-02-05T19:33Z
+articles:
+  articles/gsm_ADAM_example: gsm_ADAM_example.html
+  articles/gsm_SDTM_example: gsm_SDTM_example.html
+  articles/gsm_visualizations: gsm_visualizations.html
+  articles/Overview: Overview.html
+last_built: 2026-02-05T19:39Z
 urls:
-  reference: https://automatic-adventure-6lomjw6.pages.github.io/reference
-  article: https://automatic-adventure-6lomjw6.pages.github.io/articles
+  reference: https://gilead-biostats.github.io/workr/reference
+  article: https://gilead-biostats.github.io/workr/articles

@@ -2,11 +2,13 @@
 
 ## All functions
 
-- [`RunQuery()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunQuery.md)
+- [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.md)
+  **\[stable\]** : Load workflows from a package/directory.
+- [`RunQuery()`](https://gilead-biostats.github.io/workr/reference/RunQuery.md)
   : Run a SQL query on a data frame or DuckDB table
-- [`RunStep()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunStep.md)
+- [`RunStep()`](https://gilead-biostats.github.io/workr/reference/RunStep.md)
   : Run a single step in a workflow
-- [`RunWorkflow()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunWorkflow.md)
+- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
   : Run a workflow via its specification
-- [`RunWorkflows()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunWorkflows.md)
+- [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md)
   : Run multiple workflows

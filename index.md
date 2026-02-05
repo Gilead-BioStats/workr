@@ -3,11 +3,11 @@
 Standalone workflow execution helpers extracted from gsm.core. The
 package provides:
 
-- [`RunStep()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunStep.md)
+- [`RunStep()`](https://gilead-biostats.github.io/workr/reference/RunStep.md)
   to execute a single workflow step
-- [`RunWorkflow()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunWorkflow.md)
+- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
   to execute a workflow specification
-- [`RunWorkflows()`](https://automatic-adventure-6lomjw6.pages.github.io/reference/RunWorkflows.md)
+- [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md)
   to run multiple workflows in sequence
 
 ## Usage
@@ -31,10 +31,10 @@ RunWorkflows(lWorkflows, lData)
 ```
 
 Example workflow definitions are provided in
-[inst/workflows/helloworld.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/helloworld.yaml),
-[inst/workflows/two_steps.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/two_steps.yaml),
+[inst/workflows/helloworld.yaml](https://gilead-biostats.github.io/workr/inst/workflows/helloworld.yaml),
+[inst/workflows/two_steps.yaml](https://gilead-biostats.github.io/workr/inst/workflows/two_steps.yaml),
 and
-[inst/workflows/cars.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/cars.yaml).
+[inst/workflows/cars.yaml](https://gilead-biostats.github.io/workr/inst/workflows/cars.yaml).
 
 ``` r
 yaml_path <- system.file("workflows", "helloworld.yaml", package = "workr")
@@ -50,7 +50,7 @@ Run the example workflows using YAML definitions.
 ### 1) Hello world workflow
 
 Workflow file:
-[inst/workflows/helloworld.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/helloworld.yaml)
+[inst/workflows/helloworld.yaml](https://gilead-biostats.github.io/workr/inst/workflows/helloworld.yaml)
 
 ``` yaml
 meta:
@@ -75,7 +75,7 @@ RunWorkflow(wf, lData)
 ### 2) Two-step workflow
 
 Workflow file:
-[inst/workflows/two_steps.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/two_steps.yaml)
+[inst/workflows/two_steps.yaml](https://gilead-biostats.github.io/workr/inst/workflows/two_steps.yaml)
 
 ``` yaml
 meta:
@@ -105,7 +105,7 @@ RunWorkflow(wf, lData)
 ### 3) Cars regression workflow
 
 Workflow file:
-[inst/workflows/cars.yaml](https://automatic-adventure-6lomjw6.pages.github.io/inst/workflows/cars.yaml)
+[inst/workflows/cars.yaml](https://gilead-biostats.github.io/workr/inst/workflows/cars.yaml)
 
 ``` yaml
 meta:

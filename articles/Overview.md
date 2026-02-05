@@ -1,0 +1,79 @@
+# Overview
+
+## Background:
+
+The `pharmaverse` has quickly established itself as a community standard
+for open-source clinical reporting, with packages like `sdtm.oak` for
+SDTM transformation, `admiral` for ADaM derivations. From there, a
+variety of visualization packages can be used for the generation of
+tables like `gtsummary` and figures like `safetyCharts`. Emerging in the
+background is the CDISC analysis results dataset standard, ARS, which
+`cards` can be used to support. Furthermore, interally across many
+organzations, there is a rising popularity of shiny and web based tools
+to review data as an alternative to static reports. In parallel, the
+`gsm` framework, in particular the `gsm.core` package, has matured as a
+YAML-driven workflow engine providing reproducibility, traceability, and
+audit-ready pipelines for data science in clinical development. These
+ecosystems have typically evolved in parallel, but their complementary
+strengths create an opportunity for integration.
+
+## Objective:
+
+We present a hybrid “gsm–pharmaverse” pipeline demonstrating how
+`gsm.core` can orchestrate `pharmaverse` packages end-to-end,
+transforming raw eCRF data into SDTM, ADaM, TFL outputs and even ARS.
+This case study highlights how harmonizing these ecosystems can
+accelerate adoption of open-source R workflows in regulated clinical
+trial reporting.
+
+## Methods
+
+- Raw → SDTM ([gsm +
+  sdtm.oak](https://gilead-biostats.github.io/workr/articles/gsm_SDTM_example)):
+  Raw data were transformed into SDTM using gsm workflows, following a
+  pre-existing `sdtm.oak` vignette on implementation for the VS domain.
+  The example can be found
+  [here](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html).
+
+- SDTM → ADaM ([gsm +
+  admiral](https://gilead-biostats.github.io/workr/articles/gsm_ADAM_example)):
+  SDTM domains were re-integrated into gsm workflows and passed through
+  admiral derivations. Functions such as `derive_vars_merged()` and
+  `derive_param_map()` were used to generate ADVS parameters and
+  analysis values (e.g., MAP). Derivation logic was defined
+  declaratively via YAML !expr tags, ensuring transformations were
+  reproducible, transparent, and auditable. An example can be found
+  [here](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
+
+- ADaM → TFLs ([gsm + gtsummary +
+  safetyCharts](https://gilead-biostats.github.io/workr/articles/gsm_visualizations)):
+  From the derived ADaM datasets, gsm workflows directly invoked
+  `gtsummary` to generate table outputs and `safetyCharts` to generate
+  figures. This enables the production of publication-ready TFLs within
+  a fully traceable, end-to-end pipeline given an organization’s
+  visualization package suite. Given the growing adoption of web-based
+  visualization across organizations, gsm workflows were also evaluated
+  as a mechanism to automatically refresh web based/html applications
+  with newly derived data, supporting near-real-time exploratory and
+  safety review.
+
+- ADaM → ARS (gsm + cards; exploratory): (TBD/still not done) In
+  parallel, the same ADaM datasets were extended using cards to explore
+  the generation of ARS-aligned datasets and outputs. As ARS standards
+  continue to evolve, this demonstrates how emerging libraries can be
+  incorporated into the gsm framework with minimal friction.
+
+## Results/Conclusion:
+
+Each package retained its modular design, while `gsm.core` ensured
+workflow control, auditability, and reproducibility across the pipeline.
+
+This hybrid `gsm–pharmaverse` case study illustrates the feasibility of
+an open-source end-to-end clinical reporting pipeline. `gsm.core` serves
+as the workflow backbone, while `pharmaverse` packages provide
+domain-specific transformations for SDTM, ADaM, TFLs, and ARS. Together,
+they deliver a modular and transparent solution for clinical trial
+reporting, that is ready for automation. We propose this as a model for
+future collaboration between workflow frameworks and `pharmaverse`
+packages, moving the industry toward interoperable open-source
+standards.

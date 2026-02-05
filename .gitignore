@@ -3,3 +3,4 @@ workr.Rcheck/
 *.tar.gz
 .Rproj.user/
 .DS_Store
+docs

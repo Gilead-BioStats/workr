@@ -1,0 +1,29 @@
+url: https://gilead-biostats.github.io/workr
+
+template:
+  bootstrap: 5
+  bootswatch: yeti
+  includes:
+    in_header: '<link href="pkgdown/extra.css" rel="stylesheet">'
+
+navbar:
+  structure:
+    left: [articles, Reports, reference, news]
+    right: [search, github]
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: "Overview"
+        href: articles/Overview
+      - text: "gsm + sdtm.oak"
+        href: articles/gsm_SDTM_example
+      - text: "gsm + admiral"
+        href: articles/gsm_ADAM_example
+      - text: "gsm + viz libs"
+        href: articles/gsm_visualizations
+      - text: "Example Report"
+        href: examples/WorkProduct1
+
+
+

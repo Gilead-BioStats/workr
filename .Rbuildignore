@@ -2,3 +2,7 @@
 ^\.\.Rcheck$
 ^\.Rproj\.user$
 ^\.DS_Store$
+^.*\.Rproj$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

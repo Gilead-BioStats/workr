@@ -6,6 +6,9 @@ template:
   includes:
     in_header: '<link href="pkgdown/extra.css" rel="stylesheet">'
 
+development:
+  mode: auto
+
 navbar:
   structure:
     left: [articles, Reports, reference, news]

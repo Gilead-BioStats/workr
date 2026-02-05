@@ -11,9 +11,12 @@ development:
 
 navbar:
   structure:
-    left: [articles, Reports, reference, news]
+    left: [articles, examples, news]
     right: [search, github]
   components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/gilead-biostats/workr
     articles:
       text: User Guides
       menu:
@@ -25,5 +28,8 @@ navbar:
         href: articles/gsm_ADAM_example.html
       - text: "gsm + viz libs"
         href: articles/gsm_visualizations.html
+    examples:
+      text: Examples
+      menu:
       - text: "Example Report"
         href: examples/WorkProduct1.html

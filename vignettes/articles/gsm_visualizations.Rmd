@@ -50,4 +50,4 @@ TFL_workflows <- workr::MakeWorkflowList(
 workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
 ```
 
-An example report [here](examples/WorkProduct1.html)
+An example report [here](../examples/WorkProduct1.html)

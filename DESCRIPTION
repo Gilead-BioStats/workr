@@ -27,7 +27,6 @@ Imports:
 Suggests:
     admiral,
     arrow,
-    gsm.core,
     gt,
     gtsummary,
     quarto,
@@ -37,6 +36,5 @@ Suggests:
     testthat (>= 3.0.0),
     yaml
 Remotes:  
-    gsm.core=Gilead-BioStats/gsm.core,
     safetyCharts=SafetyGraphics/safetyCharts
 Config/testthat/edition: 3

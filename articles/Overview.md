@@ -1,79 +1,122 @@
 # Overview
 
-## Background:
+## Background
 
-The `pharmaverse` has quickly established itself as a community standard
-for open-source clinical reporting, with packages like `sdtm.oak` for
-SDTM transformation, `admiral` for ADaM derivations. From there, a
-variety of visualization packages can be used for the generation of
-tables like `gtsummary` and figures like `safetyCharts`. Emerging in the
-background is the CDISC analysis results dataset standard, ARS, which
-`cards` can be used to support. Furthermore, interally across many
-organzations, there is a rising popularity of shiny and web based tools
-to review data as an alternative to static reports. In parallel, the
-`gsm` framework, in particular the `gsm.core` package, has matured as a
-YAML-driven workflow engine providing reproducibility, traceability, and
-audit-ready pipelines for data science in clinical development. These
-ecosystems have typically evolved in parallel, but their complementary
-strengths create an opportunity for integration.
+The `pharmaverse` has rapidly emerged as an open-source standard for
+clinical trial reporting. Core packages such as `sdtm.oak` support SDTM
+transformations, while `admiral` provides a robust framework for ADaM
+derivations. Downstream, a rich ecosystem of visualization tools enables
+production-ready outputs — including tabular summaries with `gtsummary`
+and safety visualizations via `safetyCharts`. At the same time, the
+CDISC Analysis Results Standard (ARS) is gaining momentum, with packages
+like `cards` beginning to support ARS-aligned workflows. Complementing
+traditional static deliverables, many organizations are increasingly
+adopting Shiny and web-based review tools to enable interactive
+exploration of clinical data.
 
-## Objective:
+In parallel, the gsm framework — particularly the gsm.core package — has
+matured into a YAML-driven workflow engine designed to deliver
+reproducible, traceable, and audit-ready pipelines for clinical data
+science. The framework currently powers a standardized Risk-Based
+Quality Monitoring (RBQM) infrastructure, pairing flexible data
+workflows with robust reporting systems such as those demonstrated in
+[`gsm.kri`](https://gilead-biostats.github.io/gsm.kri/).
 
-We present a hybrid “gsm–pharmaverse” pipeline demonstrating how
-`gsm.core` can orchestrate `pharmaverse` packages end-to-end,
-transforming raw eCRF data into SDTM, ADaM, TFL outputs and even ARS.
-This case study highlights how harmonizing these ecosystems can
-accelerate adoption of open-source R workflows in regulated clinical
-trial reporting.
+Historically, the `pharmaverse` and `gsm` ecosystems have evolved along
+separate trajectories. However, their complementary strengths present a
+compelling opportunity for integration: combining pharmaverse’s
+domain-specific data standards and reporting capabilities with gsm’s
+workflow orchestration and auditability could form the foundation of a
+fully traceable, end-to-end clinical reporting pipeline.
+
+## Objective
+
+We present a hybrid “gsm–pharmaverse” pipeline that demonstrates how
+`gsm.core`/`workr`(???) can orchestrate `pharmaverse` packages across
+the full reporting lifecycle — transforming raw eCRF data into SDTM,
+ADaM, TFL outputs, and ARS-aligned deliverables. Through this case
+study, we illustrate how harmonizing these ecosystems enables a
+cohesive, reproducible workflow that lowers barriers to adopting
+open-source R infrastructure in regulated clinical trial reporting.
 
 ## Methods
 
+- gsm engine: In this framework, workflows are defined declaratively
+  using YAML configuration files organized into three sections:
+
+1.  Meta — captures descriptive metadata and documentation associated
+    with the workflow
+2.  Spec — declares required data sources and their structural
+    requirements, defining the inputs needed for downstream derivations
+    and transformations
+3.  Steps — specifies the execution pipeline. Each step is written as an
+    {output, name, params} block:
+
+&nbsp;
+
+    - output:
+      name:
+      params: 
+
+Where, `output` represents the returned object, `name` identifies the
+function being executed, and `params` contains the function arguments.
+At runtime,
+[`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md)
+parses these step definitions and orchestrates their execution
+sequentially, effectively reproducing the behavior of a piped R command.
+
 - Raw → SDTM ([gsm +
   sdtm.oak](https://gilead-biostats.github.io/workr/articles/gsm_SDTM_example)):
-  Raw data were transformed into SDTM using gsm workflows, following a
-  pre-existing `sdtm.oak` vignette on implementation for the VS domain.
-  The example can be found
+  Raw eCRF data were transformed into SDTM using gsm-driven workflows
+  aligned with established `sdtm.oak` implementation patterns. The
+  workflow mirrors the VS domain example from the official vignette,
+  demonstrating how standardized SDTM mappings can be embedded within a
+  reproducible YAML pipeline. The reference implementation is available
   [here](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html).
 
 - SDTM → ADaM ([gsm +
   admiral](https://gilead-biostats.github.io/workr/articles/gsm_ADAM_example)):
-  SDTM domains were re-integrated into gsm workflows and passed through
-  admiral derivations. Functions such as `derive_vars_merged()` and
-  `derive_param_map()` were used to generate ADVS parameters and
-  analysis values (e.g., MAP). Derivation logic was defined
-  declaratively via YAML !expr tags, ensuring transformations were
-  reproducible, transparent, and auditable. An example can be found
+  SDTM domains were reintroduced into the workflow engine and processed
+  through admiral derivations to construct ADaM datasets. Functions such
+  as `derive_vars_merged()` and `derive_param_map()` generated ADVS
+  parameters and analysis values (e.g., MAP), with derivation logic
+  expressed via !expr tags. This approach preserves transparency while
+  ensuring transformations remain reproducible and audit-ready. The
+  admiral vignette that demonstrates these functions can be found
   [here](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
 
 - ADaM → TFLs ([gsm + gtsummary +
   safetyCharts](https://gilead-biostats.github.io/workr/articles/gsm_visualizations)):
-  From the derived ADaM datasets, gsm workflows directly invoked
-  `gtsummary` to generate table outputs and `safetyCharts` to generate
-  figures. This enables the production of publication-ready TFLs within
-  a fully traceable, end-to-end pipeline given an organization’s
-  visualization package suite. Given the growing adoption of web-based
-  visualization across organizations, gsm workflows were also evaluated
-  as a mechanism to automatically refresh web based/html applications
-  with newly derived data, supporting near-real-time exploratory and
-  safety review.
+  The resulting ADaM datasets fed directly into visualization steps,
+  invoking `gtsummary` for tabular summaries and `safetyCharts` for
+  graphical outputs. This enables generation of publication-ready TFLs
+  within a fully traceable end-to-end pipeline, adaptable to an
+  organization’s visualization standards. Beyond static reporting, the
+  same workflows can automatically refresh web-based or HTML
+  applications as new data are derived, supporting near real-time
+  exploratory analysis and safety review.
 
-- ADaM → ARS (gsm + cards; exploratory): (TBD/still not done) In
-  parallel, the same ADaM datasets were extended using cards to explore
-  the generation of ARS-aligned datasets and outputs. As ARS standards
-  continue to evolve, this demonstrates how emerging libraries can be
-  incorporated into the gsm framework with minimal friction.
+- ADaM → ARS ([gsm +
+  cards](https://gilead-biostats.github.io/workr/articles/gsm_ARS_example)):
+  In parallel, the derived ADaM datasets were extended using cards to
+  prototype ARS-aligned datasets and outputs. Although the ARS standard
+  is still evolving, this example illustrates how emerging libraries can
+  be integrated into the gsm framework with minimal friction, enabling
+  early adoption of new reporting standards within an existing,
+  reproducible workflow.
 
-## Results/Conclusion:
+## Results / Conclusion
 
-Each package retained its modular design, while `gsm.core` ensured
-workflow control, auditability, and reproducibility across the pipeline.
+Each package preserved its modular design, while `gsm.core`/`workr`(???)
+provided centralized workflow control, auditability, and reproducibility
+across the pipeline.
 
-This hybrid `gsm–pharmaverse` case study illustrates the feasibility of
-an open-source end-to-end clinical reporting pipeline. `gsm.core` serves
-as the workflow backbone, while `pharmaverse` packages provide
-domain-specific transformations for SDTM, ADaM, TFLs, and ARS. Together,
-they deliver a modular and transparent solution for clinical trial
-reporting, that is ready for automation. We propose this as a model for
-future collaboration between workflow frameworks and `pharmaverse`
-packages, moving the industry toward interoperable open-source
-standards.
+This hybrid gsm–pharmaverse case study demonstrates the feasibility of a
+fully open-source, end-to-end clinical reporting workflow. In this
+model, the `gsm` framework serves as the orchestration backbone, while
+pharmaverse packages deliver domain-specific transformations spanning
+SDTM, ADaM, TFLs, and ARS. Together, they form a modular, transparent,
+and automation-ready reporting architecture. We propose this integration
+as a blueprint for future collaboration between workflow frameworks and
+pharmaverse tools, advancing the industry toward interoperable,
+open-source clinical reporting standards.

@@ -19,30 +19,30 @@ Show ADAM preview (first 6 rows)
 | 1      | vitals     | 375            | TEMP     | Temperature              | 40.48   | C           | NA    | SKIN   | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | TEMP    | 40.48  |
 | 1      | vitals     | 375            | OXYSAT   | Oxygen Saturation        | 98.00   | %           | NA    | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | OXYSAT  | 98.00  |
 
-### Show YAML’s of visualization transformations
+### Show YAML’s of cards transformations
 
     ## ```yaml
     ## meta:
-    ##   ID: WorkProduct1
-    ##   Type: TFL
-    ##   Description: Create Basic Work Product/Report which can modularize the tables included
+    ##   ID: table_mean_arterial_pressure
+    ##   Type: ars
+    ##   Description: Create table 1 ARS
     ##   Priority: 1
     ## spec:
     ##   ADVS:
     ##     _all:
     ##       required: true
     ## steps:
-    ##   - output: lParams
-    ##     name: list
+    ##   - output: predose_visit1_map
+    ##     name: workr::RunQuery
     ##     params:
-    ##       'dfADVS': ADVS
-    ##   - output: table1
-    ##     name: rmarkdown::render
+    ##       df: ADVS
+    ##       strQuery: "SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"
+    ##   - output: table_predose_visit1_map
+    ##     name: cards::ard_summary
     ##     params:
-    ##       input: !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")
-    ##       output_file: !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")
-    ##       envir: !expr new.env(parent = globalenv())
-    ##       params: lParams
+    ##       data: predose_visit1_map
+    ##       variables:
+    ##         - AVAL
     ## ```
 
 This workflow combines aspects of `gtsummary` and `safetyCharts` modules
@@ -50,13 +50,27 @@ to demonstrate how to assemble multiple static outputs or a hybrid
 approach that may include shiny/web app html-based modules.
 
 ``` r
-TFL_workflows <- workr::MakeWorkflowList(
-  strNames = "WorkProduct1",
-  strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/",
+ARS_workflows <- workr::MakeWorkflowList(
+  strNames = "table_mean_arterial_pressure",
+  strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/",
   strPackage = "workr"
 )
-workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
+ARS <- workr::RunWorkflows(lWorkflows = ARS_workflows, lData = adam )
 ```
 
-An example report
-[here](https://gilead-biostats.github.io/workr/examples/WorkProduct1.md)
+``` r
+map2(ARS, names(ARS), function(x,y) arrow::write_parquet(x, paste0("demo_gsmpharmaverse/data/ARS/", y,".parquet")))
+```
+
+Show Table 1 ARS (first 6 rows)
+
+| variable | context | stat_name | stat_label | stat     | fmt_fun | warning | error |
+|----------|---------|-----------|------------|----------|---------|---------|-------|
+| AVAL     | summary | N         | N          | 2        | 0       |         |       |
+| AVAL     | summary | mean      | Mean       | 93.83333 | 1       |         |       |
+| AVAL     | summary | sd        | SD         | 28.51997 | 1       |         |       |
+| AVAL     | summary | median    | Median     | 93.83333 | 1       |         |       |
+| AVAL     | summary | p25       | Q1         | 73.66667 | 1       |         |       |
+| AVAL     | summary | p75       | Q3         | 114      | 1       |         |       |
+| AVAL     | summary | min       | Min        | 73.66667 | 1       |         |       |
+| AVAL     | summary | max       | Max        | 114      | 1       |         |       |

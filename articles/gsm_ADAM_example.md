@@ -87,12 +87,6 @@ map2(ADAM, names(ADAM), function(x,y) arrow::write_parquet(x, paste0("demo_gsmph
 
 Show ADVS (first 6 rows)
 
-``` r
-ADAM$ADAM_ADVS %>%
-  filter(.data[["PARAMCD"]] == "MAP") %>% 
-  gt()
-```
-
 | oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC            | VSTPT    | VSTPTNUM | VISIT     | VISITNUM | STUDYID    | DOMAIN | VSCAT | USUBJID        | TRT01A | PARAMCD | AVAL      |
 |--------|------------|----------------|----------|--------|---------|----------|-------|-------|-------|------------------|----------|----------|-----------|----------|------------|--------|-------|----------------|--------|---------|-----------|
 | NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2015-05-16T07:25 | PREDOSE  | 1        | VISIT1    | VISIT1   | test_study | NA     | NA    | test_study-375 | DRUG X | MAP     | 114.00000 |

@@ -58,7 +58,7 @@ Show Study CT preview (first 6 rows)
     ##       type: character
     ## steps:
     ##   - output: dm
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: dm_raw
     ##       strQuery: "SELECT STUDYID, USUBJID, 'DRUG X' as TRT01A FROM df"
@@ -97,7 +97,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_sysbp
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_sysbp
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -150,7 +150,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_diabp
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_diabp
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -201,7 +201,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_pulse
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_pulse
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -243,7 +243,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_resp
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_resp
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -285,7 +285,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_temp
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_temp
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -336,7 +336,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_oxysat
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_oxysat
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
@@ -401,7 +401,7 @@ Show Study CT preview (first 6 rows)
     ##       ct_spec: study_ct
     ##       ct_clst: "C66741"
     ##   - output: vs_vsall
-    ##     name: gsm.core::RunQuery
+    ##     name: workr::RunQuery
     ##     params:
     ##       df: vs_vsall
     ##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"

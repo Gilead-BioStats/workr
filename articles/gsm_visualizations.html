@@ -734,12 +734,12 @@ Show ADAM preview (first 6 rows)
 multiple static outputs or a hybrid approach that may include shiny/web
 app html-based modules.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">TFL_workflows</span> <span class="op">&lt;-</span> <span class="fu">gsm.core</span><span class="fu">::</span><span class="fu"><a href="https://gilead-biostats.github.io/gsm.core/reference/MakeWorkflowList.html" class="external-link">MakeWorkflowList</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">TFL_workflows</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="../reference/MakeWorkflowList.html">MakeWorkflowList</a></span><span class="op">(</span></span>
 <span>  strNames <span class="op">=</span> <span class="st">"WorkProduct1"</span>,</span>
 <span>  strPath <span class="op">=</span> <span class="st">"demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/"</span>,</span>
 <span>  strPackage <span class="op">=</span> <span class="st">"workr"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu">gsm.core</span><span class="fu">::</span><span class="fu"><a href="https://gilead-biostats.github.io/gsm.core/reference/RunWorkflows.html" class="external-link">RunWorkflows</a></span><span class="op">(</span>lWorkflows <span class="op">=</span> <span class="va">TFL_workflows</span>, lData <span class="op">=</span> <span class="va">adam</span> <span class="op">)</span></span></code></pre></div>
+<span><span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="../reference/RunWorkflows.html">RunWorkflows</a></span><span class="op">(</span>lWorkflows <span class="op">=</span> <span class="va">TFL_workflows</span>, lData <span class="op">=</span> <span class="va">adam</span> <span class="op">)</span></span></code></pre></div>
 <p>An example report <a href="examples/WorkProduct1.html">here</a></p>
 </div>
 </div>

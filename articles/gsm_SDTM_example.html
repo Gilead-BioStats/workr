@@ -1915,7 +1915,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       type: character</span></span>
 <span><span class="co">## steps:</span></span>
 <span><span class="co">##   - output: dm</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: dm_raw</span></span>
 <span><span class="co">##       strQuery: "SELECT STUDYID, USUBJID, 'DRUG X' as TRT01A FROM df"</span></span>
@@ -1955,7 +1955,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_sysbp</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_sysbp</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2008,7 +2008,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_diabp</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_diabp</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2059,7 +2059,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_pulse</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_pulse</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2101,7 +2101,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_resp</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_resp</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2143,7 +2143,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_temp</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_temp</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2194,7 +2194,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_oxysat</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_oxysat</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
@@ -2259,7 +2259,7 @@ Show Study CT preview (first 6 rows)
 <span><span class="co">##       ct_spec: study_ct</span></span>
 <span><span class="co">##       ct_clst: "C66741"</span></span>
 <span><span class="co">##   - output: vs_vsall</span></span>
-<span><span class="co">##     name: gsm.core::RunQuery</span></span>
+<span><span class="co">##     name: workr::RunQuery</span></span>
 <span><span class="co">##     params:</span></span>
 <span><span class="co">##       df: vs_vsall</span></span>
 <span><span class="co">##       strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>

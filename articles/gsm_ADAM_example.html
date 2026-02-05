@@ -1211,12 +1211,12 @@ Show Raw VS preview (first 6 rows)
 <p>This workflow was inspired by portions of this <code>admiral</code>
 <a href="https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param" class="external-link">vignette</a>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ADAM_workflows</span> <span class="op">&lt;-</span> <span class="fu">gsm.core</span><span class="fu">::</span><span class="fu"><a href="https://gilead-biostats.github.io/gsm.core/reference/MakeWorkflowList.html" class="external-link">MakeWorkflowList</a></span><span class="op">(</span></span>
+<code class="sourceCode R"><span><span class="va">ADAM_workflows</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="../reference/MakeWorkflowList.html">MakeWorkflowList</a></span><span class="op">(</span></span>
 <span>  strNames <span class="op">=</span> <span class="st">"ADVS"</span>,</span>
 <span>  strPath <span class="op">=</span> <span class="st">"demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/"</span>,</span>
 <span>  strPackage <span class="op">=</span> <span class="st">"workr"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">ADAM</span> <span class="op">&lt;-</span> <span class="fu">gsm.core</span><span class="fu">::</span><span class="fu"><a href="https://gilead-biostats.github.io/gsm.core/reference/RunWorkflows.html" class="external-link">RunWorkflows</a></span><span class="op">(</span>lWorkflows <span class="op">=</span> <span class="va">ADAM_workflows</span>, lData <span class="op">=</span> <span class="va">sdtm</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ADAM</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="../reference/RunWorkflows.html">RunWorkflows</a></span><span class="op">(</span>lWorkflows <span class="op">=</span> <span class="va">ADAM_workflows</span>, lData <span class="op">=</span> <span class="va">sdtm</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">map2</span>(ADAM, <span class="fu">names</span>(ADAM), <span class="cf">function</span>(x,y) arrow<span class="sc">::</span><span class="fu">write_parquet</span>(x, <span class="fu">paste0</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/"</span>,y,<span class="st">".parquet"</span>))</span></code></pre></div>
 <details><summary>
 Show ADVS (first 6 rows)

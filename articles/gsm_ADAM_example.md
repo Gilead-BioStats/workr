@@ -73,12 +73,12 @@ This workflow was inspired by portions of this `admiral`
 [vignette](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
 
 ``` r
-ADAM_workflows <- gsm.core::MakeWorkflowList(
+ADAM_workflows <- workr::MakeWorkflowList(
   strNames = "ADVS",
   strPath = "demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/",
   strPackage = "workr"
 )
-ADAM <- gsm.core::RunWorkflows(lWorkflows = ADAM_workflows, lData = sdtm)
+ADAM <- workr::RunWorkflows(lWorkflows = ADAM_workflows, lData = sdtm)
 ```
 
 ``` r

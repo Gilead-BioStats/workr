@@ -50,12 +50,12 @@ to demonstrate how to assemble multiple static outputs or a hybrid
 approach that may include shiny/web app html-based modules.
 
 ``` r
-TFL_workflows <- gsm.core::MakeWorkflowList(
+TFL_workflows <- workr::MakeWorkflowList(
   strNames = "WorkProduct1",
   strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/",
   strPackage = "workr"
 )
-gsm.core::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
+workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
 ```
 
 An example report

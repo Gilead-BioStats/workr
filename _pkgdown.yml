@@ -12,18 +12,18 @@ navbar:
     right: [search, github]
   components:
     articles:
-      text: Articles
+      text: User Guides
       menu:
       - text: "Overview"
-        href: articles/Overview
+        href: articles/Overview.html
       - text: "gsm + sdtm.oak"
-        href: articles/gsm_SDTM_example
+        href: articles/gsm_SDTM_example.html
       - text: "gsm + admiral"
-        href: articles/gsm_ADAM_example
+        href: articles/gsm_ADAM_example.html
       - text: "gsm + viz libs"
-        href: articles/gsm_visualizations
+        href: articles/gsm_visualizations.html
       - text: "Example Report"
-        href: examples/WorkProduct1
+        href: examples/WorkProduct1.html
 
 
 

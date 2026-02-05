@@ -34,7 +34,7 @@ head(adam$ADVS) %>% gt()
 ::: {.scrollbox}
 ```{r Show ADVS transformation for MAP}
 #| echo: false
-x <- readLines(system.file("demo_gsmpharmaverse/demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml", package = "workr"), warn = FALSE)
+x <- readLines(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml", package = "workr"), warn = FALSE)
 cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
 ```
 :::

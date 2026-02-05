@@ -56,14 +56,14 @@ ADAM_workflows <- workr::MakeWorkflowList(
 ADAM <- workr::RunWorkflows(lWorkflows = ADAM_workflows, lData = sdtm)
 ```
 
-```{r Save SDTM datasets, eval = FALSE}
+```{r Save ADAM datasets, eval = FALSE}
 map2(ADAM, names(ADAM), function(x,y) arrow::write_parquet(x, paste0("demo_gsmpharmaverse/data/ADAM/",y,".parquet"))
 ```
 
 
 <details>
 <summary>Show ADVS (first 6 rows)</summary>
-```{r}
+```{r, echo = FALSE}
 ADAM$ADAM_ADVS %>%
   filter(.data[["PARAMCD"]] == "MAP") %>% 
   gt()

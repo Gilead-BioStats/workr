@@ -28,6 +28,8 @@ navbar:
         href: articles/gsm_ADAM_example.html
       - text: "gsm + viz libs"
         href: articles/gsm_visualizations.html
+      - text: "gsm + cards"
+        href: articles/gsm_ARS_example.html
     examples:
       text: Examples
       menu:

@@ -7,9 +7,7 @@ output: html_document
 library(dplyr)
 library(purrr)
 library(rlang)
-library(admiral)
-library(gtsummary)
-library(safetyCharts)
+library(cards)
 library(gt)
 options("yaml.eval.expr" = TRUE) # needs for admiral -- suggest gsm ecoystem write documentation
 ```
@@ -29,25 +27,38 @@ head(adam$ADVS) %>% gt()
 ```
 </details>
 
-## Show YAML's of visualization transformations
+## Show YAML's of cards transformations
 
 ::: {.scrollbox}
 ```{r Show ADVS transformation for MAP}
 #| echo: false
-x <- readLines(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml", package = "workr"), warn = FALSE)
+x <- readLines(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml", package = "workr"), warn = FALSE)
 cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
 ```
 :::
 
 This workflow combines aspects of `gtsummary` and `safetyCharts` modules to demonstrate how to assemble multiple static outputs or a hybrid approach that may include shiny/web app html-based modules.
 
-```{r ADAM Workflows, eval = FALSE, message = FALSE, warning = FALSE}
-TFL_workflows <- workr::MakeWorkflowList(
-  strNames = "WorkProduct1",
-  strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/",
+```{r ADAM Workflows, message = FALSE, warning = FALSE}
+ARS_workflows <- workr::MakeWorkflowList(
+  strNames = "table_mean_arterial_pressure",
+  strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/",
   strPackage = "workr"
 )
-workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
+ARS <- workr::RunWorkflows(lWorkflows = ARS_workflows, lData = adam )
 ```
 
-An example report [here](../examples/WorkProduct1.html)
+```{r Save ARS datasets, eval = FALSE}
+map2(ARS, names(ARS), function(x,y) arrow::write_parquet(x, paste0("demo_gsmpharmaverse/data/ARS/", y,".parquet")))
+```
+
+
+<details>
+<summary>Show Table 1 ARS (first 6 rows)</summary>
+```{r, echo = FALSE}
+ARS[[1]] %>%
+  gt()
+```
+</details>
+
+

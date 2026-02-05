@@ -11,7 +11,7 @@ spec:
       type: character
 steps:
   - output: dm
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: dm_raw
       strQuery: "SELECT STUDYID, USUBJID, 'DRUG X' as TRT01A FROM df"

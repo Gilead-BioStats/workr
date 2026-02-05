@@ -42,12 +42,12 @@ cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
 This workflow combines aspects of `gtsummary` and `safetyCharts` modules to demonstrate how to assemble multiple static outputs or a hybrid approach that may include shiny/web app html-based modules.
 
 ```{r ADAM Workflows, eval = FALSE, message = FALSE, warning = FALSE}
-TFL_workflows <- gsm.core::MakeWorkflowList(
+TFL_workflows <- workr::MakeWorkflowList(
   strNames = "WorkProduct1",
   strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/",
   strPackage = "workr"
 )
-gsm.core::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
+workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
 ```
 
 An example report [here](examples/WorkProduct1.html)

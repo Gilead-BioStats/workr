@@ -9,7 +9,7 @@ spec:
       required: true
 steps:
   - output: predose_visit1_map
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Analysis_ADAM.ADVS
       strQuery: "SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"

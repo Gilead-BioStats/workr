@@ -12,31 +12,31 @@ lData <- list(
 )
 
 
-SDTM_workflows <- gsm.core::MakeWorkflowList(
+SDTM_workflows <- workr::MakeWorkflowList(
   strNames = c("SDTM.VS", "SDTM.DM"),
   strPath = "./sdtm.oak_data/workflows/1_RAW_TO_SDTM/",
   strPackage = NULL
 )
-SDTM_mapped <- gsm.core::RunWorkflows(lWorkflows = SDTM_workflows, lData = lData)
+SDTM_mapped <- workr::RunWorkflows(lWorkflows = SDTM_workflows, lData = lData)
 
-ADAM_workflows <- gsm.core::MakeWorkflowList(
+ADAM_workflows <- workr::MakeWorkflowList(
   strNames = c("ADAM.ADVS"),
   strPath = "./sdtm.oak_data/workflows/2_SDTM_TO_ADAM/",
   strPackage = NULL
 )
-ADAM_mapped <- gsm.core::RunWorkflows(lWorkflows = ADAM_workflows, lData = SDTM_mapped)
+ADAM_mapped <- workr::RunWorkflows(lWorkflows = ADAM_workflows, lData = SDTM_mapped)
 
-ARS_workflows <- gsm.core::MakeWorkflowList(
+ARS_workflows <- workr::MakeWorkflowList(
   strNames = "table_mean_arterial_pressure",
   strPath = "./sdtm.oak_data/workflows/3_ADAM_TO_ARS/",
   strPackage = NULL
 )
-ARS_datasets <- gsm.core::RunWorkflows(lWorkflows = ARS_workflows, lData = ADAM_mapped)
+ARS_datasets <- workr::RunWorkflows(lWorkflows = ARS_workflows, lData = ADAM_mapped)
 
-TFL_workflows <- gsm.core::MakeWorkflowList(
+TFL_workflows <- workr::MakeWorkflowList(
   strNames = "WorkProduct1",
   strPath = "./sdtm.oak_data/workflows/3_ADAM_TO_TFL/",
   strPackage = NULL
 )
-TFLs <- gsm.core::RunWorkflows(lWorkflows = TFL_workflows, lData = ADAM_mapped)
+TFLs <- workr::RunWorkflows(lWorkflows = TFL_workflows, lData = ADAM_mapped)
 TFLs

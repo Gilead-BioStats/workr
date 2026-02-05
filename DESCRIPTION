@@ -26,3 +26,4 @@ Suggests:
     testthat (>= 3.0.0),
     yaml
 Config/testthat/edition: 3
+URL: https://automatic-adventure-6lomjw6.pages.github.io/

@@ -2,7 +2,7 @@ name: pkgdown
 
 on:
   push:
-    branches: [main]
+    branches: [add_gsm_pharmaverse]
   workflow_dispatch:
 
 jobs:

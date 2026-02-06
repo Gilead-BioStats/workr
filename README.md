@@ -58,11 +58,6 @@ result <- workr::RunWorkflow(
   lData = lData
 )
 
-result <- workr::RunWorkflow(
-  lWorkflow = wf,
-  lData = lData
-)
-
 # result = 15.4 (mean of cars$speed)
 ```
 
@@ -74,41 +69,4 @@ Each step in a workflow:
 3. Saves the result to `lData` using the `output` name
 4. Makes it available for the next step
 
-By chaining steps together, you build complex pipelines from simple, reusable components.
-
-## Composable Workflows
-
-Workflows can call other workflows! Use `RunWorkflow` as a step name to nest workflows:
-
-```yaml
-meta:
-  ID: parent
-steps:
-  - name: RunWorkflow
-    output: child_result
-    params:
-      lWorkflow: child_workflow
-      lData: lData
-  - name: process_result
-    output: final
-    params:
-      data: child_result
-```
-
-## Examples
-
-Example workflow YAML files are provided in [inst/workflows/](inst/workflows/):
-- [helloworld.yaml](inst/workflows/helloworld.yaml) - simple single-step workflow
-- [two_steps.yaml](inst/workflows/two_steps.yaml) - multi-step workflow
-- [cars.yaml](inst/workflows/cars.yaml) - regression example
-
-Load and run any example:
-
-```r
-wf <- yaml::read_yaml(
-  system.file("workflows", "cars.yaml", package = "workr")
-)
-lData <- list(cars = cars)
-model <- workr::RunWorkflow(wf, lData)
-summary(model)
-```
+By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.

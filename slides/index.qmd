@@ -378,7 +378,7 @@ RunWorkflow(
 meta:
   ID: ADVS
   Type: ADAM
-  Description: Create Basic ADSL
+  Description: Create Basic ADVS
   Priority: 1
 spec:
   SDTM_DM:
@@ -411,9 +411,9 @@ steps:
       get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
 ```
 
-By now, it's clear how to structure a workflow to arrive at a desired ADaM dataset after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values. Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
+By now, it's clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values. Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
 
-So some things to consider, especially for admiral would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
+So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
 
 # Enterprise {workr} (Zelos?)
 

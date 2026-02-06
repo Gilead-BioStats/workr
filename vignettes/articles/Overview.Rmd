@@ -13,7 +13,7 @@ Historically, the `pharmaverse` and `gsm` ecosystems have evolved along separate
 
 # Objective
 
-We present a hybrid "gsm–pharmaverse" pipeline that demonstrates how `gsm.core`/`workr`(???) can orchestrate `pharmaverse` packages across the full reporting lifecycle — transforming raw eCRF data into SDTM, ADaM, TFL outputs, and ARS-aligned deliverables. Through this case study, we illustrate how harmonizing these ecosystems enables a cohesive, reproducible workflow that lowers barriers to adopting open-source R infrastructure in regulated clinical trial reporting.
+We present a hybrid "gsm–pharmaverse" pipeline that demonstrates how `workr` can orchestrate `pharmaverse` packages across the full reporting lifecycle — transforming raw eCRF data into SDTM, ADaM, TFL outputs, and ARS-aligned deliverables. Through this case study, we illustrate how harmonizing these ecosystems enables a cohesive, reproducible workflow that lowers barriers to adopting open-source R infrastructure in regulated clinical trial reporting.
 
 # Methods
 
@@ -41,6 +41,6 @@ Where, `output` represents the returned object, `name` identifies the function b
 
 # Results / Conclusion
 
-Each package preserved its modular design, while  `gsm.core`/`workr`(???) provided centralized workflow control, auditability, and reproducibility across the pipeline.
+Each package preserved its modular design, while `workr` provided centralized workflow control, auditability, and reproducibility across the pipeline.
 
 This hybrid gsm–pharmaverse case study demonstrates the feasibility of a fully open-source, end-to-end clinical reporting workflow. In this model, the `gsm` framework serves as the orchestration backbone, while pharmaverse packages deliver domain-specific transformations spanning SDTM, ADaM, TFLs, and ARS. Together, they form a modular, transparent, and automation-ready reporting architecture. We propose this integration as a blueprint for future collaboration between workflow frameworks and pharmaverse tools, advancing the industry toward interoperable, open-source clinical reporting standards.

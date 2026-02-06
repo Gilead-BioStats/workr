@@ -15,7 +15,7 @@
 #' # get specific workflow files
 #' workflow <- MakeWorkflowList(
 #'   strPath = "example_workflow/1_mappings",
-#'   strPackage = "gsm.core"
+#'   strPackage = "workr"
 #' )
 #'
 #' @return `list` A list of workflows with workflow and parameter metadata.

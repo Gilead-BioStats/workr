@@ -94,9 +94,10 @@
 <h2 id="why-workr">Why {workr}?<a class="anchor" aria-label="anchor" href="#why-workr"></a>
 </h2>
 <p>{workr} was built to solve a specific problem: <strong>reusable, customizable data pipelines for complex clinical trial monitoring</strong>.</p>
-<p>The core functions in {workr} were originally implemented as part of the {gsm} framework for risk-based quality montoring (RBQM). The {gsm} team developed a stable, reusable model for generating metrics to monitor clinical trials.</p>
-<p>Our challenge was figuring out how to run those metrics across a large portfolio; Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps and you get 27,000 metric computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes unmaintainable.</p>
+<p>The core functions in {workr} were originally developed as part of the <a href="https://gilead-biostats.github.io/gsm.core/index.html" class="external-link">{gsm} framework</a> for risk-based quality montoring (RBQM). The {gsm} team developed a <a href="https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html" class="external-link">stable, reusable model for generating metrics</a> to monitor clinical trials.</p>
+<p>Our challenge was figuring out how to run those metrics across a large portfolio; Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps and you get 27,000 computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.</p>
 <p>{workr}’s solution: Define workflows once, customize via <code>meta</code> parameters, and compose them into larger pipelines.</p>
+<p>The original <code>gsm::RunWorkflow</code> functions were developed in a few hours, and were seen as a stopgap until we picked a “real” pipeline, but the approach has proven to be suprisingly stable and flexible. So much so that, we’ve created {workr} and started using them outside of our {gsm} pipelines.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>

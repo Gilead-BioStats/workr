@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/Gilead-BioStats/workr/blob/add_gsm_pharmaverse/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/Gilead-BioStats/workr/blob/main/DESCRIPTION)
 
 Maintainer W (2026). *workr: Workflow Execution Helpers*. R package
 version 0.1.0, <https://gilead-biostats.github.io/workr>.

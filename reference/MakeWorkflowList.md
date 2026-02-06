@@ -55,5 +55,5 @@ workflow <- MakeWorkflowList(
   strPath = "example_workflow/1_mappings",
   strPackage = "gsm.core"
 )
-#> Error in workflows %>% map(function(wf) {    if (is.null(wf$meta$Priority)) {        wf$meta$Priority <- 0    }    return(wf)}): could not find function "%>%"
+#> Error: [ strPath ] must exist.
 ```

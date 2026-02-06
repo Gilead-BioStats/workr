@@ -1,53 +1,79 @@
-# Run multiple workflows
+# Convenience function to run multiple workflows
 
-Runs multiple workflows in sequence and returns a named list of results.
+This function takes a list of workflows and a list of data as input. It
+runs each workflow and returns the results as a named list where the
+names of the list correspond to the workflow ID (`meta$ID`).
+
+Workflows are run in the order they are provided in `lWorkflows`. The
+results from each workflow are passed as inputs (along with `lData`) for
+later workflows.
 
 ## Usage
 
 ``` r
-RunWorkflows(lWorkflows, lData = NULL, lConfig = NULL, bKeepInputData = FALSE, bReturnResult = TRUE, strResultNames = c("Type", "ID"))
+RunWorkflows(
+  lWorkflows,
+  lData = NULL,
+  lConfig = NULL,
+  bKeepInputData = FALSE,
+  bReturnResult = TRUE,
+  strResultNames = c("Type", "ID")
+)
 ```
 
 ## Arguments
 
 - lWorkflows:
 
-  `list` workflows to run.
+  `list` A named list of metadata defining how the workflow should be
+  run.
 
 - lData:
 
-  `list` domain-level data.
+  `list` A named list of domain-level data frames.
 
 - lConfig:
 
-  `list` configuration object with `LoadData` and `SaveData` functions.
+  `list` A configuration object with two methods:
+
+  - `LoadData`: A function that loads data specified in
+    `lWorkflow$spec`.
+
+  - `SaveData`: A function that saves data returned by the last step in
+    `lWorkflow$steps`.
 
 - bKeepInputData:
 
-  `boolean` keep input data when returning full workflow.
+  `boolean` should the input data be included in `lData` after the
+  workflow is run? Only relevant when bReturnResult is FALSE. Default is
+  `TRUE`.
 
 - bReturnResult:
 
-  `boolean` return only last step result.
+  `boolean` should *only* the result from the last step (`lResults`) be
+  returned? If false, the full workflow (including `lResults`) is
+  returned. Default is `TRUE`.
 
 - strResultNames:
 
-  `character` vector of length two specifying meta fields for result
-  names.
+  `string` vector of length two, which describes the meta fields used to
+  name the output.
 
 ## Value
 
-A named list of results from `RunWorkflow`.
+A named list of results from
+[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
+where the names correspond to the names of the workflow ID
 
 ## Examples
 
 ``` r
-sum_step <- function(lData, y) lData$value + y
+sum_step <- function(x, y) x + y
 lWorkflows <- list(
   list(
     meta = list(Type = "demo", ID = "001"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+      list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
     )
   )
 )
@@ -58,7 +84,7 @@ RunWorkflows(lWorkflows, lData)
 #> [INFO] No spec found in workflow. Proceeding without checking data.
 #> [INFO] Workflow Step 1 of 1: `sum_step`
 #> [INFO] Evaluating 2 parameter(s) for `sum_step`
-#> [INFO] lData = lData:  Passing full lData object.
+#> [INFO] x = lData:  Passing full lData object.
 #> [INFO] y = value: Passing lData$value.
 #> [INFO] Calling `sum_step`
 #> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.

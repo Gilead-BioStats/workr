@@ -87,10 +87,13 @@ result <- workr::RunWorkflow(
 
 ## How it works
 
-Each step in a workflow: 1. Calls a function (specified by `step$name`)
-2. Passes parameters from `params` (resolving references to `lData`,
-`meta`, or literal values) 3. Saves the result to `lData` using the
-`output` name 4. Makes it available for the next step
+Each step in a workflow:
+
+1.  Calls a function (specified by `step$name`)
+2.  Passes parameters from `params` (resolving references to `lData`,
+    `meta`, or literal values)
+3.  Saves the result to `lData` using the `output` name
+4.  Makes it available for the next step
 
 By chaining steps (and even whole workflows) together, you can build
 complex pipelines from simple, reusable components.

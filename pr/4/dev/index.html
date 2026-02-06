@@ -132,7 +132,13 @@
 <div class="section level2">
 <h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h2>
-<p>Each step in a workflow: 1. Calls a function (specified by <code>step$name</code>) 2. Passes parameters from <code>params</code> (resolving references to <code>lData</code>, <code>meta</code>, or literal values) 3. Saves the result to <code>lData</code> using the <code>output</code> name 4. Makes it available for the next step</p>
+<p>Each step in a workflow:</p>
+<ol style="list-style-type: decimal">
+<li>Calls a function (specified by <code>step$name</code>)</li>
+<li>Passes parameters from <code>params</code> (resolving references to <code>lData</code>, <code>meta</code>, or literal values)</li>
+<li>Saves the result to <code>lData</code> using the <code>output</code> name</li>
+<li>Makes it available for the next step</li>
+</ol>
 <p>By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
 </div>
 </div>
@@ -162,7 +168,8 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Workr Maintainer <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Jeremy Wildfire <br><small class="roles"> Author, maintainer </small>   </li>
+<li>Zelos Zhu <br><small class="roles"> Author </small>   </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
@@ -174,7 +181,7 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Workr Maintainer.</p>
+  <p>Developed by Jeremy Wildfire, Zelos Zhu.</p>
 </div>
 
 <div class="pkgdown-footer-right">

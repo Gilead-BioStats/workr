@@ -210,9 +210,62 @@ TODO: Run code and tweak as needed
 
 # {workr} ❤️ {pharmaverse} (Zelos)
 
-## (Section placeholder)
+## From Raw to SDTM
 
-- …
+- {sdtm.oak} is a popular R package that modularizes SDTM programming that is EDC/data-standards agnostic
+- The algorithms and sub-algorithms provided can be reused across multiple SDTM domains 
+- We aim to replicate the results of the vignettes using workflows!
+
+## SDTM Example: RAW to VS 
+
+```R
+wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/1_RAW_TO_SDTM/VS.yaml"))
+lData <- list(
+  dm_raw = read.csv(system.file("raw_data/dm.csv", package = "sdtm.oak")),
+  vs_raw =  read.csv(system.file("raw_data/vitals_raw_data.csv", package = "sdtm.oak")),
+  study_ct = read.csv(system.file("raw_data/sdtm_ct.csv", package = "sdtm.oak"))
+)
+RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
+)
+```
+
+## SDTM Example: Step 1
+```yaml
+meta:
+  ID: VS
+  Type: SDTM
+  Description: Transform Raw VS to SDTM VS following sdtm.oak article
+  Priority: 1
+spec:
+  # Read in data
+  vs_raw:
+    _all:
+      required: true
+  study_ct:
+    _all:
+      required: true
+steps:
+  # Create oak_id_vars
+  - output: vs_raw2
+    name: sdtm.oak::generate_oak_id_vars
+    params:
+      raw_dat: vs_raw
+      pat_var: "PATNUM"
+      raw_src: "vitals"
+
+```
+`lData$vs_raw <- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")`
+
+```R
+# lData after Step 1
+list(
+    vs_raw = {THE RAW DATASET}
+    vs_raw2 = {THE RAW DATASET after we read ran generate_oak_id_vars}
+)
+```
+It may be important to consider how to treat interim objects along the way in the `lData` dataset, similar to a team may use `%>%` and `|>` to chain together one object, it is left to the user to use new names for output or overwrite `vs_raw`  instead of `vs_raw2` in the example above.
 
 # Enterprise {workr} (Zelos?)
 

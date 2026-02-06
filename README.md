@@ -1,121 +1,114 @@
 # workr
 
-Standalone workflow execution helpers extracted from gsm.core. The package provides:
+A **very** simple R data pipeline framework.
 
-- `RunStep()` to execute a single workflow step
-- `RunWorkflow()` to execute a workflow specification
-- `RunWorkflows()` to run multiple workflows in sequence
+## What is {workr}?
 
-## Usage
+{workr} provides a minimal mental model for describing and executing data workflows:
+
+- **Workflows** are YAML files with `meta` (workflow metadata) and `steps` (ordered list of function calls)
+- **Steps** are functions that accept data and parameters, producing output that gets added to the shared data list
+- **Meta** is workflow-level configuration accessible to all steps
+
+The package provides three core functions:
+
+- `RunStep()` - execute a single workflow step
+- `RunWorkflow()` - execute a workflow specification (YAML)
+- `RunWorkflows()` - run multiple workflows in sequence
+
+## Why {workr}?
+
+{workr} was built to solve a specific problem: **reusable, customizable data pipelines for complex clinical trial monitoring**.
+
+The core functions in {workr} were originally implemented as part of the {gsm} framework for risk-based quality montoring (RBQM). The {gsm} team developed a stable, reusable model for generating metrics to monitor clinical trials. 
+
+Our challenge was figuring out how to run those metrics across a large portfolio; Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps and you get 27,000 metric computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes unmaintainable.
+
+{workr}'s solution: Define workflows once, customize via `meta` parameters, and compose them into larger pipelines.
+
+## Quick Start
+
+Define a workflow in YAML:
+
+```yaml
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull 
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
+
+Run it from R:
 
 ```r
-lWorkflows <- list(
-  list(
-    meta = list(Type = "demo", ID = "001"),
-    steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
-    )
-  )
+wf <- yaml::read_yaml("hello_cars.yaml")
+lData <- list(df = cars)
+
+result <- workr::RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
 )
 
-sum_step <- function(lData, y) {
-  lData$value + y
-}
+result <- workr::RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
+)
 
-lData <- list(value = 2)
-RunWorkflows(lWorkflows, lData)
+# result = 15.4 (mean of cars$speed)
 ```
 
-Example workflow definitions are provided in [inst/workflows/helloworld.yaml](inst/workflows/helloworld.yaml), [inst/workflows/two_steps.yaml](inst/workflows/two_steps.yaml), and [inst/workflows/cars.yaml](inst/workflows/cars.yaml).
+## How it works
 
-```r
-yaml_path <- system.file("workflows", "helloworld.yaml", package = "workr")
-workflow <- yaml::read_yaml(yaml_path)
-```
+Each step in a workflow:
+1. Calls a function (specified by `step$name`)
+2. Passes parameters from `params` (resolving references to `lData`, `meta`, or literal values)
+3. Saves the result to `lData` using the `output` name
+4. Makes it available for the next step
 
-Replace the placeholder example with your workflow definitions.
+By chaining steps together, you build complex pipelines from simple, reusable components.
 
-## Cookbook
+## Composable Workflows
 
-Run the example workflows using YAML definitions.
-
-### 1) Hello world workflow
-
-Workflow file: [inst/workflows/helloworld.yaml](inst/workflows/helloworld.yaml)
+Workflows can call other workflows! Use `RunWorkflow` as a step name to nest workflows:
 
 ```yaml
 meta:
-  Type: demo
-  ID: helloworld
+  ID: parent
 steps:
-  - name: sum_step
-    output: result
+  - name: RunWorkflow
+    output: child_result
     params:
+      lWorkflow: child_workflow
       lData: lData
-      "y": value
+  - name: process_result
+    output: final
+    params:
+      data: child_result
 ```
+
+## Examples
+
+Example workflow YAML files are provided in [inst/workflows/](inst/workflows/):
+- [helloworld.yaml](inst/workflows/helloworld.yaml) - simple single-step workflow
+- [two_steps.yaml](inst/workflows/two_steps.yaml) - multi-step workflow
+- [cars.yaml](inst/workflows/cars.yaml) - regression example
+
+Load and run any example:
 
 ```r
-sum_step <- function(lData, y) lData$value + y
-lData <- list(value = 2)
-
-wf <- yaml::read_yaml(system.file("workflows", "helloworld.yaml", package = "workr"))
-RunWorkflow(wf, lData)
-```
-
-### 2) Two-step workflow
-
-Workflow file: [inst/workflows/two_steps.yaml](inst/workflows/two_steps.yaml)
-
-```yaml
-meta:
-  Type: demo
-  ID: two_steps
-steps:
-  - name: sum_step
-    output: intermediate
-    params:
-      lData: lData
-      "y": value
-  - name: sum_step
-    output: result
-    params:
-      lData: lData
-      "y": value
-```
-
-```r
-sum_step <- function(lData, y) lData$value + y
-lData <- list(value = 2)
-
-wf <- yaml::read_yaml(system.file("workflows", "two_steps.yaml", package = "workr"))
-RunWorkflow(wf, lData)
-```
-
-### 3) Cars regression workflow
-
-Workflow file: [inst/workflows/cars.yaml](inst/workflows/cars.yaml)
-
-```yaml
-meta:
-  Type: demo
-  ID: cars
-steps:
-  - name: stats::as.formula
-    output: model_formula
-    params:
-      object: "dist ~ speed"
-  - name: stats::lm
-    output: model
-    params:
-      formula: model_formula
-      data: cars
-```
-
-```r
+wf <- yaml::read_yaml(
+  system.file("workflows", "cars.yaml", package = "workr")
+)
 lData <- list(cars = cars)
-
-wf <- yaml::read_yaml(system.file("workflows", "cars.yaml", package = "workr"))
-model <- RunWorkflow(wf, lData)
+model <- workr::RunWorkflow(wf, lData)
 summary(model)
 ```

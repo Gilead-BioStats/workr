@@ -11,7 +11,7 @@ development:
 
 navbar:
   structure:
-    left: [articles, examples, news]
+    left: [articles, examples, slides, news]
     right: [search, github]
   components:
     github:
@@ -35,3 +35,6 @@ navbar:
       menu:
       - text: "Example Report"
         href: examples/WorkProduct1.html
+    slides:
+      text: Slides
+      href: slides/

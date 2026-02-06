@@ -1,6 +1,8 @@
 ---
 title: "Phuse Connect 2026"
 subtitle: "{workr}: a very simple R data pipeline"
+author: "Zelos Zhu + Jeremy Wildfire"
+date: "2025-03-20"
 ---
 
 ## Agenda
@@ -8,8 +10,7 @@ subtitle: "{workr}: a very simple R data pipeline"
 - What is {workr}?
 - Why did we build this?
 - {workr} ❤️ {pharmaverse}
-- Enterprise {workr}
-- Links
+- Automating {workr} 🤖
 
 # What is {workr}? {background-color="#f0f0f0"}
 
@@ -40,15 +41,12 @@ steps:
       lData: speed
 ```
 
-::: {.notes}
-- Each step calls a function (`name`)
-- Results of the last step is returned by detault (can be customized)
-:::
-
 ## `workr::RunWorkflow()`
 
-- Pass your workflow and some `data` to `workr::RunWorkflow()`
+- Pass in your workflow and a list of data (`lData`)
 - Each step runs a function (`step$name`) that updates `lData`
+- Steps can use `meta` and `lData` as inputs
+- Returns result of last step by default (can be customized)
 
 ## Example 1: Hello Cars 
 

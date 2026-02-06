@@ -126,48 +126,13 @@
 <span>  lData <span class="op">=</span> <span class="va">lData</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="reference/RunWorkflow.html">RunWorkflow</a></span><span class="op">(</span></span>
-<span>  lWorkflow <span class="op">=</span> <span class="va">wf</span>,</span>
-<span>  lData <span class="op">=</span> <span class="va">lData</span></span>
-<span><span class="op">)</span></span>
-<span></span>
 <span><span class="co"># result = 15.4 (mean of cars$speed)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
 </h2>
 <p>Each step in a workflow: 1. Calls a function (specified by <code>step$name</code>) 2. Passes parameters from <code>params</code> (resolving references to <code>lData</code>, <code>meta</code>, or literal values) 3. Saves the result to <code>lData</code> using the <code>output</code> name 4. Makes it available for the next step</p>
-<p>By chaining steps together, you build complex pipelines from simple, reusable components.</p>
-</div>
-<div class="section level2">
-<h2 id="composable-workflows">Composable Workflows<a class="anchor" aria-label="anchor" href="#composable-workflows"></a>
-</h2>
-<p>Workflows can call other workflows! Use <code>RunWorkflow</code> as a step name to nest workflows:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">meta</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> parent</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="fu">steps</span><span class="kw">:</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> RunWorkflow</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="at">    </span><span class="fu">output</span><span class="kw">:</span><span class="at"> child_result</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a><span class="at">      </span><span class="fu">lWorkflow</span><span class="kw">:</span><span class="at"> child_workflow</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a><span class="at">      </span><span class="fu">lData</span><span class="kw">:</span><span class="at"> lData</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> process_result</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="at">    </span><span class="fu">output</span><span class="kw">:</span><span class="at"> final</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="at">      </span><span class="fu">data</span><span class="kw">:</span><span class="at"> child_result</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
-</h2>
-<p>Example workflow YAML files are provided in <a href="inst/workflows/">inst/workflows/</a>: - <a href="inst/workflows/helloworld.yaml">helloworld.yaml</a> - simple single-step workflow - <a href="inst/workflows/two_steps.yaml">two_steps.yaml</a> - multi-step workflow - <a href="inst/workflows/cars.yaml">cars.yaml</a> - regression example</p>
-<p>Load and run any example:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">wf</span> <span class="op">&lt;-</span> <span class="fu">yaml</span><span class="fu">::</span><span class="fu"><a href="https://yaml.r-lib.org/reference/read_yaml.html" class="external-link">read_yaml</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"workflows"</span>, <span class="st">"cars.yaml"</span>, package <span class="op">=</span> <span class="st">"workr"</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">lData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>cars <span class="op">=</span> <span class="va">cars</span><span class="op">)</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="reference/RunWorkflow.html">RunWorkflow</a></span><span class="op">(</span><span class="va">wf</span>, <span class="va">lData</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></code></pre></div>
+<p>By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

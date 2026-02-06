@@ -56,14 +56,16 @@ jobs:
         run: |
           quarto render slides/index.qmd
 
+      - name: Copy slides to pkgdown site
+        run: |
+          mkdir -p pkgdown/assets/slides
+          cp -r slides/_site/* pkgdown/assets/slides
+          
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}
 
-      - name: Copy slides to pkgdown site
-        run: |
-          mkdir -p docs/slides
-          cp -r slides/_site/* docs/slides/
+
 
       - name: Deploy PR preview 🧪
         if: github.event_name == 'pull_request'

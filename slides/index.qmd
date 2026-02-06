@@ -214,7 +214,7 @@ TODO: Run code and tweak as needed
 
 - {sdtm.oak} is a popular R package that modularizes SDTM programming that is EDC/data-standards agnostic
 - The algorithms and sub-algorithms provided can be reused across multiple SDTM domains 
-- We aim to replicate the results of the vignettes using workflows!
+- We aim to replicate the results of this [vignette](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html) using workflows!
 
 ## SDTM Example: RAW to VS 
 
@@ -265,7 +265,155 @@ list(
     vs_raw2 = {THE RAW DATASET after we read ran generate_oak_id_vars}
 )
 ```
-It may be important to consider how to treat interim objects along the way in the `lData` dataset, similar to a team may use `%>%` and `|>` to chain together one object, it is left to the user to use new names for output or overwrite `vs_raw`  instead of `vs_raw2` in the example above.
+It may be important to consider how to treat interim objects along the way in the `lData` dataset, similar to how a team may use pipes, e.g. `%>%` and `|>` to chain together one object, it is left to the user to use new names for output or overwrite objects, in this case `vs_raw`  instead of `vs_raw2` for the example above.
+
+## SDTM Example: CT assignment Steps
+```yaml
+  # Map topic variable SYSBP and its qualifiers.
+  - output: vs_sysbp
+    name: sdtm.oak::hardcode_ct
+    params:
+      raw_dat: vs_raw
+      raw_var: "SYS_BP"
+      tgt_var: "VSTESTCD"
+      tgt_val: "SYSBP"
+      ct_spec: study_ct
+      ct_clst: "C66741"
+  - output: vs_sysbp
+    name: workr::RunQuery
+    params:
+      df: vs_sysbp
+      strQuery: "SELECT * FROM df WHERE VSTESTCD IS NOT NULL"
+  # Map topic variable SYSBP and its qualifiers.
+  - output: vs_sysbp
+    name: sdtm.oak::hardcode_ct
+    params:
+      tgt_dat: vs_sysbp
+      raw_dat: vs_raw
+      raw_var: "SYS_BP"
+      tgt_var: "VSTEST"
+      tgt_val: "Systolic Blood Pressure"
+      ct_spec: study_ct
+      ct_clst: "C67153"
+  - output: vs_sysbp
+    name: sdtm.oak::assign_no_ct
+    params:
+      tgt_dat: vs_sysbp
+      raw_dat:  vs_raw
+      raw_var: "SYS_BP"
+      tgt_var: "VSORRES"
+```
+This is equivalent to.....
+
+## SDTM Example: CT assignment Steps (via pipes)
+
+```r
+# Map topic variable SYSBP and its qualifiers.
+vs_sysbp <-
+  hardcode_ct(
+    raw_dat = vs_raw,
+    raw_var = "SYS_BP",
+    tgt_var = "VSTESTCD",
+    tgt_val = "SYSBP",
+    ct_spec = study_ct,
+    ct_clst = "C66741"
+  ) %>%
+  dplyr::filter(!is.na(.data$VSTESTCD))  %>%
+  hardcode_ct(
+    raw_dat = vs_raw,
+    raw_var = "SYS_BP",
+    tgt_var = "VSTEST",
+    tgt_val = "Systolic Blood Pressure",
+    ct_spec = study_ct,
+    ct_clst = "C67153",
+    id_vars = oak_id_vars()
+  ) %>%
+  assign_no_ct(
+    raw_dat = vs_raw,
+    raw_var = "SYS_BP",
+    tgt_var = "VSORRES",
+    id_vars = oak_id_vars()
+  ) %>%
+  hardcode_ct(
+    raw_dat = vs_raw,
+    raw_var = "SYS_BP",
+    tgt_var = "VSORRESU",
+    tgt_val = "mmHg",
+    ct_spec = study_ct,
+    ct_clst = "C66770",
+    id_vars = oak_id_vars()
+  ) %>%
+  assign_ct(
+    raw_dat = vs_raw,
+    raw_var = "SUBPOS",
+    tgt_var = "VSPOS",
+    ct_spec = study_ct,
+    ct_clst = "C71148",
+    id_vars = oak_id_vars()
+  )
+```
+
+Each pipe statement is equivalent to a step in the workflow; integration of any package would mostly be depend on familiarity with a particular R Package, not necessarily this workr framework.
+
+## From SDTM to ADaM
+
+- {admiral} is a popular R package that modularizes ADaM programming with many extension packages that address specific therapeutic area needs
+- Here we'll highlight just a few specific functions, but the documentation and user guides for {admiral} are some of the best amongst all R packages
+
+## ADaM Example: VS to ADVS
+```R
+wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/ADVS.yaml"))
+sdtm <- list(
+  SDTM_DM = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_DM.parquet", package = "workr")),
+  SDTM_VS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet", package = "workr"))
+)
+RunWorkflow(
+  lWorkflow = wf,
+  lData = sdtm
+)
+```
+
+## ADaM Example: Create MAP
+```yaml
+meta:
+  ID: ADVS
+  Type: ADAM
+  Description: Create Basic ADSL
+  Priority: 1
+spec:
+  SDTM_DM:
+    _all:
+      required: true
+  SDTM_VS:
+    _all:
+      required: true
+steps:
+  - output: initial_advs
+    name: admiral::derive_vars_merged
+    params:
+      dataset: SDTM_VS
+      dataset_add: SDTM_DM
+      new_vars: !expr exprs(TRT01A)
+      by_vars: !expr exprs(STUDYID, USUBJID)
+  - output: advs
+    name: dplyr::mutate
+    params:
+      .data: initial_advs
+      PARAMCD: !expr rlang::expr(.data[["VSTESTCD"]])
+      AVAL: !expr rlang::expr(.data[["VSORRES"]])
+  - output: advs
+    name: admiral::derive_param_map
+    params:
+      dataset: advs
+      by_vars: !expr exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM)
+      sysbp_code: 'SYSBP'
+      diabp_code: 'DIABP'
+      get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
+```
+
+By now, it's clear how to structure a workflow to arrive at a desired ADaM dataset after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values. Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
+
+So some things to consider, especially for admiral would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
 
 # Enterprise {workr} (Zelos?)
 

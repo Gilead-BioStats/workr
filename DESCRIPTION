@@ -3,11 +3,11 @@ Type: Package
 Title: Workflow Execution Helpers
 Version: 0.1.0
 Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
-Maintainer: Workr Maintainer <maintainer@workr.example>
+Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
 Authors@R: c(
-    person("Workr", "Maintainer", email = "maintainer@workr.example", role = c("aut", "cre")),
-    person("Gilead", "Biostats", role = "cph")
- )
+    person("Jeremy", "Wildfire", email = "jwildfire@gilead.com", role = c("aut", "cre")),
+    person("Zelos", "Zhu", email = "zelos.zhu@atorus.com", role = c("aut")),
+    person("Gilead", role = c("cph")))
 Description: Standalone helpers for running assessment workflows and steps.
     This package extracts the workflow execution utilities from gsm.core,
     providing RunWorkflows, RunWorkflow, and RunStep as a lightweight runtime.
@@ -35,6 +35,6 @@ Suggests:
     sdtm.oak,
     testthat (>= 3.0.0),
     yaml
-Remotes:  
-    safetyCharts=SafetyGraphics/safetyCharts
+Remotes:
+    SafetyGraphics/safetyCharts
 Config/testthat/edition: 3

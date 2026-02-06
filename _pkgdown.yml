@@ -1,4 +1,37 @@
-url: https://automatic-adventure-6lomjw6.pages.github.io/
+url: https://gilead-biostats.github.io/workr
+
 template:
   bootstrap: 5
+  bootswatch: yeti
+  includes:
+    in_header: '<link href="pkgdown/extra.css" rel="stylesheet">'
 
+development:
+  mode: auto
+
+navbar:
+  structure:
+    left: [articles, examples, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fab fa-github
+      href: https://github.com/gilead-biostats/workr
+    articles:
+      text: User Guides
+      menu:
+      - text: "Overview"
+        href: articles/Overview.html
+      - text: "gsm + sdtm.oak"
+        href: articles/gsm_SDTM_example.html
+      - text: "gsm + admiral"
+        href: articles/gsm_ADAM_example.html
+      - text: "gsm + viz libs"
+        href: articles/gsm_visualizations.html
+      - text: "gsm + cards"
+        href: articles/gsm_ARS_example.html
+    examples:
+      text: Examples
+      menu:
+      - text: "Example Report"
+        href: examples/WorkProduct1.html

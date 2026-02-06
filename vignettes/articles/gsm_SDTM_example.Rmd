@@ -1,0 +1,97 @@
+---
+title: "Incorporating sdtm.oak"
+output: html_document
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+library(dplyr)
+library(rlang)
+library(purrr)
+library(sdtm.oak)
+library(gt)
+options("yaml.eval.expr" = TRUE) # needs for admiral -- suggest gsm ecoystem write documentation
+```
+
+# Prepare list of data of raw-data
+```{r raw data load}
+lData <- list(
+  dm_raw = read.csv(system.file("raw_data/dm.csv", package = "sdtm.oak")),
+  vs_raw =  read.csv(system.file("raw_data/vitals_raw_data.csv", package = "sdtm.oak")),
+  study_ct = read.csv(system.file("raw_data/sdtm_ct.csv", package = "sdtm.oak"))
+)
+```
+
+<details>
+<summary>Show Raw DM preview (first 6 rows)</summary>
+
+```{r Show Raw DM, echo = FALSE}
+head(lData$dm_raw) %>% gt()
+```
+</details>
+
+<details>
+<summary>Show Raw VS preview (first 6 rows)</summary>
+```{r Show Raw VS, echo = FALSE}
+head(lData$vs_raw) %>% gt()
+```
+</details>
+
+<details>
+<summary>Show Study CT preview (first 6 rows)</summary>
+```{r Show Study Controlled Terminology, echo = FALSE}
+head(lData$study_ct) %>% gt()
+```
+</details>
+
+## Show YAML's of sdtm.oak transformations
+
+::: {.scrollbox}
+```{r Show DM SDTM transformation}
+#| echo: false
+
+dm_path <- system.file("demo_gsmpharmaverse", "workflows", "1_RAW_TO_SDTM", "DM.yaml", package = "workr")
+x <- readLines(dm_path, warn = FALSE)
+cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
+```
+:::
+
+::: {.scrollbox}
+```{r Show VS SDTM transformation}
+#| echo: false
+
+vs_path <- system.file("demo_gsmpharmaverse", "workflows", "1_RAW_TO_SDTM", "VS.yaml", package = "workr")
+x <- readLines(vs_path, warn = FALSE)
+cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
+```
+:::
+
+This workflow was designed to mimic and follow this respective `sdtm.oak` [vignette](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html). 
+
+
+# Run Respective Workflows to Arrive at SDTM datasets
+```{r SDTM Workflows, message = FALSE}
+SDTM_workflows <- workr::MakeWorkflowList(
+  strNames = c("VS", "DM"),
+  strPath = "demo_gsmpharmaverse/workflows/1_RAW_TO_SDTM/",
+  strPackage = "workr"
+)
+SDTM <- workr::RunWorkflows(lWorkflows = SDTM_workflows, lData = lData)
+```
+
+```{r Save SDTM datasets, eval = FALSE}
+# Take Results and save them as parquets in a SDTM folder 
+# or wherever it needs to be saved, gsm has a load/save configuartion as well
+purrr::map2(
+  SDTM,
+  names(SDTM),
+  function(x,y) arrow::write_parquet(x, paste0("demo_gsmpharmaverse/data/SDTM/", y,".parquet")) 
+)
+```
+
+
+<details>
+<summary>Show SDTM VS (first 6 rows)</summary>
+```{r, echo = FALSE}
+head(SDTM$SDTM_VS) %>% gt()
+```
+</details>

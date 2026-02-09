@@ -2,14 +2,14 @@
 <url><loc>https://gilead-biostats.github.io/workr/404.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/LICENSE-text.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/LICENSE.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/ADAM_example.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/ARS_example.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/articles/Overview.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/articles/gsm_ADAM_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/articles/gsm_ARS_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/articles/gsm_SDTM_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/articles/gsm_visualizations.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/Pharmaverse.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/SDTM_example.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/Visualizations.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/articles/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/authors.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/copilot-instructions.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/examples/WorkProduct1.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.html</loc></url>
@@ -18,5 +18,8 @@
 <url><loc>https://gilead-biostats.github.io/workr/reference/RunWorkflow.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/RunWorkflows.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/index.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/workr-package.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/slides/index.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/slides/index_files/libs/revealjs/plugin/notes/speaker-view.html</loc></url>
 </urlset>
 

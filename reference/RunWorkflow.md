@@ -1,58 +1,75 @@
-# Run a workflow via its specification
+# Run a workflow via it's YAML specification.
 
-Runs a single workflow definition by invoking `RunStep` for each step
-and capturing results.
+**\[stable\]**
+
+Attempts to run a single assessment (`lWorkflow`) using shared data
+(`lData`) and metadata (`lMapping`). Calls `RunStep` for each item in
+`lWorkflow$workflow` and saves the results to `lWorkflow`.
 
 ## Usage
 
 ``` r
-RunWorkflow(lWorkflow, lData = NULL, lConfig = NULL, bReturnResult = TRUE, bKeepInputData = TRUE)
+RunWorkflow(
+  lWorkflow,
+  lData = NULL,
+  lConfig = NULL,
+  bReturnResult = TRUE,
+  bKeepInputData = TRUE
+)
 ```
 
 ## Arguments
 
 - lWorkflow:
 
-  `list` metadata defining how the workflow should be run.
+  `list` A named list of metadata defining how the workflow should be
+  run.
 
 - lData:
 
-  `list` domain-level data.
+  `list` A named list of domain-level data frames.
 
 - lConfig:
 
-  `list` configuration object with `LoadData` and `SaveData` functions.
+  `list` A configuration object with two methods:
+
+  - `LoadData`: A function that loads data specified in
+    `lWorkflow$spec`.
+
+  - `SaveData`: A function that saves data returned by the last step in
+    `lWorkflow$steps`.
 
 - bReturnResult:
 
-  `boolean` return only last step result.
+  `boolean` should *only* the result from the last step (`lResults`) be
+  returned? If false, the full workflow (including `lResults`) is
+  returned. Default is `TRUE`.
 
 - bKeepInputData:
 
-  `boolean` keep input data when returning full workflow.
+  `boolean` should the input data be included in `lData` after the
+  workflow is run? Only relevant when bReturnResult is FALSE. Default is
+  `TRUE`.
 
 ## Value
 
-Results from the final step or the full workflow object.
+Object containing the results of the workflow's last step (if
+`bLastResult` is `TRUE`) or the full workflow object (if
+`bReturnResults` is `TRUE`) or the full workflow object (if
+`bReturnResults` is `FALSE`).
 
 ## Examples
 
 ``` r
-sum_step <- function(lData, y) lData$value + y
-lWorkflow <- list(
-  meta = list(Type = "demo", ID = "001"),
-  steps = list(
-    list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
-  )
+if (FALSE) { # \dontrun{
+# Load a simple workflow from YAML
+wf <- yaml::read_yaml(
+  system.file("workflows", "cars.yaml", package = "workr")
 )
-lData <- list(value = 2)
-RunWorkflow(lWorkflow, lData)
-#> [INFO] Initializing `demo_001` Workflow
-#> [INFO] No spec found in workflow. Proceeding without checking data.
-#> [INFO] Workflow Step 1 of 1: `sum_step`
-#> [INFO] Evaluating 2 parameter(s) for `sum_step`
-#> [INFO] lData = lData:  Passing full lData object.
-#> [INFO] y = value: Passing lData$value.
-#> [INFO] Calling `sum_step`
-#> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.
+lData <- list(cars = cars)
+
+# Run the workflow
+result <- RunWorkflow(wf, lData)
+summary(result)
+} # }
 ```

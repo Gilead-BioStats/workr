@@ -52,8 +52,8 @@ MakeWorkflowList(
 ``` r
 # get specific workflow files
 workflow <- MakeWorkflowList(
-  strPath = "example_workflow/1_mappings",
-  strPackage = "gsm.core"
+  strName = "cars",
+  strPath = "workflows",
+  strPackage = "workr"
 )
-#> Error: [ strPath ] must exist.
 ```

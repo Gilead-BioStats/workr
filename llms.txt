@@ -1,135 +1,102 @@
 # workr
 
-Standalone workflow execution helpers extracted from gsm.core. The
-package provides:
+A **very** simple R data pipeline framework.
 
-- [`RunStep()`](https://gilead-biostats.github.io/workr/reference/RunStep.md)
-  to execute a single workflow step
-- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
-  to execute a workflow specification
-- [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md)
-  to run multiple workflows in sequence
+## What is {workr}?
 
-## Usage
+{workr} provides a minimal mental model for describing and executing
+data workflows:
+
+- **Workflows** are YAML files with `meta` (workflow metadata) and
+  `steps` (ordered list of function calls)
+- **Steps** are functions that accept data and parameters, producing
+  output that gets added to the shared data list
+- **Meta** is workflow-level configuration accessible to all steps
+
+The package provides three core functions:
+
+- [`RunStep()`](https://gilead-biostats.github.io/workr/reference/RunStep.md) -
+  execute a single workflow step
+- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md) -
+  execute a workflow specification (YAML)
+- [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md) -
+  run multiple workflows in sequence
+
+## Why {workr}?
+
+{workr} was built to solve a specific problem: **reusable, customizable
+data pipelines for complex clinical trial monitoring**.
+
+The core functions in {workr} were originally developed as part of the
+[{gsm} framework](https://gilead-biostats.github.io/gsm.core/index.html)
+for risk-based quality montoring (RBQM). The {gsm} team developed a
+[stable, reusable model for generating
+metrics](https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html)
+to monitor clinical trials.
+
+Our challenge was figuring out how to run those metrics across a large
+portfolio; Take 30 studies with monthly snapshots, each needing 15
+metrics computed in 5 steps and you get 27,000 computations per year. To
+make things more complex, each study has slightly different
+requirements, so maintaining individual scripts quickly becomes a
+massive pain.
+
+{workr}’s solution: Define workflows once, customize via `meta`
+parameters, and compose them into larger pipelines.
+
+The original `gsm::RunWorkflow` functions were developed in a few hours,
+and were seen as a stopgap until we picked a “real” pipeline, but the
+approach has proven to be suprisingly stable and flexible. So much so
+that, we’ve created {workr} and started using them outside of our {gsm}
+pipelines.
+
+## Quick Start
+
+Define a workflow in YAML:
+
+``` yaml
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull 
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
+
+Run it from R:
 
 ``` r
-lWorkflows <- list(
-  list(
-    meta = list(Type = "demo", ID = "001"),
-    steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
-    )
-  )
+wf <- yaml::read_yaml("hello_cars.yaml")
+lData <- list(df = cars)
+
+result <- workr::RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
 )
 
-sum_step <- function(lData, y) {
-  lData$value + y
-}
-
-lData <- list(value = 2)
-RunWorkflows(lWorkflows, lData)
+# result = 15.4 (mean of cars$speed)
 ```
 
-Example workflow definitions are provided in
-[inst/workflows/helloworld.yaml](https://gilead-biostats.github.io/workr/inst/workflows/helloworld.yaml),
-[inst/workflows/two_steps.yaml](https://gilead-biostats.github.io/workr/inst/workflows/two_steps.yaml),
-and
-[inst/workflows/cars.yaml](https://gilead-biostats.github.io/workr/inst/workflows/cars.yaml).
+## How it works
 
-``` r
-yaml_path <- system.file("workflows", "helloworld.yaml", package = "workr")
-workflow <- yaml::read_yaml(yaml_path)
-```
+Each step in a workflow:
 
-Replace the placeholder example with your workflow definitions.
+1.  Calls a function (specified by `step$name`)
+2.  Passes parameters from `params` (resolving references to `lData`,
+    `meta`, or literal values)
+3.  Saves the result to `lData` using the `output` name
+4.  Makes it available for the next step
 
-## Cookbook
-
-Run the example workflows using YAML definitions.
-
-### 1) Hello world workflow
-
-Workflow file:
-[inst/workflows/helloworld.yaml](https://gilead-biostats.github.io/workr/inst/workflows/helloworld.yaml)
-
-``` yaml
-meta:
-  Type: demo
-  ID: helloworld
-steps:
-  - name: sum_step
-    output: result
-    params:
-      lData: lData
-      "y": value
-```
-
-``` r
-sum_step <- function(lData, y) lData$value + y
-lData <- list(value = 2)
-
-wf <- yaml::read_yaml(system.file("workflows", "helloworld.yaml", package = "workr"))
-RunWorkflow(wf, lData)
-```
-
-### 2) Two-step workflow
-
-Workflow file:
-[inst/workflows/two_steps.yaml](https://gilead-biostats.github.io/workr/inst/workflows/two_steps.yaml)
-
-``` yaml
-meta:
-  Type: demo
-  ID: two_steps
-steps:
-  - name: sum_step
-    output: intermediate
-    params:
-      lData: lData
-      "y": value
-  - name: sum_step
-    output: result
-    params:
-      lData: lData
-      "y": value
-```
-
-``` r
-sum_step <- function(lData, y) lData$value + y
-lData <- list(value = 2)
-
-wf <- yaml::read_yaml(system.file("workflows", "two_steps.yaml", package = "workr"))
-RunWorkflow(wf, lData)
-```
-
-### 3) Cars regression workflow
-
-Workflow file:
-[inst/workflows/cars.yaml](https://gilead-biostats.github.io/workr/inst/workflows/cars.yaml)
-
-``` yaml
-meta:
-  Type: demo
-  ID: cars
-steps:
-  - name: stats::as.formula
-    output: model_formula
-    params:
-      object: "dist ~ speed"
-  - name: stats::lm
-    output: model
-    params:
-      formula: model_formula
-      data: cars
-```
-
-``` r
-lData <- list(cars = cars)
-
-wf <- yaml::read_yaml(system.file("workflows", "cars.yaml", package = "workr"))
-model <- RunWorkflow(wf, lData)
-summary(model)
-```
+By chaining steps (and even whole workflows) together, you can build
+complex pipelines from simple, reusable components.
 
 # Package index
 
@@ -138,26 +105,26 @@ summary(model)
 - [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.md)
   **\[stable\]** : Load workflows from a package/directory.
 - [`RunQuery()`](https://gilead-biostats.github.io/workr/reference/RunQuery.md)
-  : Run a SQL query on a data frame or DuckDB table
+  **\[stable\]** : Run a SQL query on a data frame or DuckDB table
 - [`RunStep()`](https://gilead-biostats.github.io/workr/reference/RunStep.md)
-  : Run a single step in a workflow
+  : Run a single step in a workflow.
 - [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
-  : Run a workflow via its specification
+  **\[stable\]** : Run a workflow via it's YAML specification.
 - [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md)
-  : Run multiple workflows
+  : Convenience function to run multiple workflows
 
 # Articles
 
 ### All vignettes
 
 - [Incorporating
-  admiral](https://gilead-biostats.github.io/workr/articles/gsm_ADAM_example.md):
-- [Incorporating TFL libraries like \`gtsummary\` and
-  \`safetyCharts\`](https://gilead-biostats.github.io/workr/articles/gsm_ARS_example.md)
-  :
+  admiral](https://gilead-biostats.github.io/workr/articles/ADAM_example.md):
 - [Incorporating
-  sdtm.oak](https://gilead-biostats.github.io/workr/articles/gsm_SDTM_example.md):
-- [Incorporating TFL libraries like \`gtsummary\` and
-  \`safetyCharts\`](https://gilead-biostats.github.io/workr/articles/gsm_visualizations.md)
-  :
+  cards](https://gilead-biostats.github.io/workr/articles/ARS_example.md):
 - [Overview](https://gilead-biostats.github.io/workr/articles/Overview.md):
+- [Pharamaverse Case
+  Study](https://gilead-biostats.github.io/workr/articles/Pharmaverse.md):
+- [Incorporating
+  sdtm.oak](https://gilead-biostats.github.io/workr/articles/SDTM_example.md):
+- [Incorporating TFL libraries like \`gtsummary\` and
+  \`safetyCharts\`](https://gilead-biostats.github.io/workr/articles/Visualizations.md):

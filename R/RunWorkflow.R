@@ -24,34 +24,17 @@
 #'   is `TRUE`) or the full workflow object (if `bReturnResults` is `FALSE`).
 #'
 #' @examples
-#' # Generate mapped input data to metric workflow.
-#' lMappingWorkflows <- MakeWorkflowList(
-#'   strNames = c("AE", "SUBJ"),
-#'   strPath = "example_workflow/1_mappings",
-#'   strPackage = "workr",
-#'   bExact = TRUE
+#' \dontrun{
+#' # Load a simple workflow from YAML
+#' wf <- yaml::read_yaml(
+#'   system.file("workflows", "cars.yaml", package = "workr")
 #' )
-#' lRawData <- list(
-#'   Raw_SUBJ = workr::lSource$Raw_SUBJ,
-#'   Raw_AE = workr::lSource$Raw_AE
-#' )
-#'
-#' lMappedData <- RunWorkflows(
-#'   lMappingWorkflows,
-#'   lRawData
-#' )
-#'
-#' # Run the metric workflow.
-#' lMetricWorkflow <- MakeWorkflowList(
-#'   strPath = "example_workflow/2_metrics",
-#'   strNames = c("kri0001", "kri0002"),
-#'   strPackage = "workr"
-#' )$kri0001
-#' lMetricOutput <- RunWorkflow(
-#'   lMetricWorkflow,
-#'   lMappedData
-#' )
-#' @return `list` contains just lData if `bReturnData` is `TRUE`, otherwise returns the full `lWorkflow` object.
+#' lData <- list(cars = cars)
+#' 
+#' # Run the workflow
+#' result <- RunWorkflow(wf, lData)
+#' summary(result)
+#' }
 #'
 #' @export
 

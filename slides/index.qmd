@@ -1,0 +1,256 @@
+---
+title: "Phuse Connect 2026"
+subtitle: "{workr}: a very simple R data pipeline"
+author: "Zelos Zhu + Jeremy Wildfire"
+date: "2025-03-20"
+---
+
+## Agenda
+
+- What is {workr}?
+- Why did we build this?
+- {workr} ❤️ {pharmaverse}
+- Automating {workr} 🤖
+
+# What is {workr}? {background-color="#f0f0f0"}
+
+A **very** simple R data pipeline 
+<br>
+<small>(almost too simple?)</small>
+
+::: {.notes}
+TODO: Add hex logo when available
+:::
+
+## {workr} workflows have `meta` and `steps`
+
+```yaml
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull 
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
+
+## `workr::RunWorkflow()`
+
+- Pass in your workflow and a list of data (`lData`)
+- Each step runs a function (`step$name`) that updates `lData`
+- Steps can use `meta` and `lData` as inputs
+- Returns result of last step by default (can be customized)
+
+## Example 1: Hello Cars 
+
+```R
+wf <- yaml::read_yaml("hello_cars.yaml")
+lData <- list(df = cars)
+RunWorkflow(
+    lWorkflow = wf,
+    lData = lData
+)
+```
+
+## Example 1: Hello Cars - Step 1
+
+```yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull # function to be called
+    output: speed # output saved as `lData$speed`
+    params:
+      df: df # `lData$df` (`cars`)  passed as `df` argument
+      col: col # `meta$col` (`"speed"`) passed as `col` argument
+  - ...
+``` 
+`lData$speed <- dplyr::pull(df=cars, col="speed")`
+
+```R
+# lData after Step 1
+list(
+    df = cars, 
+    speed = c(4, 4, ...)
+)
+```
+
+## Example 1: Hello Cars - Step 2
+
+```yaml
+    ...
+    - name: mean        # function to be called
+      output: result    # output saved as `lData$result`
+      params:
+        lData: speed    # `lData$speed` passed as `lData` argument
+```
+
+```lData$result <- mean(lData$speed)```
+<br>
+<small>Basically ```mean(cars$speed)```</small>
+
+```R
+# lData after Step 2
+list(
+    df = cars, 
+    speed = c(4, 4, ...), 
+    result = 15.4
+)
+```
+`RunWorkflow()` returns: 15.4
+<br>
+<small>Return full workflow object with: `RunWorkflow(bReturnResult = FALSE)`</small>
+
+## Example 1b: Hello Iris
+```R
+wf$meta$col <- "dist"
+RunWorkflow(wf, lData)
+```
+
+- Returns: 42.98 (`mean(cars$dist)`)
+
+```R
+lData$df <- iris
+wf$meta$col <- "Sepal.Length"
+RunWorkflow(wf, lData)
+```
+
+- Returns: 5.84 (`mean(iris$Sepal.Length)`)
+
+## `workr::RunWorkflows()`
+
+- Convenience function to run multiple workflows in sequence
+- Output of each workflow added to `lData` for the next workflow
+
+## Example 2: Avg. Lab Values - Subset
+
+```yaml
+# subset.yaml
+meta:
+  ID: subset
+  meta: 
+    col: param
+    value: cholesterol
+steps:
+  - name: dplyr::filter
+    output: df
+    params:
+        df: raw
+        expr: !!expr(!!rlang::sym(meta$col) == meta$value)
+``` 
+
+## Example 2: Avg. Lab Values - Subset + Mean
+
+```R
+sub_wf <- yaml::read_yaml("subset.yaml")
+mean_wf <- yaml::read_yaml("hello_cars.yaml")
+mean_wf$meta$col <- "value" # adjust for lab data
+wfs <- list(sub_wf,mean_wf)
+lData <- list(raw = clindata::adam_labs)
+RunWorkflows(wfs, lData)
+```
+
+- `subset` workflow filters `clindata::adam_labs` to cholesterol rows and returns as result as `lData$df`
+- `mean` workflow calculates mean of `value` column from filtered data
+- Returns average cholesteral value for all subjests in `clindata::adam_labs`
+
+::: {.notes}
+TODO: Run code and tweak as needed
+:::
+
+## That’s really about it
+
+- Minimal mental model
+- Easy to read / debug
+- Suprisingly scalable
+
+# Why did we build this? 
+
+## RBQM is highly repeatable
+
+- Data pipeline: 30 studies × monthly snapshots × 15 metrics × 5 steps
+- ~27,000 metrics / year
+
+## But clinical trials are complicated
+
+- Study designs vary
+- Metrics need tweaks
+- Study-level (and sometimes metric-level) customization required
+
+## We didn’t want to maintain 30 study scripts
+
+- Needed reusable pipelines / workflows
+- Existing tools felt a bit complicated (targets, glue, etc.)
+
+## So we built {workr}
+
+- {gsm} analytics pipeline overview (TBD)
+- Example 2: AE pipeline (TBD)
+- Example 2a: Custom AE pipeline (TBD)
+
+## Overall study workflow
+
+- Mapping → analysis → reporting → reports
+- Example 3: One workflow to rule them all (TBD)
+- Study-level workflows in GitHub
+
+## It kind of just works
+
+- {workr} is qualified for GxP use as part of {gsm.core} (TBD)
+- {qcthat} plug (TBD)
+- 100s of snapshots for dozens of studies
+
+# {workr} ❤️ {pharmaverse} (Zelos)
+
+## (Section placeholder)
+
+- …
+
+# Enterprise {workr} (Zelos?)
+
+## Helper functions
+
+- `RunStep()`
+  - RunStep parses `params` as follows:  `lMeta` → `lData` → `lSpec` → names(`lMeta`) → names(`lData`) →  as.character({param})
+- `MakeWorkflow()`
+- `RunWorkflows()`
+- `RunQuery()`
+
+## Data Specifications
+
+- Define expected inputs / outputs for each step
+- Validate data before running steps
+
+## Save / Load
+
+- Compatible with database frameworks, S3, DuckDB, etc.
+
+## GitHub Actions integrations
+
+- (TBD)
+
+## “Production frameworks”
+
+- Gismo intro (TBD)
+- Example X: GitHub demo (TBD)
+
+# Links
+
+## Phuse workshop
+
+- Part 3 (TBD)
+
+## {gsm} examples
+
+- Cookbook (1 metric): https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_AdverseEventWorkflow.html
+- Cookbook (snapshots): https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_ReportingWorkflow.html
+- Extensions vignette: https://gilead-biostats.github.io/gsm.core/articles/gsmExtensions.html
+- Data model vignette (appendix 2): https://gilead-biostats.github.io/gsm.core/articles/DataModel.html

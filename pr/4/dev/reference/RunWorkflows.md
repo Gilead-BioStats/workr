@@ -68,24 +68,24 @@ where the names correspond to the names of the workflow ID
 ## Examples
 
 ``` r
-sum_step <- function(x, y) x + y
+sum_step <- function(x, y) {x + y}
 lWorkflows <- list(
   list(
     meta = list(Type = "demo", ID = "001"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
+      list(name = "sum_step", output = "result", params = list(x = "value1", y = "value2"))
     )
   )
 )
-lData <- list(value = 2)
+lData <- list(value1 = 1, value2 = 2)
 RunWorkflows(lWorkflows, lData)
 #> [INFO] Running 1 Workflows
 #> [INFO] Initializing `demo_001` Workflow
 #> [INFO] No spec found in workflow. Proceeding without checking data.
 #> [INFO] Workflow Step 1 of 1: `sum_step`
 #> [INFO] Evaluating 2 parameter(s) for `sum_step`
-#> [INFO] x = lData:  Passing full lData object.
-#> [INFO] y = value: Passing lData$value.
+#> [INFO] x = value1: Passing lData$value1.
+#> [INFO] y = value2: Passing lData$value2.
 #> [INFO] Calling `sum_step`
 #> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.
 ```

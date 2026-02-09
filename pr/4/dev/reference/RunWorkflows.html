@@ -23,7 +23,7 @@ as inputs (along with lData) for later workflows."><meta name="robots" content="
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
     <li><a class="dropdown-item" href="../articles/Pharmaverse.html">Pharmaverse Case Study</a></li>
     <li><a class="dropdown-item" href="../articles/SDTM_example.html">Cookbook: sdtm.oak</a></li>
     <li><a class="dropdown-item" href="../articles/ADAM_example.html">Cookbook: admiral</a></li>
@@ -110,24 +110,24 @@ the workflow ID</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sum_step</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sum_step</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span><span class="op">}</span></span></span>
 <span class="r-in"><span><span class="va">lWorkflows</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    meta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>Type <span class="op">=</span> <span class="st">"demo"</span>, ID <span class="op">=</span> <span class="st">"001"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>    steps <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"sum_step"</span>, output <span class="op">=</span> <span class="st">"result"</span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"lData"</span>, y <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>      <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"sum_step"</span>, output <span class="op">=</span> <span class="st">"result"</span>, params <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"value1"</span>, y <span class="op">=</span> <span class="st">"value2"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">lData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lData</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value1 <span class="op">=</span> <span class="fl">1</span>, value2 <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">RunWorkflows</span><span class="op">(</span><span class="va">lWorkflows</span>, <span class="va">lData</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Running 1 Workflows</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Initializing `demo_001` Workflow</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] No spec found in workflow. Proceeding without checking data.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Workflow Step 1 of 1: `sum_step`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Evaluating 2 parameter(s) for `sum_step`</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] x = lData:  Passing full lData object.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] y = value: Passing lData$value.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] x = value1: Passing lData$value1.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] y = value2: Passing lData$value2.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Calling `sum_step`</span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in GetStrFunctionIfNamespaced(lStep$name):</span> Function 'sum_step' not found.</span>
 <span class="r-in"><span></span></span>

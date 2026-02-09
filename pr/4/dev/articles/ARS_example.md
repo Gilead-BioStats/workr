@@ -1,4 +1,4 @@
-# Incorporating TFL libraries like \`gtsummary\` and \`safetyCharts\`
+# Incorporating cards
 
 ## Prepare list of data of raw-data
 

@@ -76,13 +76,15 @@ RunStep(lStep, lData, lMeta, lSpec = NULL)
 ## Examples
 
 ``` r
-sum_step <- function(x, y) x + y
-lStep <- list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
-lData <- list(value = 2)
+rlang::is_installed(c("glue"))
+#> [1] TRUE
+sum_step <- function(x, y) {x + y}
+lStep <- list(name = "sum_step", output = "result", params = list(x = "value1", y = "value2"))
+lData <- list(value1 = 1, value2 = 2)
 RunStep(lStep = lStep, lData = lData, lMeta = list())
 #> [INFO] Evaluating 2 parameter(s) for `sum_step`
-#> [INFO] x = lData:  Passing full lData object.
-#> [INFO] y = value: Passing lData$value.
+#> [INFO] x = value1: Passing lData$value1.
+#> [INFO] y = value2: Passing lData$value2.
 #> [INFO] Calling `sum_step`
 #> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.
 ```

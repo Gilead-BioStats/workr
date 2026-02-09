@@ -32,10 +32,12 @@ MakeWorkflowList(
 \code{MakeWorkflowList()} is a utility function that creates a list of workflows for use in KRI pipelines.
 }
 \examples{
+\dontshow{if (rlang::is_installed(c("dplyr","purrr"))) withAutoprint(\{ # examplesIf}
 # get specific workflow files
 workflow <- MakeWorkflowList(
-  strPath = "example_workflow/1_mappings",
-  strPackage = "gsm.core"
+  strName = "cars",
+  strPath = "workflows",
+  strPackage = "workr"
 )
-
+\dontshow{\}) # examplesIf}
 }

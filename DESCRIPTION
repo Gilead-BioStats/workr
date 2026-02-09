@@ -20,6 +20,7 @@ RoxygenNote: 7.3.3
 Imports:
     DBI,
     dbplyr,
+    dplyr,
     duckdb,
     glue,
     purrr,
@@ -29,8 +30,9 @@ Suggests:
     arrow,
     gt,
     gtsummary,
+    knitr,
     quarto,
-    rlang,
+    rmarkdown,
     safetyCharts,
     sdtm.oak,
     testthat (>= 3.0.0),
@@ -38,3 +40,5 @@ Suggests:
 Remotes:
     SafetyGraphics/safetyCharts
 Config/testthat/edition: 3
+VignetteBuilder:
+    knitr

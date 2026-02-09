@@ -1,6 +1,10 @@
 ---
-title: "Incorporating TFL libraries like `gtsummary` and `safetyCharts` "
-output: html_document
+title: "Incorporating cards"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Incorporating cards}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, echo = FALSE, message = FALSE, warning = FALSE}

@@ -47,9 +47,10 @@ lData\{paramVal\}) and passed to the function.
 }
 }
 \examples{
-sum_step <- function(x, y) x + y
-lStep <- list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
-lData <- list(value = 2)
+rlang::is_installed(c("glue"))
+sum_step <- function(x, y) {x + y}
+lStep <- list(name = "sum_step", output = "result", params = list(x = "value1", y = "value2"))
+lData <- list(value1 = 1, value2 = 2)
 RunStep(lStep = lStep, lData = lData, lMeta = list())
 
 }

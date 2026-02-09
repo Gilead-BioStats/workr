@@ -22,16 +22,16 @@
 #' the workflow ID
 #'
 #' @examples
-#' sum_step <- function(x, y) x + y
+#' sum_step <- function(x, y) {x + y}
 #' lWorkflows <- list(
 #'   list(
 #'     meta = list(Type = "demo", ID = "001"),
 #'     steps = list(
-#'       list(name = "sum_step", output = "result", params = list(x = "lData", y = "value"))
+#'       list(name = "sum_step", output = "result", params = list(x = "value1", y = "value2"))
 #'     )
 #'   )
 #' )
-#' lData <- list(value = 2)
+#' lData <- list(value1 = 1, value2 = 2)
 #' RunWorkflows(lWorkflows, lData)
 #'
 #' @export

@@ -3,44 +3,97 @@ title: "Overview"
 output: html_document
 ---
 
-# Background
+# Introduction
 
-The `pharmaverse` has rapidly emerged as an open-source standard for clinical trial reporting. Core packages such as `sdtm.oak` support SDTM transformations, while `admiral` provides a robust framework for ADaM derivations. Downstream, a rich ecosystem of visualization tools enables production-ready outputs — including tabular summaries with `gtsummary` and safety visualizations via `safetyCharts`. At the same time, the CDISC Analysis Results Standard (ARS) is gaining momentum, with packages like `cards` beginning to support ARS-aligned workflows. Complementing traditional static deliverables, many organizations are increasingly adopting Shiny and web-based review tools to enable interactive exploration of clinical data.
+Clinical trial pipelines are repeatable but rarely identical. A typical clinical pipieline may include dozens of studies, regular snapshots, and multiple metrics. Studies might share 90 percent of the same logic with a few study-specific tweaks. Maintaining one-off scripts for each study does not scale, yet many pipeline frameworks impose heavy abstractions (or custom code) that are harder to audit in regulated settings.
 
-In parallel, the gsm framework — particularly the gsm.core package — has matured into a YAML-driven workflow engine designed to deliver reproducible, traceable, and audit-ready pipelines for clinical data science. The framework currently powers a standardized Risk-Based Quality Monitoring (RBQM) infrastructure, pairing flexible data workflows with robust reporting systems such as those demonstrated in [`gsm.kri`](https://gilead-biostats.github.io/gsm.kri/).
-
-Historically, the `pharmaverse` and `gsm` ecosystems have evolved along separate trajectories. However, their complementary strengths present a compelling opportunity for integration: combining pharmaverse’s domain-specific data standards and reporting capabilities with gsm’s workflow orchestration and auditability could form the foundation of a fully traceable, end-to-end clinical reporting pipeline.
+[{workr}](https://github.com/Gilead-BioStats/workr) is an open-source R package that was created as a deliberately minimal alternative: a small set of functions for describing and running data workflows as ordered function calls. Workflows are defined in YAML with `meta` and `steps`. Each step runs a function, resolves parameters from workflow metadata or shared data, and stores the output back into the shared list. This approach grew out of the {gsm} framework for risk-based quality monitoring (RBQM), where the same metric logic must be re-used across many studies and snapshots. The simplicity proved robust enough that we extracted it into a standalone package.
 
 # Objective
 
-We present a hybrid "gsm–pharmaverse" pipeline that demonstrates how `gsm.core`/`workr`(???) can orchestrate `pharmaverse` packages across the full reporting lifecycle — transforming raw eCRF data into SDTM, ADaM, TFL outputs, and ARS-aligned deliverables. Through this case study, we illustrate how harmonizing these ecosystems enables a cohesive, reproducible workflow that lowers barriers to adopting open-source R infrastructure in regulated clinical trial reporting.
+We introduce {workr} as a simple, auditable workflow engine for R, and demonstrate how it can orchestrate domain-specific pipelines without imposing a heavy framework. As a concrete example, we use a pharmaverse-based reporting workflow (SDTM to ADaM to TFLs and ARS) to show how established clinical reporting packages can be composed into a reproducible pipeline using {workr}.
 
 # Methods
 
--   gsm engine: In this framework, workflows are defined declaratively using YAML configuration files organized into three sections:
+## Workflow model
 
-1.  Meta — captures descriptive metadata and documentation associated with the workflow
-2.  Spec — declares required data sources and their structural requirements, defining the inputs needed for downstream derivations and transformations
-3.  Steps — specifies the execution pipeline. Each step is written as an {output, name, params} block:
+{workr} workflows are YAML files with two sections:
 
-```         
+1. Meta: workflow metadata and configuration
+2. Steps: an ordered list of function calls
+
+Each step is written as an {output, name, params} block:
+
+```
 - output:
   name:
-  params: 
+  params:
 ```
 
-Where, `output` represents the returned object, `name` identifies the function being executed, and `params` contains the function arguments. At runtime, `RunWorkflows()` parses these step definitions and orchestrates their execution sequentially, effectively reproducing the behavior of a piped R command. 
+At runtime, `RunWorkflow()` and `RunWorkflows()` resolve parameters from `meta`, the shared data list (`lData`), or literal values, then execute steps sequentially. The result of each step is stored in `lData` under `output`, making it available to downstream steps.
 
--   Raw → SDTM ([gsm + sdtm.oak](gsm_SDTM_example)): Raw eCRF data were transformed into SDTM using gsm-driven workflows aligned with established `sdtm.oak` implementation patterns. The workflow mirrors the VS domain example from the official vignette, demonstrating how standardized SDTM mappings can be embedded within a reproducible YAML pipeline. The reference implementation is available [here](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html).
+## Mini-example: Hello Cars
 
--   SDTM → ADaM ([gsm + admiral](gsm_ADAM_example)): SDTM domains were reintroduced into the workflow engine and processed through admiral derivations to construct ADaM datasets. Functions such as `derive_vars_merged()` and `derive_param_map()` generated ADVS parameters and analysis values (e.g., MAP), with derivation logic expressed via !expr tags. This approach preserves transparency while ensuring transformations remain reproducible and audit-ready. The admiral vignette that demonstrates these functions can be found  [here](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
+The workflow below computes the mean speed from `cars` using two steps: pull a column, then apply `mean`.
 
--   ADaM → TFLs ([gsm + gtsummary + safetyCharts](gsm_visualizations)): The resulting ADaM datasets fed directly into visualization steps, invoking `gtsummary` for tabular summaries and `safetyCharts` for graphical outputs. This enables generation of publication-ready TFLs within a fully traceable end-to-end pipeline, adaptable to an organization’s visualization standards. Beyond static reporting, the same workflows can automatically refresh web-based or HTML applications as new data are derived, supporting near real-time exploratory analysis and safety review.
+```yaml
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
 
--   ADaM → ARS ([gsm + cards](gsm_ARS_example)): In parallel, the derived ADaM datasets were extended using cards to prototype ARS-aligned datasets and outputs. Although the ARS standard is still evolving, this example illustrates how emerging libraries can be integrated into the gsm framework with minimal friction, enabling early adoption of new reporting standards within an existing, reproducible workflow.
+```r
+wf <- yaml::read_yaml("hello_cars.yaml")
+lData <- list(df = cars)
 
-# Results / Conclusion
+workr::RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
+)
+```
 
-Each package preserved its modular design, while  `gsm.core`/`workr`(???) provided centralized workflow control, auditability, and reproducibility across the pipeline.
+## {gsm} usage
 
-This hybrid gsm–pharmaverse case study demonstrates the feasibility of a fully open-source, end-to-end clinical reporting workflow. In this model, the `gsm` framework serves as the orchestration backbone, while pharmaverse packages deliver domain-specific transformations spanning SDTM, ADaM, TFLs, and ARS. Together, they form a modular, transparent, and automation-ready reporting architecture. We propose this integration as a blueprint for future collaboration between workflow frameworks and pharmaverse tools, advancing the industry toward interoperable, open-source clinical reporting standards.
+{gsm} is a standardized RBQM framework that pairs a flexible data pipeline with robust reporting. {gsm.core} (https://gilead-biostats.github.io/gsm.core/) provides the analytics foundation and workflow utilities, while {gsm.kri} (https://gilead-biostats.github.io/gsm.kri/) focuses on metric visualizations and reporting outputs. A broader RBQM overview is available [here](https://pubmed.ncbi.nlm.nih.gov/38722529/). {workr} functions were originally developed and released as part of the core {gsm} pacakges and are still used to execute YAML-defined steps that orchestrate reusable pipelines across studies and snapshots.
+
+In practice, a typical {gsm} pipeline follows a consistent progression from source data to reports:
+
+- Data mapping to standardized domains via {gsm.mapping}
+- Metric computation using {gsm.core} and {gsm.kri}
+- Report-ready data models produced by {gsm.reporting}
+- Interactive HTML reports and widgets generated by {gsm.kri}
+
+All {gsm.core} assessments follow a standardized six-step pipeline: Input_Rate, Transform, Analyze, Threshold, Flag, and Summarize. This structure makes metric logic auditable and consistent across domains.
+
+Example resources and implementations:
+
+- Adverse Event workflow example: https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_AdverseEventWorkflow.html
+- Reporting workflow example: https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_ReportingWorkflow.html
+- Extensions vignette: https://gilead-biostats.github.io/gsm.core/articles/gsmExtensions.html
+- Data model and pipeline overview: https://gilead-biostats.github.io/gsm.core/articles/DataModel.html
+
+## {Pharmaverse} case study
+
+To ground the discussion, we implement a clinical reporting workflow using pharmaverse packages, with {workr} providing the orchestration layer:
+
+- Raw to SDTM: workflows invoke `sdtm.oak` functions aligned with the VS domain example from the official vignette.
+- SDTM to ADaM: `admiral` derivations (for example, `derive_vars_merged()` and `derive_param_map()`) construct analysis-ready datasets with transparent derivation logic expressed via `!expr` tags.
+- ADaM to TFLs: `gtsummary` and `safetyCharts` generate tables and safety visualizations in the same pipeline, enabling publishable outputs and optional refresh of HTML or web-based review artifacts.
+- ADaM to ARS: `cards` prototypes ARS-aligned outputs to illustrate how emerging standards can be introduced without retooling the workflow engine.
+
+# Results and Conclusion
+
+The pharmaverse example demonstrates that {workr} can orchestrate end-to-end clinical reporting workflows while keeping the execution model simple, transparent, and audit-friendly. Each package remains modular, and the workflow definition stays readable and easy to customize for study-specific variations.
+
+This paper positions {workr} as a minimal workflow backbone for clinical reporting. The pharmaverse pipeline illustrates how domain-specific tools can plug into that backbone, enabling reproducible pipelines that scale across studies without sacrificing clarity or auditability.

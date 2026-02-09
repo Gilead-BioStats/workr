@@ -11,7 +11,7 @@ development:
 
 navbar:
   structure:
-    left: [articles, examples, slides, news]
+    left: [articles, reference, examples, slides, news]
     right: [search, github]
   components:
     github:

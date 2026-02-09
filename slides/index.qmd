@@ -367,10 +367,7 @@ sdtm <- list(
   SDTM_DM = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_DM.parquet", package = "workr")),
   SDTM_VS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet", package = "workr"))
 )
-RunWorkflow(
-  lWorkflow = wf,
-  lData = sdtm
-)
+RunWorkflow(lWorkflow = wf, lData = sdtm)
 ```
 
 ## ADaM Example: Create MAP
@@ -414,6 +411,64 @@ steps:
 By now, it's clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values. Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
 
 So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
+
+## From ADaM to TFL
+
+- How every team/organization handles data visualizations may just have the most variance
+- We will go over a way that uses a workflow to render Rmarkdown documents with prespecified templates for tables/figures, specifically using `gtsummary` and `safetyCharts`
+- The setup for this would be applicable for shiny apps, static reports, web-based html reports, where to host or view the final object is to be left to the user
+
+## TFL Example: ADVS to TFL
+```r
+wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml", package = "workr"), warn = FALSE)
+adam <- list(
+  ADVS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet", package = "workr"))
+)
+workr::RunWorkflows(lWorkflows = wf, lData = adam )
+```
+
+## TFL Example: Render Rmarkdown
+```yaml
+meta:
+  ID: WorkProduct1
+  Type: TFL
+  Description: Create Basic Work Product/Report which can modularize the tables included
+  Priority: 1
+spec:
+  ADVS:
+    _all:
+      required: true
+steps:
+  - output: lParams
+    name: list
+    params:
+      'dfADVS': ADVS
+  - output: table1
+    name: rmarkdown::render
+    params:
+      input: !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")
+      output_file: !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")
+      envir: !expr new.env(parent = globalenv())
+      params: lParams
+```
+
+These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be. 
+
+The methodology & technical infrastructure will be left to the user.
+
+## TFL WorkProduct 1: Parent Rmd
+
+{insert pic of rmd}
+
+## TFL WorkProduct 1: Child Rmd(s)
+
+{insert pic of table1/figure1}
+
+## TFL Overview
+
+- Using smaller child .Rmds that may match a respective company standard table/figure template may be favorable in this scenario
+- This allows a larger work product/bundle to be stitched together with these child rmarkdowns to reduce clutter of the main document.
+- For some deliveries it may be necessary to only have a few tables and figures, and other deliveries a much heftier report. This framework allows a "lego set" style assembled work deliverable in a pick and choose fashion
 
 # Enterprise {workr} (Zelos?)
 

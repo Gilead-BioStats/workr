@@ -18,23 +18,20 @@ navbar:
       icon: fab fa-github
       href: https://github.com/gilead-biostats/workr
     articles:
-      text: User Guides
+      text: Vignettes
       menu:
-      - text: "Overview"
+      - text: "Intro to {workr} (US Phuse Connect 2026)"
         href: articles/Overview.html
-      - text: "gsm + sdtm.oak"
-        href: articles/gsm_SDTM_example.html
-      - text: "gsm + admiral"
-        href: articles/gsm_ADAM_example.html
-      - text: "gsm + viz libs"
+      - text: "Pharmaverse Case Study"
+        href: articles/Pharmaverse.html
+      - text: "Cookbook: sdtm.oak"
+        href: articles/SDTM_example.html
+      - text: "Cookbook: admiral"
+        href: articles/ADAM_example.html
+      - text: "Cookbook: viz libs"
         href: articles/gsm_visualizations.html
-      - text: "gsm + cards"
-        href: articles/gsm_ARS_example.html
-    examples:
-      text: Examples
-      menu:
-      - text: "Example Report"
-        href: examples/WorkProduct1.html
+      - text: "Cookbook: cards"
+        href: articles/ARS_example.html
     slides:
       text: Slides
       href: slides/

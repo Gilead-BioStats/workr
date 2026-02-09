@@ -2,12 +2,13 @@ pandoc: 3.1.11
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
-  articles/gsm_ADAM_example: gsm_ADAM_example.html
-  articles/gsm_ARS_example: gsm_ARS_example.html
-  articles/gsm_SDTM_example: gsm_SDTM_example.html
-  articles/gsm_visualizations: gsm_visualizations.html
+  articles/ADAM_example: ADAM_example.html
+  articles/ARS_example: ARS_example.html
   articles/Overview: Overview.html
-last_built: 2026-02-06T18:58Z
+  articles/Pharmaverse: Pharmaverse.html
+  articles/SDTM_example: SDTM_example.html
+  articles/Visualizations: Visualizations.html
+last_built: 2026-02-09T14:45Z
 urls:
   reference: https://gilead-biostats.github.io/workr/reference
   article: https://gilead-biostats.github.io/workr/articles

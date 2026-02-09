@@ -1,11 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://gilead-biostats.github.io/workr/dev/LICENSE-text.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/LICENSE.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/articles/ADAM_example.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/articles/ARS_example.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/Overview.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/articles/gsm_ADAM_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/articles/gsm_ARS_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/articles/gsm_SDTM_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/articles/gsm_visualizations.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/articles/Pharmaverse.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/articles/SDTM_example.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/articles/Visualizations.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/authors.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/examples/WorkProduct1.html</loc></url>

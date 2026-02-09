@@ -258,6 +258,8 @@ steps:
 ```
 `lData$vs_raw <- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")`
 
+
+## SDTM Example: Step 1 (2)
 ```R
 # lData after Step 1
 list(
@@ -305,7 +307,7 @@ It may be important to consider how to treat interim objects along the way in th
 ```
 This is equivalent to.....
 
-## SDTM Example: CT assignment Steps (via pipes)
+## SDTM Example: With pipes
 
 ```r
 # Map topic variable SYSBP and its qualifiers.
@@ -333,25 +335,10 @@ vs_sysbp <-
     raw_var = "SYS_BP",
     tgt_var = "VSORRES",
     id_vars = oak_id_vars()
-  ) %>%
-  hardcode_ct(
-    raw_dat = vs_raw,
-    raw_var = "SYS_BP",
-    tgt_var = "VSORRESU",
-    tgt_val = "mmHg",
-    ct_spec = study_ct,
-    ct_clst = "C66770",
-    id_vars = oak_id_vars()
-  ) %>%
-  assign_ct(
-    raw_dat = vs_raw,
-    raw_var = "SUBPOS",
-    tgt_var = "VSPOS",
-    ct_spec = study_ct,
-    ct_clst = "C71148",
-    id_vars = oak_id_vars()
   )
 ```
+
+## SDTM Example: With pipes (2)
 
 Each pipe statement is equivalent to a step in the workflow; integration of any package would mostly be depend on familiarity with a particular R Package, not necessarily this workr framework.
 
@@ -408,9 +395,14 @@ steps:
       get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
 ```
 
-By now, it's clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values. Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
+## ADaM Example: Create MAP (2)
 
-So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
+- By now, it's clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values.
+
+## ADaM Example: Create MAP (3)
+
+- Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
+- So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
 
 ## From ADaM to TFL
 
@@ -452,23 +444,75 @@ steps:
       params: lParams
 ```
 
-These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be. 
 
-The methodology & technical infrastructure will be left to the user.
+## TFL Example: Render Rmarkdown (2)
+
+- These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be. 
+
+- The methodology & technical infrastructure will be left to the user.
 
 ## TFL WorkProduct 1: Parent Rmd
 
-{insert pic of rmd}
+![](images/workproduct1.png)
 
 ## TFL WorkProduct 1: Child Rmd(s)
 
-{insert pic of table1/figure1}
+![](images/table1.png)
 
 ## TFL Overview
 
 - Using smaller child .Rmds that may match a respective company standard table/figure template may be favorable in this scenario
 - This allows a larger work product/bundle to be stitched together with these child rmarkdowns to reduce clutter of the main document.
 - For some deliveries it may be necessary to only have a few tables and figures, and other deliveries a much heftier report. This framework allows a "lego set" style assembled work deliverable in a pick and choose fashion
+
+## From ADaM to ARS/ARD
+
+- {cards} is an R package for creating CDISC Analysis Results Data (ARD)
+
+- It is designed to support automation, reproducibility, reusability, and traceability of analysis results
+
+## ARS/ARD Example: ADVS summary
+```R
+wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml"))
+adam <- list(
+  ADVS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet", package = "workr"))
+)
+workr::RunWorkflows(lWorkflows = wf, lData = adam )
+```
+
+## ARS/ARD Example: Create Summary Statistics
+
+```yaml
+meta:
+  ID: table_mean_arterial_pressure
+  Type: ars
+  Description: Create table 1 ARS
+  Priority: 1
+spec:
+  ADVS:
+    _all:
+      required: true
+steps:
+  - output: predose_visit1_map
+    name: workr::RunQuery
+    params:
+      df: ADVS
+      strQuery: "SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"
+  - output: table_predose_visit1_map
+    name: cards::ard_summary
+    params:
+      data: predose_visit1_map
+      variables:
+        - AVAL
+```
+
+## ARS/ARD Example: Considerations
+
+- The primary output (thus far) of these workflows is typically a derived dataset, but persistence (load/save) is intentionally decoupled
+
+- Workflows orchestrate transformation logic; storage strategy is flexible and left to the user/organization
+
+- Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step
 
 # Enterprise {workr} (Zelos?)
 

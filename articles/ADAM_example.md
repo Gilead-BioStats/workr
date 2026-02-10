@@ -36,7 +36,7 @@ Show Raw VS preview (first 6 rows)
     ## meta:
     ##   ID: ADVS
     ##   Type: ADAM
-    ##   Description: Create Basic ADSL
+    ##   Description: Create Basic ADVS
     ##   Priority: 1
     ## spec:
     ##   SDTM_DM:

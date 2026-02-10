@@ -1,7 +1,7 @@
 meta:
   ID: ADVS
   Type: ADAM
-  Description: Create Basic ADSL
+  Description: Create Basic ADVS
   Priority: 1
 spec:
   SDTM_DM:

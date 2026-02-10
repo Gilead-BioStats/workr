@@ -11,7 +11,7 @@ development:
 
 navbar:
   structure:
-    left: [articles, examples, slides, news]
+    left: [articles, reference, examples, slides, news]
     right: [search, github]
   components:
     github:
@@ -21,7 +21,7 @@ navbar:
       text: Vignettes
       menu:
       - text: "Intro to {workr} (US Phuse Connect 2026)"
-        href: Overview.html
+        href: articles/Overview.html
       - text: "Pharmaverse Case Study"
         href: articles/Pharmaverse.html
       - text: "Cookbook: sdtm.oak"

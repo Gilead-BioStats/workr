@@ -605,7 +605,6 @@ steps:
 table_predose_visit1_map  <- adam$ADVS %>% 
   filter(PARAMCD == 'MAP', VISIT == 'VISIT1', VSTPT == 'PREDOSE') %>% 
   cards::ard_summary(variables = c(AVAL))
-)
 ```
 :::
 :::

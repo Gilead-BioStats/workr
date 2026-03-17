@@ -619,6 +619,13 @@ table_predose_visit1_map  <- adam$ADVS %>%
 
 # Enterprise {workr} (Zelos?)
 
+## Color demo
+
+![](images/color_entry.png){width=450px}
+
+
+[Live Demo](https://zeloszhu.shinyapps.io/color-demo-presenter/)
+
 ## Helper functions
 
 - `RunStep()`

@@ -129,3 +129,27 @@ jobs:
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           Rscript -e 'pkgdown::deploy_to_branch(new_process = FALSE)'
+
+      - name: Restore explorer subfolder
+        if: github.event_name != 'pull_request'
+        run: |
+          # pkgdown::deploy_to_branch force-pushes gh-pages, which may wipe
+          # the explorer/ subfolder. Restore it from the previous gh-pages commit.
+          git fetch origin gh-pages
+          git checkout gh-pages
+
+          # Check if explorer/ existed in the parent commit
+          PARENT=$(git log --skip=1 -1 --format="%H" 2>/dev/null || true)
+          if [ -n "$PARENT" ] && git ls-tree "$PARENT" --name-only -d | grep -qx 'explorer'; then
+            echo "Restoring explorer/ from $PARENT"
+            git checkout "$PARENT" -- explorer/
+            git add explorer/
+            if ! git diff --cached --quiet; then
+              git commit -m "restore: explorer/ after pkgdown deploy"
+              git push origin gh-pages
+            else
+              echo "explorer/ already present"
+            fi
+          else
+            echo "No explorer/ to restore"
+          fi

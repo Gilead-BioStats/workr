@@ -97,10 +97,10 @@
 <h2 id="why-workr">Why {workr}?<a class="anchor" aria-label="anchor" href="#why-workr"></a>
 </h2>
 <p>{workr} was built to solve a specific problem: <strong>reusable, customizable data pipelines for complex clinical trial monitoring</strong>.</p>
-<p>The core functions in {workr} were originally developed as part of the <a href="https://gilead-biostats.github.io/gsm.core/index.html" class="external-link">{gsm} framework</a> for risk-based quality montoring (RBQM). The {gsm} team developed a <a href="https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html" class="external-link">stable, reusable model for generating metrics</a> to monitor clinical trials.</p>
-<p>Our challenge was figuring out how to run those metrics across a large portfolio; Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps and you get 27,000 computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.</p>
+<p>The core functions in {workr} were originally developed as part of the <a href="https://gilead-biostats.github.io/gsm.core/index.html" class="external-link">{gsm} framework</a> for risk-based quality monitoring (RBQM). The {gsm} team developed a <a href="https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html" class="external-link">stable, reusable model for generating metrics</a> to monitor clinical trials.</p>
+<p>Our challenge was figuring out how to run those metrics across a large portfolio. Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps, and you get 27,000 computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.</p>
 <p>{workr}’s solution: Define workflows once, customize via <code>meta</code> parameters, and compose them into larger pipelines.</p>
-<p>The original <code>gsm::RunWorkflow</code> functions were developed in a few hours, and were seen as a stopgap until we picked a “real” pipeline, but the approach has proven to be suprisingly stable and flexible. So much so that, we’ve created {workr} and started using them outside of our {gsm} pipelines.</p>
+<p>The original <code>gsm::RunWorkflow</code> functions were developed in a few hours and were seen as a stopgap until we picked a “real” pipeline, but the approach has proven to be surprisingly stable and flexible. So much so that we’ve created {workr} and started using them outside of our {gsm} pipelines.</p>
 </div>
 <div class="section level2">
 <h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
@@ -145,12 +145,9 @@
 <p>By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
 </div>
 <div class="section level2">
-<h2 id="snapshots--workflow-explorer">Snapshots &amp; Workflow Explorer<a class="anchor" aria-label="anchor" href="#snapshots--workflow-explorer"></a>
+<h2 id="workflow-snapshots">Workflow Snapshots<a class="anchor" aria-label="anchor" href="#workflow-snapshots"></a>
 </h2>
-<p>{workr} includes tooling for creating reproducible snapshots of GitHub-hosted R package ecosystems and a browser-based workflow explorer.</p>
-<div class="section level3">
-<h3 id="package-snapshots">Package Snapshots<a class="anchor" aria-label="anchor" href="#package-snapshots"></a>
-</h3>
+<p>One nice thing about {workr} workflows is that they can be combined across packages. To support this, {workr} includes tooling for creating reproducible snapshots of workflows from multiple packages.</p>
 <p><code>pkgSnapshot()</code> resolves a list of GitHub packages to specific versions and generates:</p>
 <ul>
 <li>
@@ -164,44 +161,75 @@
 <p>Snapshots are stored on orphan branches (prefixed <code>ss-*</code>) and updated nightly via GitHub Actions.</p>
 <p>📦 <a href="https://github.com/Gilead-BioStats/workr/tree/ss-demo" class="external-link">Demo snapshot (<code>ss-demo</code>)</a> — gsm.core, gsm.mapping, gsm.kri, gsm.reporting</p>
 </div>
-<div class="section level3">
-<h3 id="workflow-explorer">Workflow Explorer<a class="anchor" aria-label="anchor" href="#workflow-explorer"></a>
-</h3>
-<p>An interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.</p>
+<div class="section level2">
+<h2 id="workflow-explorer">Workflow Explorer<a class="anchor" aria-label="anchor" href="#workflow-explorer"></a>
+</h2>
+<p>YAMLs can be a little hard to follow, so we’ve also included a workflow explorer — an interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.</p>
 <p>🔍 <a href="https://gilead-biostats.github.io/workr/dev/explorer/">Workflow Explorer</a></p>
 </div>
-<div class="section level3">
-<h3 id="github-actions">GitHub Actions<a class="anchor" aria-label="anchor" href="#github-actions"></a>
-</h3>
+<div class="section level2">
+<h2 id="automation-via-github-actions">Automation via GitHub Actions<a class="anchor" aria-label="anchor" href="#automation-via-github-actions"></a>
+</h2>
+<p>We provide several GitHub Actions to automate snapshot creation and site deployment.</p>
 <table class="table">
 <colgroup>
-<col width="50%">
-<col width="50%">
+<col width="33%">
+<col width="33%">
+<col width="33%">
 </colgroup>
 <thead><tr class="header">
 <th>Workflow</th>
+<th>Trigger</th>
 <th>Purpose</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
 <td><code>snapshot.yaml</code></td>
-<td>Reusable: resolve packages, generate snapshot artifacts on an orphan branch</td>
+<td>Reusable / manual</td>
+<td>Resolve packages and generate snapshot artifacts on an orphan <code>ss-*</code> branch</td>
 </tr>
 <tr class="even">
 <td><code>nightly-snapshot.yaml</code></td>
-<td>Scheduled: runs <code>snapshot.yaml</code> nightly for configured branches</td>
+<td>Cron (2am UTC) / manual</td>
+<td>Runs <code>snapshot.yaml</code> for configured snapshot branches</td>
 </tr>
 <tr class="odd">
 <td><code>site-build.yaml</code></td>
-<td>Reusable: build the explorer app from <code>ss-*</code> branch data</td>
+<td>Reusable</td>
+<td>Build the workflow explorer app from <code>ss-*</code> branch data</td>
 </tr>
 <tr class="even">
 <td><code>site-deploy.yaml</code></td>
-<td>Standalone Pages deploy (for repos without pkgdown)</td>
+<td>Push to <code>ss-*</code> / cron / manual</td>
+<td>Standalone Pages deploy for repos without pkgdown</td>
+</tr>
+<tr class="odd">
+<td><code>pkgdown-with-examples.yaml</code></td>
+<td>Push to main/dev / PR / manual</td>
+<td>Build pkgdown site with examples, slides, and explorer</td>
+</tr>
+<tr class="even">
+<td><code>pkgdown-cleanup.yaml</code></td>
+<td>PR close</td>
+<td>Remove PR preview deployments from gh-pages</td>
+</tr>
+<tr class="odd">
+<td><code>R-CMD-check.yaml</code></td>
+<td>Push to main / PR</td>
+<td>Standard R CMD check</td>
+</tr>
+<tr class="even">
+<td><code>R-CMD-check-dev.yaml</code></td>
+<td>Push to dev / PR</td>
+<td>R CMD check against dev dependencies</td>
+</tr>
+<tr class="odd">
+<td><code>r-releaser-caller.yaml</code></td>
+<td>Manual</td>
+<td>Release automation via r-releaser</td>
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

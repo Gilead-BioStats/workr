@@ -29,25 +29,25 @@ data pipelines for complex clinical trial monitoring**.
 
 The core functions in {workr} were originally developed as part of the
 [{gsm} framework](https://gilead-biostats.github.io/gsm.core/index.html)
-for risk-based quality montoring (RBQM). The {gsm} team developed a
+for risk-based quality monitoring (RBQM). The {gsm} team developed a
 [stable, reusable model for generating
 metrics](https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html)
 to monitor clinical trials.
 
 Our challenge was figuring out how to run those metrics across a large
-portfolio; Take 30 studies with monthly snapshots, each needing 15
-metrics computed in 5 steps and you get 27,000 computations per year. To
-make things more complex, each study has slightly different
+portfolio. Take 30 studies with monthly snapshots, each needing 15
+metrics computed in 5 steps, and you get 27,000 computations per year.
+To make things more complex, each study has slightly different
 requirements, so maintaining individual scripts quickly becomes a
 massive pain.
 
 {workr}’s solution: Define workflows once, customize via `meta`
 parameters, and compose them into larger pipelines.
 
-The original `gsm::RunWorkflow` functions were developed in a few hours,
+The original `gsm::RunWorkflow` functions were developed in a few hours
 and were seen as a stopgap until we picked a “real” pipeline, but the
-approach has proven to be suprisingly stable and flexible. So much so
-that, we’ve created {workr} and started using them outside of our {gsm}
+approach has proven to be surprisingly stable and flexible. So much so
+that we’ve created {workr} and started using them outside of our {gsm}
 pipelines.
 
 ## Quick Start
@@ -98,13 +98,11 @@ Each step in a workflow:
 By chaining steps (and even whole workflows) together, you can build
 complex pipelines from simple, reusable components.
 
-## Snapshots & Workflow Explorer
+## Workflow Snapshots
 
-{workr} includes tooling for creating reproducible snapshots of
-GitHub-hosted R package ecosystems and a browser-based workflow
-explorer.
-
-### Package Snapshots
+One nice thing about {workr} workflows is that they can be combined
+across packages. To support this, {workr} includes tooling for creating
+reproducible snapshots of workflows from multiple packages.
 
 `pkgSnapshot()` resolves a list of GitHub packages to specific versions
 and generates:
@@ -122,22 +120,31 @@ nightly via GitHub Actions.
 (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) —
 gsm.core, gsm.mapping, gsm.kri, gsm.reporting
 
-### Workflow Explorer
+## Workflow Explorer
 
-An interactive single-page app for browsing workflow pipelines across
-snapshot branches. Workflows are grouped by phase, sorted by priority,
-and searchable. Each card links to the source YAML and opens a detail
-modal with metadata, input spec, step-by-step pipeline, and raw YAML
-toggle.
+YAMLs can be a little hard to follow, so we’ve also included a workflow
+explorer — an interactive single-page app for browsing workflow
+pipelines across snapshot branches. Workflows are grouped by phase,
+sorted by priority, and searchable. Each card links to the source YAML
+and opens a detail modal with metadata, input spec, step-by-step
+pipeline, and raw YAML toggle.
 
 🔍 [Workflow
 Explorer](https://gilead-biostats.github.io/workr/dev/explorer/)
 
-### GitHub Actions
+## Automation via GitHub Actions
 
-| Workflow                | Purpose                                                                     |
-|-------------------------|-----------------------------------------------------------------------------|
-| `snapshot.yaml`         | Reusable: resolve packages, generate snapshot artifacts on an orphan branch |
-| `nightly-snapshot.yaml` | Scheduled: runs `snapshot.yaml` nightly for configured branches             |
-| `site-build.yaml`       | Reusable: build the explorer app from `ss-*` branch data                    |
-| `site-deploy.yaml`      | Standalone Pages deploy (for repos without pkgdown)                         |
+We provide several GitHub Actions to automate snapshot creation and site
+deployment.
+
+| Workflow                     | Trigger                        | Purpose                                                                     |
+|------------------------------|--------------------------------|-----------------------------------------------------------------------------|
+| `snapshot.yaml`              | Reusable / manual              | Resolve packages and generate snapshot artifacts on an orphan `ss-*` branch |
+| `nightly-snapshot.yaml`      | Cron (2am UTC) / manual        | Runs `snapshot.yaml` for configured snapshot branches                       |
+| `site-build.yaml`            | Reusable                       | Build the workflow explorer app from `ss-*` branch data                     |
+| `site-deploy.yaml`           | Push to `ss-*` / cron / manual | Standalone Pages deploy for repos without pkgdown                           |
+| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples, slides, and explorer                      |
+| `pkgdown-cleanup.yaml`       | PR close                       | Remove PR preview deployments from gh-pages                                 |
+| `R-CMD-check.yaml`           | Push to main / PR              | Standard R CMD check                                                        |
+| `R-CMD-check-dev.yaml`       | Push to dev / PR               | R CMD check against dev dependencies                                        |
+| `r-releaser-caller.yaml`     | Manual                         | Release automation via r-releaser                                           |

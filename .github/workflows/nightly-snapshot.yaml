@@ -1,0 +1,20 @@
+name: Nightly Snapshots
+
+on:
+  schedule:
+    # Run nightly at 2am UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  dev-snapshot:
+    uses: ./.github/workflows/snapshot.yaml
+    with:
+      branch: dev
+      pkg_branch: dev
+
+  main-snapshot:
+    uses: ./.github/workflows/snapshot.yaml
+    with:
+      branch: main
+      pkg_branch: main

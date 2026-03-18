@@ -112,18 +112,19 @@ jobs:
         run: |
           BRANCH="${{ steps.inputs.outputs.branch }}"
 
-          # Create or checkout the target branch
-          git fetch origin "$BRANCH" 2>/dev/null || true
-          git checkout "$BRANCH" 2>/dev/null || git checkout -b "$BRANCH"
+          # Save snapshot output outside the working tree
+          cp -r snapshot_output /tmp/snapshot_output
 
-          # Copy snapshot output to repo root
-          cp -f snapshot_output/manifest.csv . 2>/dev/null || true
-          cp -f snapshot_output/rproject.toml . 2>/dev/null || true
-          if [ -d snapshot_output/workflows ]; then
-            rm -rf workflows
-            cp -r snapshot_output/workflows .
+          # Create a clean orphan branch (no inherited files)
+          git checkout --orphan "${BRANCH}_tmp"
+          git rm -rf .
+
+          # Copy only snapshot artifacts
+          cp -f /tmp/snapshot_output/manifest.csv . 2>/dev/null || true
+          cp -f /tmp/snapshot_output/rproject.toml . 2>/dev/null || true
+          if [ -d /tmp/snapshot_output/workflows ]; then
+            cp -r /tmp/snapshot_output/workflows .
           fi
-          rm -rf snapshot_output
 
           # Stage and commit
           git add manifest.csv rproject.toml workflows/ 2>/dev/null || true
@@ -132,7 +133,7 @@ jobs:
             echo "HAS_CHANGES=false" >> $GITHUB_ENV
           else
             git commit -m "chore: update package snapshot $(date +%Y-%m-%d)"
-            git push origin "$BRANCH"
+            git push origin "HEAD:${BRANCH}" --force
             echo "HAS_CHANGES=true" >> $GITHUB_ENV
           fi
 

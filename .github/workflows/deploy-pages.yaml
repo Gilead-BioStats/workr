@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Workflow Explorer
 
 on:
   push:
@@ -11,22 +11,21 @@ on:
         description: 'Glob pattern for snapshot branches (e.g. ss-*, release-*)'
         required: false
         default: 'ss-*'
+      deploy_path:
+        description: 'Subfolder on gh-pages to deploy into (e.g. explorer, library)'
+        required: false
+        default: 'explorer'
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: deploy-explorer
   cancel-in-progress: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,7 +44,6 @@ jobs:
           PATTERN="${{ inputs.branch_pattern || 'ss-*' }}"
           echo "Branch pattern: $PATTERN"
 
-          # Discover branches matching the pattern
           MATCHED=$(git branch -r --list "origin/$PATTERN" | sed 's|origin/||' | tr -d ' ' || true)
           ALL=$(echo "$MATCHED" | tr ' ' '\n' | sort -u | grep -v '^$')
 
@@ -60,7 +58,6 @@ jobs:
             DEST="docs/data/$BRANCH"
             mkdir -p "$DEST"
 
-            # Check if workflows/ directory exists on this branch
             HAS_WORKFLOWS=$(git ls-tree "origin/$BRANCH" --name-only -d | grep -x 'workflows' || true)
             if [ -n "$HAS_WORKFLOWS" ]; then
               git archive "origin/$BRANCH" -- workflows/ | tar -x -C "$DEST"
@@ -75,10 +72,8 @@ jobs:
               echo '[]' > "$DEST/_index.json"
             fi
 
-            # Copy manifest.csv if it exists
             if git cat-file -e "origin/$BRANCH:manifest.csv" 2>/dev/null; then
               git show "origin/$BRANCH:manifest.csv" > "$DEST/manifest.csv"
-              # Write snapshot date (last commit date of manifest.csv on this branch)
               git log -1 --format="%ci" "origin/$BRANCH" -- manifest.csv | cut -d' ' -f1 > "$DEST/_snapshot_date.txt"
               echo "  manifest.csv: yes (snapshot: $(cat "$DEST/_snapshot_date.txt"))"
             else
@@ -88,7 +83,6 @@ jobs:
             FOUND_BRANCHES+=("$BRANCH")
           done
 
-          # Write branches.json
           python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "${FOUND_BRANCHES[@]}" > docs/data/branches.json
           echo "branches.json: $(cat docs/data/branches.json)"
 
@@ -98,9 +92,37 @@ jobs:
           npm ci
           npm run build
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: docs
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Deploy to gh-pages subfolder
+        run: |
+          DEPLOY_PATH="${{ inputs.deploy_path || 'explorer' }}"
+          echo "Deploying to gh-pages/$DEPLOY_PATH"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Save built site
+          cp -r docs /tmp/explorer-build
+
+          # Checkout or create gh-pages
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git checkout gh-pages
+          else
+            git checkout --orphan gh-pages
+            git rm -rf .
+            echo "# GitHub Pages" > README.md
+            git add README.md
+            git commit -m "init gh-pages"
+          fi
+
+          # Replace only the deploy subfolder, leave everything else intact
+          rm -rf "$DEPLOY_PATH"
+          cp -r /tmp/explorer-build "$DEPLOY_PATH"
+
+          git add "$DEPLOY_PATH/"
+          if git diff --cached --quiet; then
+            echo "No changes to deploy"
+          else
+            git commit -m "deploy: update workflow explorer $(date +%Y-%m-%d)"
+            git push origin gh-pages
+          fi

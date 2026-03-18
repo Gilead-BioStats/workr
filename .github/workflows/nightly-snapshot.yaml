@@ -7,14 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  dev-snapshot:
+  demo-snapshot:
     uses: ./.github/workflows/snapshot.yaml
     with:
-      branch: dev
+      branch: ss-demo
+      pkglist: 'Gilead-BioStats/gsm.core,Gilead-BioStats/gsm.mapping,Gilead-BioStats/gsm.kri,Gilead-BioStats/gsm.reporting'
       pkg_branch: dev
-
-  main-snapshot:
-    uses: ./.github/workflows/snapshot.yaml
-    with:
-      branch: main
-      pkg_branch: main

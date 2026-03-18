@@ -1,31 +1,56 @@
 name: Deploy Workflow Explorer
 
+# Deploy modes:
+#   standalone — full GitHub Pages deploy at site root (for repos without pkgdown)
+#   subfolder  — commit to a subfolder on gh-pages (coexists with pkgdown)
+#
+# Set DEFAULT_DEPLOY_MODE below for push/schedule triggers.
+# Manual dispatch lets you override via the deploy_mode input.
+
 on:
   push:
     branches: ['ss-*']
   schedule:
-    - cron: '30 2 * * *'   # nightly at 2:30 AM UTC
+    - cron: '30 2 * * *'
   workflow_dispatch:
     inputs:
       branch_pattern:
         description: 'Glob pattern for snapshot branches (e.g. ss-*, release-*)'
         required: false
         default: 'ss-*'
+      deploy_mode:
+        description: 'standalone = Pages root, subfolder = gh-pages subfolder'
+        required: false
+        default: 'subfolder'
+        type: choice
+        options:
+          - standalone
+          - subfolder
       deploy_path:
-        description: 'Subfolder on gh-pages to deploy into (e.g. explorer, library)'
+        description: 'Subfolder name when mode=subfolder (e.g. explorer, library)'
         required: false
         default: 'explorer'
 
+env:
+  DEFAULT_DEPLOY_MODE: subfolder
+  DEFAULT_DEPLOY_PATH: explorer
+  DEFAULT_BRANCH_PATTERN: 'ss-*'
+
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: deploy-explorer
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.resolve.outputs.mode }}
+      path: ${{ steps.resolve.outputs.path }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,13 +60,20 @@ jobs:
         with:
           node-version: 20
 
+      - name: Resolve inputs
+        id: resolve
+        run: |
+          echo "mode=${{ inputs.deploy_mode || env.DEFAULT_DEPLOY_MODE }}" >> $GITHUB_OUTPUT
+          echo "path=${{ inputs.deploy_path || env.DEFAULT_DEPLOY_PATH }}" >> $GITHUB_OUTPUT
+          echo "pattern=${{ inputs.branch_pattern || env.DEFAULT_BRANCH_PATTERN }}" >> $GITHUB_OUTPUT
+
       - name: Build site data
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p docs/data
 
-          PATTERN="${{ inputs.branch_pattern || 'ss-*' }}"
+          PATTERN="${{ steps.resolve.outputs.pattern }}"
           echo "Branch pattern: $PATTERN"
 
           MATCHED=$(git branch -r --list "origin/$PATTERN" | sed 's|origin/||' | tr -d ' ' || true)
@@ -92,18 +124,50 @@ jobs:
           npm ci
           npm run build
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: explorer-build
+          path: docs/
+
+  deploy-standalone:
+    needs: build
+    if: needs.build.outputs.mode == 'standalone'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: explorer-build
+          path: docs
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  deploy-subfolder:
+    needs: build
+    if: needs.build.outputs.mode == 'subfolder'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: explorer-build
+          path: /tmp/explorer-build
       - name: Deploy to gh-pages subfolder
         run: |
-          DEPLOY_PATH="${{ inputs.deploy_path || 'explorer' }}"
+          DEPLOY_PATH="${{ needs.build.outputs.path }}"
           echo "Deploying to gh-pages/$DEPLOY_PATH"
 
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Save built site
-          cp -r docs /tmp/explorer-build
-
-          # Checkout or create gh-pages
           if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
             git fetch origin gh-pages
             git checkout gh-pages
@@ -115,7 +179,6 @@ jobs:
             git commit -m "init gh-pages"
           fi
 
-          # Replace only the deploy subfolder, leave everything else intact
           rm -rf "$DEPLOY_PATH"
           cp -r /tmp/explorer-build "$DEPLOY_PATH"
 

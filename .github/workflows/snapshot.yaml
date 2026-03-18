@@ -12,11 +12,6 @@ on:
         required: false
         type: string
         default: ''
-      pkglist:
-        description: 'Comma-separated GitHub refs. Leave empty to use manifest.csv.'
-        required: false
-        type: string
-        default: ''
       pkg_branch:
         description: 'Branch to resolve untagged packages from'
         required: false
@@ -28,13 +23,9 @@ on:
       branch:
         description: 'Branch to commit snapshot output to'
         required: true
-        default: 'snapshot/dev'
+        default: 'ss-demo'
       target:
         description: 'Target branch for PR (leave empty to skip PR creation)'
-        required: false
-        default: ''
-      pkglist:
-        description: 'Comma-separated GitHub refs. Leave empty to use manifest.csv.'
         required: false
         default: ''
       pkg_branch:
@@ -56,6 +47,26 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Read packages.yaml from snapshot branch
+        id: pkgconfig
+        run: |
+          BRANCH="${{ inputs.branch }}"
+
+          # Try to read packages.yaml from the target snapshot branch
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            if git show "origin/$BRANCH:packages.yaml" > /tmp/packages.yaml 2>/dev/null; then
+              echo "Found packages.yaml on branch '$BRANCH'"
+              cat /tmp/packages.yaml
+              echo "found=true" >> $GITHUB_OUTPUT
+            else
+              echo "::error::packages.yaml not found on branch '$BRANCH'. Run init-snapshot first."
+              exit 1
+            fi
+          else
+            echo "::error::Branch '$BRANCH' does not exist. Run init-snapshot first."
+            exit 1
+          fi
+
       - name: Set up R
         uses: r-lib/actions/setup-r@v2
         with:
@@ -63,16 +74,8 @@ jobs:
 
       - name: Install R dependencies
         run: |
-          install.packages("base64enc")
+          install.packages(c("base64enc", "yaml"))
         shell: Rscript {0}
-
-      - name: Set inputs
-        id: inputs
-        run: |
-          echo "branch=${{ inputs.branch }}" >> $GITHUB_OUTPUT
-          echo "target=${{ inputs.target }}" >> $GITHUB_OUTPUT
-          echo "pkglist=${{ inputs.pkglist }}" >> $GITHUB_OUTPUT
-          echo "pkg_branch=${{ inputs.pkg_branch }}" >> $GITHUB_OUTPUT
 
       - name: Run snapshot
         env:
@@ -82,16 +85,18 @@ jobs:
           r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
           for (f in r_files) source(f)
 
-          # Use provided pkglist or fall back to manifest.csv
-          pkglist_input <- "${{ steps.inputs.outputs.pkglist }}"
-          if (nchar(trimws(pkglist_input)) > 0) {
-            pkglist <- trimws(strsplit(pkglist_input, ",")[[1]])
-          } else {
-            pkglist <- pkgListFromManifest("manifest.csv")
+          # Read package list from packages.yaml
+          config <- yaml::read_yaml("/tmp/packages.yaml")
+          pkglist <- config$packages
+
+          if (is.null(pkglist) || length(pkglist) == 0) {
+            stop("No packages found in packages.yaml")
           }
 
+          message("Packages: ", paste(pkglist, collapse = ", "))
+
           # Run snapshot
-          pkg_branch_input <- "${{ steps.inputs.outputs.pkg_branch }}"
+          pkg_branch_input <- "${{ inputs.pkg_branch }}"
           pkg_branch <- if (nchar(trimws(pkg_branch_input)) > 0) trimws(pkg_branch_input) else NULL
 
           pkgSnapshot(
@@ -110,7 +115,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH="${{ steps.inputs.outputs.branch }}"
+          BRANCH="${{ inputs.branch }}"
 
           # Save snapshot output to /tmp so it survives branch switches
           cp -r snapshot_output /tmp/snapshot_output
@@ -146,12 +151,12 @@ jobs:
           fi
 
       - name: Create PR if target specified
-        if: env.HAS_CHANGES == 'true' && steps.inputs.outputs.target != ''
+        if: env.HAS_CHANGES == 'true' && inputs.target != ''
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH="${{ steps.inputs.outputs.branch }}"
-          TARGET="${{ steps.inputs.outputs.target }}"
+          BRANCH="${{ inputs.branch }}"
+          TARGET="${{ inputs.target }}"
 
           # Check if PR already exists
           EXISTING_PR=$(gh pr list --head "$BRANCH" --base "$TARGET" --json number --jq '.[0].number' 2>/dev/null || echo "")
@@ -161,9 +166,7 @@ jobs:
               --head "$BRANCH" \
               --base "$TARGET" \
               --title "chore: package snapshot update $(date +%Y-%m-%d)" \
-              --body "Automated package snapshot update.
-
-          Generated from: \`${{ steps.inputs.outputs.pkglist }}\`"
+              --body "Automated package snapshot update."
           else
             echo "PR #$EXISTING_PR already exists for $BRANCH -> $TARGET"
           fi

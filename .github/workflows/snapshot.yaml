@@ -83,6 +83,8 @@ jobs:
         shell: Rscript {0}
 
       - name: Run snapshot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Source R files (workr checkout or local)
           r_dir <- if (dir.exists("_workr/R")) "_workr/R" else "R"

@@ -18,9 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout caller repository (for ss-* branch data)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Checkout workr site sources
+        uses: actions/checkout@v4
+        with:
+          repository: Gilead-BioStats/workr
+          ref: dev
+          path: _workr
+          sparse-checkout: site
 
       - uses: actions/setup-node@v4
         with:
@@ -79,9 +88,9 @@ jobs:
 
       - name: Build Vite app
         run: |
-          cd site
+          cd _workr/site
           npm ci
-          npm run build
+          npx vite build --outDir ../../docs --emptyOutDir false
 
       - uses: actions/upload-artifact@v4
         with:

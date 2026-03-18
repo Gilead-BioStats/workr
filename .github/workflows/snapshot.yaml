@@ -42,22 +42,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout caller repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Checkout workr R sources
+        uses: actions/checkout@v4
+        with:
+          repository: Gilead-BioStats/workr
+          ref: dev
+          path: _workr
+          sparse-checkout: R
+
       - name: Read packages.yaml from snapshot branch
-        id: pkgconfig
         run: |
           BRANCH="${{ inputs.branch }}"
 
-          # Try to read packages.yaml from the target snapshot branch
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
             if git show "origin/$BRANCH:packages.yaml" > /tmp/packages.yaml 2>/dev/null; then
               echo "Found packages.yaml on branch '$BRANCH'"
               cat /tmp/packages.yaml
-              echo "found=true" >> $GITHUB_OUTPUT
             else
               echo "::error::packages.yaml not found on branch '$BRANCH'. Run init-snapshot first."
               exit 1
@@ -78,11 +83,10 @@ jobs:
         shell: Rscript {0}
 
       - name: Run snapshot
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Source all R files
-          r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
+          # Source R files (workr checkout or local)
+          r_dir <- if (dir.exists("_workr/R")) "_workr/R" else "R"
+          r_files <- list.files(r_dir, pattern = "\\.R$", full.names = TRUE)
           for (f in r_files) source(f)
 
           # Read package list from packages.yaml
@@ -112,8 +116,6 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit and push to branch
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           BRANCH="${{ inputs.branch }}"
 
@@ -158,7 +160,6 @@ jobs:
           BRANCH="${{ inputs.branch }}"
           TARGET="${{ inputs.target }}"
 
-          # Check if PR already exists
           EXISTING_PR=$(gh pr list --head "$BRANCH" --base "$TARGET" --json number --jq '.[0].number' 2>/dev/null || echo "")
 
           if [ -z "$EXISTING_PR" ]; then

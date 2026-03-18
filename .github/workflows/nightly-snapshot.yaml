@@ -1,0 +1,15 @@
+name: Nightly Snapshots
+
+on:
+  schedule:
+    # Run nightly at 2am UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  demo-snapshot:
+    uses: ./.github/workflows/snapshot.yaml
+    with:
+      branch: ss-demo
+      pkglist: 'Gilead-BioStats/gsm.core,Gilead-BioStats/gsm.mapping,Gilead-BioStats/gsm.kri,Gilead-BioStats/gsm.reporting'
+      pkg_branch: dev

@@ -144,6 +144,65 @@
 </ol>
 <p>By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
 </div>
+<div class="section level2">
+<h2 id="snapshots--workflow-explorer">Snapshots &amp; Workflow Explorer<a class="anchor" aria-label="anchor" href="#snapshots--workflow-explorer"></a>
+</h2>
+<p>{workr} includes tooling for creating reproducible snapshots of GitHub-hosted R package ecosystems and a browser-based workflow explorer.</p>
+<div class="section level3">
+<h3 id="package-snapshots">Package Snapshots<a class="anchor" aria-label="anchor" href="#package-snapshots"></a>
+</h3>
+<p><code>pkgSnapshot()</code> resolves a list of GitHub packages to specific versions and generates:</p>
+<ul>
+<li>
+<code>manifest.csv</code> — pinned package versions with SHAs</li>
+<li>
+<code>rproject.toml</code> — <a href="https://github.com/A2-ai/rv" class="external-link">rv</a>-compatible dependency file</li>
+<li>
+<code>workflows/</code> — merged workflow YAML files pulled from each package’s <code>inst/workflow/</code>
+</li>
+</ul>
+<p>Snapshots are stored on orphan branches (prefixed <code>ss-*</code>) and updated nightly via GitHub Actions.</p>
+<p>📦 <a href="https://github.com/Gilead-BioStats/workr/tree/ss-demo" class="external-link">Demo snapshot (<code>ss-demo</code>)</a> — gsm.core, gsm.mapping, gsm.kri, gsm.reporting</p>
+</div>
+<div class="section level3">
+<h3 id="workflow-explorer">Workflow Explorer<a class="anchor" aria-label="anchor" href="#workflow-explorer"></a>
+</h3>
+<p>An interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.</p>
+<p>🔍 <a href="https://gilead-biostats.github.io/workr/dev/explorer/">Workflow Explorer</a></p>
+</div>
+<div class="section level3">
+<h3 id="github-actions">GitHub Actions<a class="anchor" aria-label="anchor" href="#github-actions"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="50%">
+<col width="50%">
+</colgroup>
+<thead><tr class="header">
+<th>Workflow</th>
+<th>Purpose</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>snapshot.yaml</code></td>
+<td>Reusable: resolve packages, generate snapshot artifacts on an orphan branch</td>
+</tr>
+<tr class="even">
+<td><code>nightly-snapshot.yaml</code></td>
+<td>Scheduled: runs <code>snapshot.yaml</code> nightly for configured branches</td>
+</tr>
+<tr class="odd">
+<td><code>site-build.yaml</code></td>
+<td>Reusable: build the explorer app from <code>ss-*</code> branch data</td>
+</tr>
+<tr class="even">
+<td><code>site-deploy.yaml</code></td>
+<td>Standalone Pages deploy (for repos without pkgdown)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>

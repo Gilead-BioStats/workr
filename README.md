@@ -73,3 +73,34 @@ Each step in a workflow:
 4. Makes it available for the next step
 
 By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.
+
+## Snapshots & Workflow Explorer
+
+{workr} includes tooling for creating reproducible snapshots of GitHub-hosted R package ecosystems and a browser-based workflow explorer.
+
+### Package Snapshots
+
+`pkgSnapshot()` resolves a list of GitHub packages to specific versions and generates:
+
+- `manifest.csv` — pinned package versions with SHAs
+- `rproject.toml` — [rv](https://github.com/A2-ai/rv)-compatible dependency file
+- `workflows/` — merged workflow YAML files pulled from each package's `inst/workflow/`
+
+Snapshots are stored on orphan branches (prefixed `ss-*`) and updated nightly via GitHub Actions.
+
+📦 [Demo snapshot (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) — gsm.core, gsm.mapping, gsm.kri, gsm.reporting
+
+### Workflow Explorer
+
+An interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.
+
+🔍 [Workflow Explorer](https://gilead-biostats.github.io/workr/dev/explorer/)
+
+### GitHub Actions
+
+| Workflow | Purpose |
+|---|---|
+| `snapshot.yaml` | Reusable: resolve packages, generate snapshot artifacts on an orphan branch |
+| `nightly-snapshot.yaml` | Scheduled: runs `snapshot.yaml` nightly for configured branches |
+| `site-build.yaml` | Reusable: build the explorer app from `ss-*` branch data |
+| `site-deploy.yaml` | Standalone Pages deploy (for repos without pkgdown) |

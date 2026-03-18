@@ -112,18 +112,27 @@ jobs:
         run: |
           BRANCH="${{ steps.inputs.outputs.branch }}"
 
-          # Create or checkout the target branch
-          git fetch origin "$BRANCH" 2>/dev/null || true
-          git checkout "$BRANCH" 2>/dev/null || git checkout -b "$BRANCH"
+          # Save snapshot output to /tmp so it survives branch switches
+          cp -r snapshot_output /tmp/snapshot_output
 
-          # Copy snapshot output to repo root
-          cp -f snapshot_output/manifest.csv . 2>/dev/null || true
-          cp -f snapshot_output/rproject.toml . 2>/dev/null || true
-          if [ -d snapshot_output/workflows ]; then
-            rm -rf workflows
-            cp -r snapshot_output/workflows .
+          # Check if the branch already exists on the remote
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch '$BRANCH' exists — checking out"
+            git fetch origin "$BRANCH"
+            git checkout "$BRANCH"
+          else
+            echo "Branch '$BRANCH' does not exist — creating orphan"
+            git checkout --orphan "$BRANCH"
+            git rm -rf .
           fi
-          rm -rf snapshot_output
+
+          # Copy snapshot artifacts into the working tree
+          cp -f /tmp/snapshot_output/manifest.csv . 2>/dev/null || true
+          cp -f /tmp/snapshot_output/rproject.toml . 2>/dev/null || true
+          if [ -d /tmp/snapshot_output/workflows ]; then
+            rm -rf workflows
+            cp -r /tmp/snapshot_output/workflows .
+          fi
 
           # Stage and commit
           git add manifest.csv rproject.toml workflows/ 2>/dev/null || true

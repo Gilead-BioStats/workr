@@ -56,4 +56,5 @@ workflow <- MakeWorkflowList(
   strPath = "workflows",
   strPackage = "workr"
 )
+#> [FATAL] hello_cars.yaml must contain `Type` attribute in `meta` section.
 ```

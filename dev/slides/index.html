@@ -97,6 +97,7 @@
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-0fde88a82f0356838740f155f1088782.css">
+  <link rel="stylesheet" href="styles.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -436,11 +437,12 @@ Zelos Zhu + Jeremy Wildfire
 <ul>
 <li>{sdtm.oak} is a popular R package that modularizes SDTM programming that is EDC/data-standards agnostic</li>
 <li>The algorithms and sub-algorithms provided can be reused across multiple SDTM domains</li>
-<li>We aim to replicate the results of this <a href="https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html">vignette</a> using workflows!</li>
+<li>We aim to replicate the results of this <a href="https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html">vignette</a> <img data-src="images/sdtm_vignette.png" width="150"> using workflows!</li>
 </ul>
 </section>
-<section id="sdtm-example-raw-to-vs" class="slide level2">
+<section id="sdtm-example-raw-to-vs" class="slide level2 step1-compare">
 <h2>SDTM Example: RAW to VS</h2>
+<p>What you would run in R</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/1_RAW_TO_SDTM/VS.yaml"</span>))</span>
 <span id="cb11-2"><a href=""></a>lData <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
 <span id="cb11-3"><a href=""></a>  <span class="at">dm_raw =</span> <span class="fu">read.csv</span>(<span class="fu">system.file</span>(<span class="st">"raw_data/dm.csv"</span>, <span class="at">package =</span> <span class="st">"sdtm.oak"</span>)),</span>
@@ -451,9 +453,9 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb11-8"><a href=""></a>  <span class="at">lWorkflow =</span> wf,</span>
 <span id="cb11-9"><a href=""></a>  <span class="at">lData =</span> lData</span>
 <span id="cb11-10"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="sdtm-example-step-1" class="slide level2">
-<h2>SDTM Example: Step 1</h2>
+<p>Whats happening inside</p>
+<div class="columns">
+<div class="column" style="width:48%;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
 <span id="cb12-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> VS</span></span>
 <span id="cb12-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> SDTM</span></span>
@@ -475,85 +477,88 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb12-19"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at"> vs_raw</span></span>
 <span id="cb12-20"><a href=""></a><span class="at">      </span><span class="fu">pat_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"PATNUM"</span></span>
 <span id="cb12-21"><a href=""></a><span class="at">      </span><span class="fu">raw_src</span><span class="kw">:</span><span class="at"> </span><span class="st">"vitals"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p><code>lData$vs_raw &lt;- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")</code></p>
+</div><div class="column" style="width:4%;">
+<p>=</p>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a>lData<span class="sc">$</span>vs_raw2 <span class="ot">&lt;-</span> <span class="fu">generate_oak_id_vars</span>(<span class="at">raw_dat =</span> lData<span class="sc">$</span>vs_raw, <span class="at">pat_var =</span> <span class="st">"PATNUM"</span>, <span class="at">raw_src =</span> <span class="st">"vitals"</span>)<span class="st">`</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 </section>
-<section id="sdtm-example-step-1-2" class="slide level2">
-<h2>SDTM Example: Step 1 (2)</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href=""></a><span class="co"># lData after Step 1</span></span>
-<span id="cb13-2"><a href=""></a><span class="fu">list</span>(</span>
-<span id="cb13-3"><a href=""></a>    <span class="at">vs_raw =</span> {THE RAW DATASET}</span>
-<span id="cb13-4"><a href=""></a>    <span class="at">vs_raw2 =</span> {THE RAW DATASET after we read ran generate_oak_id_vars}</span>
-<span id="cb13-5"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>It may be important to consider how to treat interim objects along the way in the <code>lData</code> dataset, similar to how a team may use pipes, e.g.&nbsp;<code>%&gt;%</code> and <code>|&gt;</code> to chain together one object, it is left to the user to use new names for output or overwrite objects, in this case <code>vs_raw</code> instead of <code>vs_raw2</code> for the example above.</p>
+<section id="sdtm-example-naming-convention-considerations" class="slide level2">
+<h2>SDTM Example: Naming convention considerations</h2>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href=""></a><span class="co"># lData after Step 1</span></span>
+<span id="cb14-2"><a href=""></a><span class="fu">list</span>(</span>
+<span id="cb14-3"><a href=""></a>    <span class="at">vs_raw =</span> {THE RAW DATASET}</span>
+<span id="cb14-4"><a href=""></a>    <span class="at">vs_raw2 =</span> {THE RAW DATASET after we ran generate_oak_id_vars}</span>
+<span id="cb14-5"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>It is important to define how interim objects are handled within <code>lData</code>. As in pipe-based workflows (<code>%&gt;%</code> and <code>|&gt;</code>), teams can either preserve each step by assigning a new output name or overwrite the existing object; in this example, that means choosing vs_raw2 for traceability or overwriting <code>vs_raw</code>.</p>
 </section>
-<section id="sdtm-example-ct-assignment-steps" class="slide level2">
+<section id="sdtm-example-ct-assignment-steps" class="slide level2 ct-compare">
 <h2>SDTM Example: CT assignment Steps</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a href=""></a><span class="co">  # Map topic variable SYSBP and its qualifiers.</span></span>
-<span id="cb14-2"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-3"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::hardcode_ct</span></span>
-<span id="cb14-4"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb14-5"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at"> vs_raw</span></span>
-<span id="cb14-6"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
-<span id="cb14-7"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSTESTCD"</span></span>
-<span id="cb14-8"><a href=""></a><span class="at">      </span><span class="fu">tgt_val</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYSBP"</span></span>
-<span id="cb14-9"><a href=""></a><span class="at">      </span><span class="fu">ct_spec</span><span class="kw">:</span><span class="at"> study_ct</span></span>
-<span id="cb14-10"><a href=""></a><span class="at">      </span><span class="fu">ct_clst</span><span class="kw">:</span><span class="at"> </span><span class="st">"C66741"</span></span>
-<span id="cb14-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> workr::RunQuery</span></span>
-<span id="cb14-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb14-14"><a href=""></a><span class="at">      </span><span class="fu">df</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-15"><a href=""></a><span class="at">      </span><span class="fu">strQuery</span><span class="kw">:</span><span class="at"> </span><span class="st">"SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
-<span id="cb14-16"><a href=""></a><span class="co">  # Map topic variable SYSBP and its qualifiers.</span></span>
-<span id="cb14-17"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-18"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::hardcode_ct</span></span>
-<span id="cb14-19"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb14-20"><a href=""></a><span class="at">      </span><span class="fu">tgt_dat</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-21"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at"> vs_raw</span></span>
-<span id="cb14-22"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
-<span id="cb14-23"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSTEST"</span></span>
-<span id="cb14-24"><a href=""></a><span class="at">      </span><span class="fu">tgt_val</span><span class="kw">:</span><span class="at"> </span><span class="st">"Systolic Blood Pressure"</span></span>
-<span id="cb14-25"><a href=""></a><span class="at">      </span><span class="fu">ct_spec</span><span class="kw">:</span><span class="at"> study_ct</span></span>
-<span id="cb14-26"><a href=""></a><span class="at">      </span><span class="fu">ct_clst</span><span class="kw">:</span><span class="at"> </span><span class="st">"C67153"</span></span>
-<span id="cb14-27"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-28"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::assign_no_ct</span></span>
-<span id="cb14-29"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb14-30"><a href=""></a><span class="at">      </span><span class="fu">tgt_dat</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
-<span id="cb14-31"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at">  vs_raw</span></span>
-<span id="cb14-32"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
-<span id="cb14-33"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSORRES"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>This is equivalent to…..</p>
-</section>
-<section id="sdtm-example-with-pipes" class="slide level2">
-<h2>SDTM Example: With pipes</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href=""></a><span class="co"># Map topic variable SYSBP and its qualifiers.</span></span>
-<span id="cb15-2"><a href=""></a>vs_sysbp <span class="ot">&lt;-</span></span>
-<span id="cb15-3"><a href=""></a>  <span class="fu">hardcode_ct</span>(</span>
-<span id="cb15-4"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
-<span id="cb15-5"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
-<span id="cb15-6"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSTESTCD"</span>,</span>
-<span id="cb15-7"><a href=""></a>    <span class="at">tgt_val =</span> <span class="st">"SYSBP"</span>,</span>
-<span id="cb15-8"><a href=""></a>    <span class="at">ct_spec =</span> study_ct,</span>
-<span id="cb15-9"><a href=""></a>    <span class="at">ct_clst =</span> <span class="st">"C66741"</span></span>
-<span id="cb15-10"><a href=""></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-11"><a href=""></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(.data<span class="sc">$</span>VSTESTCD))  <span class="sc">%&gt;%</span></span>
-<span id="cb15-12"><a href=""></a>  <span class="fu">hardcode_ct</span>(</span>
-<span id="cb15-13"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
-<span id="cb15-14"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
-<span id="cb15-15"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSTEST"</span>,</span>
-<span id="cb15-16"><a href=""></a>    <span class="at">tgt_val =</span> <span class="st">"Systolic Blood Pressure"</span>,</span>
-<span id="cb15-17"><a href=""></a>    <span class="at">ct_spec =</span> study_ct,</span>
-<span id="cb15-18"><a href=""></a>    <span class="at">ct_clst =</span> <span class="st">"C67153"</span>,</span>
-<span id="cb15-19"><a href=""></a>    <span class="at">id_vars =</span> <span class="fu">oak_id_vars</span>()</span>
-<span id="cb15-20"><a href=""></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-21"><a href=""></a>  <span class="fu">assign_no_ct</span>(</span>
-<span id="cb15-22"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
-<span id="cb15-23"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
-<span id="cb15-24"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSORRES"</span>,</span>
-<span id="cb15-25"><a href=""></a>    <span class="at">id_vars =</span> <span class="fu">oak_id_vars</span>()</span>
-<span id="cb15-26"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="sdtm-example-with-pipes-2" class="slide level2">
-<h2>SDTM Example: With pipes (2)</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Using workflows</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href=""></a><span class="co">  # Map topic variable SYSBP and its qualifiers.</span></span>
+<span id="cb15-2"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-3"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::hardcode_ct</span></span>
+<span id="cb15-4"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb15-5"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at"> vs_raw</span></span>
+<span id="cb15-6"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
+<span id="cb15-7"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSTESTCD"</span></span>
+<span id="cb15-8"><a href=""></a><span class="at">      </span><span class="fu">tgt_val</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYSBP"</span></span>
+<span id="cb15-9"><a href=""></a><span class="at">      </span><span class="fu">ct_spec</span><span class="kw">:</span><span class="at"> study_ct</span></span>
+<span id="cb15-10"><a href=""></a><span class="at">      </span><span class="fu">ct_clst</span><span class="kw">:</span><span class="at"> </span><span class="st">"C66741"</span></span>
+<span id="cb15-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> workr::RunQuery</span></span>
+<span id="cb15-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb15-14"><a href=""></a><span class="at">      </span><span class="fu">df</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-15"><a href=""></a><span class="at">      </span><span class="fu">strQuery</span><span class="kw">:</span><span class="at"> </span><span class="st">"SELECT * FROM df WHERE VSTESTCD IS NOT NULL"</span></span>
+<span id="cb15-16"><a href=""></a><span class="co">  # Map topic variable SYSBP and its qualifiers.</span></span>
+<span id="cb15-17"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-18"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::hardcode_ct</span></span>
+<span id="cb15-19"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb15-20"><a href=""></a><span class="at">      </span><span class="fu">tgt_dat</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-21"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at"> vs_raw</span></span>
+<span id="cb15-22"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
+<span id="cb15-23"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSTEST"</span></span>
+<span id="cb15-24"><a href=""></a><span class="at">      </span><span class="fu">tgt_val</span><span class="kw">:</span><span class="at"> </span><span class="st">"Systolic Blood Pressure"</span></span>
+<span id="cb15-25"><a href=""></a><span class="at">      </span><span class="fu">ct_spec</span><span class="kw">:</span><span class="at"> study_ct</span></span>
+<span id="cb15-26"><a href=""></a><span class="at">      </span><span class="fu">ct_clst</span><span class="kw">:</span><span class="at"> </span><span class="st">"C67153"</span></span>
+<span id="cb15-27"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-28"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> sdtm.oak::assign_no_ct</span></span>
+<span id="cb15-29"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb15-30"><a href=""></a><span class="at">      </span><span class="fu">tgt_dat</span><span class="kw">:</span><span class="at"> vs_sysbp</span></span>
+<span id="cb15-31"><a href=""></a><span class="at">      </span><span class="fu">raw_dat</span><span class="kw">:</span><span class="at">  vs_raw</span></span>
+<span id="cb15-32"><a href=""></a><span class="at">      </span><span class="fu">raw_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"SYS_BP"</span></span>
+<span id="cb15-33"><a href=""></a><span class="at">      </span><span class="fu">tgt_var</span><span class="kw">:</span><span class="at"> </span><span class="st">"VSORRES"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:50%;">
+<p>Using pipes</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a><span class="co"># Map topic variable SYSBP and its qualifiers.</span></span>
+<span id="cb16-2"><a href=""></a>vs_sysbp <span class="ot">&lt;-</span></span>
+<span id="cb16-3"><a href=""></a>  <span class="fu">hardcode_ct</span>(</span>
+<span id="cb16-4"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
+<span id="cb16-5"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
+<span id="cb16-6"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSTESTCD"</span>,</span>
+<span id="cb16-7"><a href=""></a>    <span class="at">tgt_val =</span> <span class="st">"SYSBP"</span>,</span>
+<span id="cb16-8"><a href=""></a>    <span class="at">ct_spec =</span> study_ct,</span>
+<span id="cb16-9"><a href=""></a>    <span class="at">ct_clst =</span> <span class="st">"C66741"</span></span>
+<span id="cb16-10"><a href=""></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-11"><a href=""></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(.data<span class="sc">$</span>VSTESTCD))  <span class="sc">%&gt;%</span></span>
+<span id="cb16-12"><a href=""></a>  <span class="fu">hardcode_ct</span>(</span>
+<span id="cb16-13"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
+<span id="cb16-14"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
+<span id="cb16-15"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSTEST"</span>,</span>
+<span id="cb16-16"><a href=""></a>    <span class="at">tgt_val =</span> <span class="st">"Systolic Blood Pressure"</span>,</span>
+<span id="cb16-17"><a href=""></a>    <span class="at">ct_spec =</span> study_ct,</span>
+<span id="cb16-18"><a href=""></a>    <span class="at">ct_clst =</span> <span class="st">"C67153"</span>,</span>
+<span id="cb16-19"><a href=""></a>    <span class="at">id_vars =</span> <span class="fu">oak_id_vars</span>()</span>
+<span id="cb16-20"><a href=""></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-21"><a href=""></a>  <span class="fu">assign_no_ct</span>(</span>
+<span id="cb16-22"><a href=""></a>    <span class="at">raw_dat =</span> vs_raw,</span>
+<span id="cb16-23"><a href=""></a>    <span class="at">raw_var =</span> <span class="st">"SYS_BP"</span>,</span>
+<span id="cb16-24"><a href=""></a>    <span class="at">tgt_var =</span> <span class="st">"VSORRES"</span>,</span>
+<span id="cb16-25"><a href=""></a>    <span class="at">id_vars =</span> <span class="fu">oak_id_vars</span>()</span>
+<span id="cb16-26"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 <p>Each pipe statement is equivalent to a step in the workflow; integration of any package would mostly be depend on familiarity with a particular R Package, not necessarily this workr framework.</p>
 </section>
 <section id="from-sdtm-to-adam" class="slide level2">
@@ -563,63 +568,79 @@ Zelos Zhu + Jeremy Wildfire
 <li>Here we’ll highlight just a few specific functions, but the documentation and user guides for {admiral} are some of the best amongst all R packages</li>
 </ul>
 </section>
-<section id="adam-example-vs-to-advs" class="slide level2">
-<h2>ADaM Example: VS to ADVS</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/ADVS.yaml"</span>))</span>
-<span id="cb16-2"><a href=""></a>sdtm <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb16-3"><a href=""></a>  <span class="at">SDTM_DM =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/SDTM/SDTM_DM.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>)),</span>
-<span id="cb16-4"><a href=""></a>  <span class="at">SDTM_VS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
-<span id="cb16-5"><a href=""></a>)</span>
-<span id="cb16-6"><a href=""></a><span class="fu">RunWorkflow</span>(<span class="at">lWorkflow =</span> wf, <span class="at">lData =</span> sdtm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="adam-example-vs-to-advs-add-map" class="slide level2 step1-compare">
+<h2>ADaM Example: VS to ADVS (add MAP)</h2>
+<p>What you would run in R</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/ADVS.yaml"</span>))</span>
+<span id="cb17-2"><a href=""></a>sdtm <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb17-3"><a href=""></a>  <span class="at">SDTM_DM =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/SDTM/SDTM_DM.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>)),</span>
+<span id="cb17-4"><a href=""></a>  <span class="at">SDTM_VS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
+<span id="cb17-5"><a href=""></a>)</span>
+<span id="cb17-6"><a href=""></a><span class="fu">RunWorkflow</span>(<span class="at">lWorkflow =</span> wf, <span class="at">lData =</span> sdtm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Whats happening inside</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb18-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
+<span id="cb18-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> ADVS</span></span>
+<span id="cb18-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> ADAM</span></span>
+<span id="cb18-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create Basic ADVS</span></span>
+<span id="cb18-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb18-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb18-7"><a href=""></a><span class="at">  </span><span class="fu">SDTM_DM</span><span class="kw">:</span></span>
+<span id="cb18-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
+<span id="cb18-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb18-10"><a href=""></a><span class="at">  </span><span class="fu">SDTM_VS</span><span class="kw">:</span></span>
+<span id="cb18-11"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
+<span id="cb18-12"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb18-13"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb18-14"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> advs</span></span>
+<span id="cb18-15"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admiral::derive_vars_merged</span></span>
+<span id="cb18-16"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb18-17"><a href=""></a><span class="at">      </span><span class="fu">dataset</span><span class="kw">:</span><span class="at"> SDTM_VS</span></span>
+<span id="cb18-18"><a href=""></a><span class="at">      </span><span class="fu">dataset_add</span><span class="kw">:</span><span class="at"> SDTM_DM</span></span>
+<span id="cb18-19"><a href=""></a><span class="at">      </span><span class="fu">new_vars</span><span class="kw">:</span><span class="at"> !expr exprs(TRT01A)</span></span>
+<span id="cb18-20"><a href=""></a><span class="at">      </span><span class="fu">by_vars</span><span class="kw">:</span><span class="at"> !expr exprs(STUDYID, USUBJID)</span></span>
+<span id="cb18-21"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> advs</span></span>
+<span id="cb18-22"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> dplyr::mutate</span></span>
+<span id="cb18-23"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb18-24"><a href=""></a><span class="at">      </span><span class="fu">.data</span><span class="kw">:</span><span class="at"> advs</span></span>
+<span id="cb18-25"><a href=""></a><span class="at">      </span><span class="fu">PARAMCD</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSTESTCD"]])</span></span>
+<span id="cb18-26"><a href=""></a><span class="at">      </span><span class="fu">AVAL</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSORRES"]])</span></span>
+<span id="cb18-27"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> advs</span></span>
+<span id="cb18-28"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admiral::derive_param_map</span></span>
+<span id="cb18-29"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb18-30"><a href=""></a><span class="at">      </span><span class="fu">dataset</span><span class="kw">:</span><span class="at"> advs</span></span>
+<span id="cb18-31"><a href=""></a><span class="at">      </span><span class="fu">by_vars</span><span class="kw">:</span><span class="at"> !expr exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM)</span></span>
+<span id="cb18-32"><a href=""></a><span class="at">      </span><span class="fu">sysbp_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'SYSBP'</span></span>
+<span id="cb18-33"><a href=""></a><span class="at">      </span><span class="fu">diabp_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'DIABP'</span></span>
+<span id="cb18-34"><a href=""></a><span class="at">      </span><span class="fu">get_unit_expr</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSORRESU"]])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:4%;">
+<p>=</p>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href=""></a>advs <span class="ot">&lt;-</span> admiral<span class="sc">::</span><span class="fu">derive_vars_merged</span>(</span>
+<span id="cb19-2"><a href=""></a>    <span class="at">dataset =</span> SDTM_VS,</span>
+<span id="cb19-3"><a href=""></a>    <span class="at">dataset_add =</span> SDTM_DM,</span>
+<span id="cb19-4"><a href=""></a>    <span class="at">new_vars =</span>  <span class="fu">exprs</span>(TRT01A),</span>
+<span id="cb19-5"><a href=""></a>    <span class="at">by_vars =</span>  <span class="fu">exprs</span>(STUDYID, USUBJID)</span>
+<span id="cb19-6"><a href=""></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-7"><a href=""></a>  <span class="fu">mutate</span>(</span>
+<span id="cb19-8"><a href=""></a>    <span class="at">PARAMCD =</span> VSTESTCD,</span>
+<span id="cb19-9"><a href=""></a>    <span class="at">AVAL =</span> VSORRES</span>
+<span id="cb19-10"><a href=""></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-11"><a href=""></a>  <span class="fu">derive_param_map</span>(</span>
+<span id="cb19-12"><a href=""></a>    <span class="at">by_vars =</span> <span class="fu">exprs</span>(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM),</span>
+<span id="cb19-13"><a href=""></a>    <span class="at">sysbp_code =</span> <span class="st">'SYSBP'</span>,</span>
+<span id="cb19-14"><a href=""></a>    <span class="at">diabp_code =</span> <span class="st">'DIABP'</span>,</span>
+<span id="cb19-15"><a href=""></a>    <span class="at">get_unit_expr =</span> VSORRESU</span>
+<span id="cb19-16"><a href=""></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 </section>
-<section id="adam-example-create-map" class="slide level2">
+<section id="adam-example-create-map" class="slide level2 adam-map-notes">
 <h2>ADaM Example: Create MAP</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb17-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
-<span id="cb17-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> ADVS</span></span>
-<span id="cb17-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> ADAM</span></span>
-<span id="cb17-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create Basic ADVS</span></span>
-<span id="cb17-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb17-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
-<span id="cb17-7"><a href=""></a><span class="at">  </span><span class="fu">SDTM_DM</span><span class="kw">:</span></span>
-<span id="cb17-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
-<span id="cb17-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb17-10"><a href=""></a><span class="at">  </span><span class="fu">SDTM_VS</span><span class="kw">:</span></span>
-<span id="cb17-11"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
-<span id="cb17-12"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb17-13"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
-<span id="cb17-14"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> initial_advs</span></span>
-<span id="cb17-15"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admiral::derive_vars_merged</span></span>
-<span id="cb17-16"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb17-17"><a href=""></a><span class="at">      </span><span class="fu">dataset</span><span class="kw">:</span><span class="at"> SDTM_VS</span></span>
-<span id="cb17-18"><a href=""></a><span class="at">      </span><span class="fu">dataset_add</span><span class="kw">:</span><span class="at"> SDTM_DM</span></span>
-<span id="cb17-19"><a href=""></a><span class="at">      </span><span class="fu">new_vars</span><span class="kw">:</span><span class="at"> !expr exprs(TRT01A)</span></span>
-<span id="cb17-20"><a href=""></a><span class="at">      </span><span class="fu">by_vars</span><span class="kw">:</span><span class="at"> !expr exprs(STUDYID, USUBJID)</span></span>
-<span id="cb17-21"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> advs</span></span>
-<span id="cb17-22"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> dplyr::mutate</span></span>
-<span id="cb17-23"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb17-24"><a href=""></a><span class="at">      </span><span class="fu">.data</span><span class="kw">:</span><span class="at"> initial_advs</span></span>
-<span id="cb17-25"><a href=""></a><span class="at">      </span><span class="fu">PARAMCD</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSTESTCD"]])</span></span>
-<span id="cb17-26"><a href=""></a><span class="at">      </span><span class="fu">AVAL</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSORRES"]])</span></span>
-<span id="cb17-27"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> advs</span></span>
-<span id="cb17-28"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> admiral::derive_param_map</span></span>
-<span id="cb17-29"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb17-30"><a href=""></a><span class="at">      </span><span class="fu">dataset</span><span class="kw">:</span><span class="at"> advs</span></span>
-<span id="cb17-31"><a href=""></a><span class="at">      </span><span class="fu">by_vars</span><span class="kw">:</span><span class="at"> !expr exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM)</span></span>
-<span id="cb17-32"><a href=""></a><span class="at">      </span><span class="fu">sysbp_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'SYSBP'</span></span>
-<span id="cb17-33"><a href=""></a><span class="at">      </span><span class="fu">diabp_code</span><span class="kw">:</span><span class="at"> </span><span class="st">'DIABP'</span></span>
-<span id="cb17-34"><a href=""></a><span class="at">      </span><span class="fu">get_unit_expr</span><span class="kw">:</span><span class="at"> !expr rlang::expr(.data[["VSORRESU"]])</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="adam-example-create-map-2" class="slide level2">
-<h2>ADaM Example: Create MAP (2)</h2>
 <ul>
-<li>By now, it’s clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of <code>derive_param_map()</code> which would create an associated mean arterial pressure value based off of <code>SYSBP</code> and <code>DIABP</code> values.</li>
-</ul>
-</section>
-<section id="adam-example-create-map-3" class="slide level2">
-<h2>ADaM Example: Create MAP (3)</h2>
-<ul>
-<li>Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where <code>admiral</code> demonstrates is advantages and convenience.</li>
-<li>So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of <code>expr()</code>, <code>exprs()</code>, <code>!!</code> , etc.</li>
+<li>The prior examples establish a consistent workflow pattern for producing an ADaM dataset. In this step, <code>derive_param_map()</code> derives mean arterial pressure (MAP) from <code>SYSBP</code> and <code>DIABP</code>.</li>
+<li>Compared with stitching together multiple tidyverse transformations, this approach reduces boilerplate and makes the derivation intent clearer.</li>
+<li>A valuable area for future collaboration, particularly in admiral, is harmonizing quasiquotation patterns to improve readability and adoption, especially around <code>expr()</code>, <code>exprs()</code>, and <code>!!</code>.</li>
 </ul>
 </section>
 <section id="from-adam-to-tfl" class="slide level2">
@@ -627,56 +648,70 @@ Zelos Zhu + Jeremy Wildfire
 <ul>
 <li>How every team/organization handles data visualizations may just have the most variance</li>
 <li>We will go over a way that uses a workflow to render Rmarkdown documents with prespecified templates for tables/figures, specifically using <code>gtsummary</code> and <code>safetyCharts</code></li>
-<li>The setup for this would be applicable for shiny apps, static reports, web-based html reports, where to host or view the final object is to be left to the user</li>
+<li>The setup for this would be applicable for shiny apps, static reports, web-based html reports, where to host or view the final object is left to the user</li>
 </ul>
 </section>
-<section id="tfl-example-advs-to-tfl" class="slide level2">
+<section id="tfl-example-advs-to-tfl" class="slide level2 step1-compare">
 <h2>TFL Example: ADVS to TFL</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml"</span>, <span class="at">package =</span> <span class="st">"workr"</span>), <span class="at">warn =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb18-2"><a href=""></a>adam <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb18-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
-<span id="cb18-4"><a href=""></a>)</span>
-<span id="cb18-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>What you would run in R</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml"</span>, <span class="at">package =</span> <span class="st">"workr"</span>), <span class="at">warn =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb20-2"><a href=""></a>adam <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb20-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
+<span id="cb20-4"><a href=""></a>)</span>
+<span id="cb20-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Whats happening inside</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb21-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
+<span id="cb21-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> WorkProduct1</span></span>
+<span id="cb21-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> TFL</span></span>
+<span id="cb21-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create Basic Work Product/Report which can modularize the tables included</span></span>
+<span id="cb21-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb21-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb21-7"><a href=""></a><span class="at">  </span><span class="fu">ADVS</span><span class="kw">:</span></span>
+<span id="cb21-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
+<span id="cb21-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb21-10"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb21-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> lParams</span></span>
+<span id="cb21-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> list</span></span>
+<span id="cb21-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb21-14"><a href=""></a><span class="at">      </span><span class="fu">'dfADVS'</span><span class="kw">:</span><span class="at"> ADVS</span></span>
+<span id="cb21-15"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table1</span></span>
+<span id="cb21-16"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> rmarkdown::render</span></span>
+<span id="cb21-17"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb21-18"><a href=""></a><span class="at">      </span><span class="fu">input</span><span class="kw">:</span><span class="at"> !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")</span></span>
+<span id="cb21-19"><a href=""></a><span class="at">      </span><span class="fu">output_file</span><span class="kw">:</span><span class="at"> !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")</span></span>
+<span id="cb21-20"><a href=""></a><span class="at">      </span><span class="fu">envir</span><span class="kw">:</span><span class="at"> !expr new.env(parent = globalenv())</span></span>
+<span id="cb21-21"><a href=""></a><span class="at">      </span><span class="fu">params</span><span class="kw">:</span><span class="at"> lParams</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:4%;">
+<p>=</p>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href=""></a>lParams <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">dfADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>)))</span>
+<span id="cb22-2"><a href=""></a>table1 <span class="ot">&lt;-</span> rmarkdown<span class="sc">::</span><span class="fu">render</span>(</span>
+<span id="cb22-3"><a href=""></a>  <span class="at">input =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"demo_gsmpharmaverse"</span>, <span class="st">"report_templates"</span>, <span class="st">"WorkProduct1.Rmd"</span>),</span>
+<span id="cb22-4"><a href=""></a>  <span class="at">output_file =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"demo_gsmpharmaverse"</span>, <span class="st">"TFLS"</span>, <span class="st">"WorkProduct1.html"</span>),</span>
+<span id="cb22-5"><a href=""></a>  <span class="at">envir =</span> <span class="fu">new.env</span>(<span class="at">parent =</span> <span class="fu">globalenv</span>()),</span>
+<span id="cb22-6"><a href=""></a>  <span class="at">params =</span> lParams</span>
+<span id="cb22-7"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 </section>
-<section id="tfl-example-render-rmarkdown" class="slide level2">
-<h2>TFL Example: Render Rmarkdown</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb19-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
-<span id="cb19-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> WorkProduct1</span></span>
-<span id="cb19-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> TFL</span></span>
-<span id="cb19-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create Basic Work Product/Report which can modularize the tables included</span></span>
-<span id="cb19-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb19-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
-<span id="cb19-7"><a href=""></a><span class="at">  </span><span class="fu">ADVS</span><span class="kw">:</span></span>
-<span id="cb19-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
-<span id="cb19-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb19-10"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
-<span id="cb19-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> lParams</span></span>
-<span id="cb19-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> list</span></span>
-<span id="cb19-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb19-14"><a href=""></a><span class="at">      </span><span class="fu">'dfADVS'</span><span class="kw">:</span><span class="at"> ADVS</span></span>
-<span id="cb19-15"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table1</span></span>
-<span id="cb19-16"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> rmarkdown::render</span></span>
-<span id="cb19-17"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb19-18"><a href=""></a><span class="at">      </span><span class="fu">input</span><span class="kw">:</span><span class="at"> !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")</span></span>
-<span id="cb19-19"><a href=""></a><span class="at">      </span><span class="fu">output_file</span><span class="kw">:</span><span class="at"> !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")</span></span>
-<span id="cb19-20"><a href=""></a><span class="at">      </span><span class="fu">envir</span><span class="kw">:</span><span class="at"> !expr new.env(parent = globalenv())</span></span>
-<span id="cb19-21"><a href=""></a><span class="at">      </span><span class="fu">params</span><span class="kw">:</span><span class="at"> lParams</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="tfl-example-render-rmarkdown-2" class="slide level2">
+<section id="tfl-preview" class="slide level2">
+<h2>TFL Preview</h2>
+
+<img data-src="images/report_picture.png" class="r-stretch"></section>
+<section id="tfl-example-render-rmarkdown-2" class="slide level2 tfl-rmd-notes">
 <h2>TFL Example: Render Rmarkdown (2)</h2>
 <ul>
-<li><p>These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be.</p></li>
-<li><p>The methodology &amp; technical infrastructure will be left to the user.</p></li>
+<li>These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be.</li>
+<li>The methodology &amp; technical infrastructure will be left to the user.</li>
 </ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p>Parent Rmd <img data-src="images/workproduct1.png" style="width:82.0%"></p>
+</div><div class="column" style="width:50%;">
+<p>Child Rmd <img data-src="images/table1.png"></p>
+</div></div>
 </section>
-<section id="tfl-workproduct-1-parent-rmd" class="slide level2">
-<h2>TFL WorkProduct 1: Parent Rmd</h2>
-
-<img data-src="images/workproduct1.png" class="r-stretch"></section>
-<section id="tfl-workproduct-1-child-rmds" class="slide level2">
-<h2>TFL WorkProduct 1: Child Rmd(s)</h2>
-
-<img data-src="images/table1.png" class="r-stretch"></section>
 <section id="tfl-overview" class="slide level2">
 <h2>TFL Overview</h2>
 <ul>
@@ -692,50 +727,63 @@ Zelos Zhu + Jeremy Wildfire
 <li><p>It is designed to support automation, reproducibility, reusability, and traceability of analysis results</p></li>
 </ul>
 </section>
-<section id="arsard-example-advs-summary" class="slide level2">
+<section id="arsard-example-advs-summary" class="slide level2 step1-compare">
 <h2>ARS/ARD Example: ADVS summary</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml"</span>))</span>
-<span id="cb20-2"><a href=""></a>adam <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb20-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
-<span id="cb20-4"><a href=""></a>)</span>
-<span id="cb20-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>What you would run in R</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href=""></a>wf <span class="ot">&lt;-</span> yaml<span class="sc">::</span><span class="fu">read_yaml</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml"</span>))</span>
+<span id="cb23-2"><a href=""></a>adam <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb23-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
+<span id="cb23-4"><a href=""></a>)</span>
+<span id="cb23-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Whats happening inside</p>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb24-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
+<span id="cb24-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> table_mean_arterial_pressure</span></span>
+<span id="cb24-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> ars</span></span>
+<span id="cb24-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create table 1 ARS</span></span>
+<span id="cb24-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
+<span id="cb24-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb24-7"><a href=""></a><span class="at">  </span><span class="fu">ADVS</span><span class="kw">:</span></span>
+<span id="cb24-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
+<span id="cb24-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb24-10"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb24-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
+<span id="cb24-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> workr::RunQuery</span></span>
+<span id="cb24-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb24-14"><a href=""></a><span class="at">      </span><span class="fu">df</span><span class="kw">:</span><span class="at"> ADVS</span></span>
+<span id="cb24-15"><a href=""></a><span class="at">      </span><span class="fu">strQuery</span><span class="kw">:</span><span class="at"> </span><span class="st">"SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"</span></span>
+<span id="cb24-16"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table_predose_visit1_map</span></span>
+<span id="cb24-17"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cards::ard_summary</span></span>
+<span id="cb24-18"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb24-19"><a href=""></a><span class="at">      </span><span class="fu">data</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
+<span id="cb24-20"><a href=""></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb24-21"><a href=""></a><span class="at">        </span><span class="kw">-</span><span class="at"> AVAL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div><div class="column" style="width:4%;">
+<p>=</p>
+</div><div class="column" style="width:48%;">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href=""></a>table_predose_visit1_map  <span class="ot">&lt;-</span> adam<span class="sc">$</span>ADVS <span class="sc">%&gt;%</span> </span>
+<span id="cb25-2"><a href=""></a>  <span class="fu">filter</span>(PARAMCD <span class="sc">==</span> <span class="st">'MAP'</span>, VISIT <span class="sc">==</span> <span class="st">'VISIT1'</span>, VSTPT <span class="sc">==</span> <span class="st">'PREDOSE'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb25-3"><a href=""></a>  cards<span class="sc">::</span><span class="fu">ard_summary</span>(<span class="at">variables =</span> <span class="fu">c</span>(AVAL))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
 </section>
-<section id="arsard-example-create-summary-statistics" class="slide level2">
-<h2>ARS/ARD Example: Create Summary Statistics</h2>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb21-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
-<span id="cb21-2"><a href=""></a><span class="at">  </span><span class="fu">ID</span><span class="kw">:</span><span class="at"> table_mean_arterial_pressure</span></span>
-<span id="cb21-3"><a href=""></a><span class="at">  </span><span class="fu">Type</span><span class="kw">:</span><span class="at"> ars</span></span>
-<span id="cb21-4"><a href=""></a><span class="at">  </span><span class="fu">Description</span><span class="kw">:</span><span class="at"> Create table 1 ARS</span></span>
-<span id="cb21-5"><a href=""></a><span class="at">  </span><span class="fu">Priority</span><span class="kw">:</span><span class="at"> </span><span class="dv">1</span></span>
-<span id="cb21-6"><a href=""></a><span class="fu">spec</span><span class="kw">:</span></span>
-<span id="cb21-7"><a href=""></a><span class="at">  </span><span class="fu">ADVS</span><span class="kw">:</span></span>
-<span id="cb21-8"><a href=""></a><span class="at">    </span><span class="fu">_all</span><span class="kw">:</span></span>
-<span id="cb21-9"><a href=""></a><span class="at">      </span><span class="fu">required</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb21-10"><a href=""></a><span class="fu">steps</span><span class="kw">:</span></span>
-<span id="cb21-11"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
-<span id="cb21-12"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> workr::RunQuery</span></span>
-<span id="cb21-13"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb21-14"><a href=""></a><span class="at">      </span><span class="fu">df</span><span class="kw">:</span><span class="at"> ADVS</span></span>
-<span id="cb21-15"><a href=""></a><span class="at">      </span><span class="fu">strQuery</span><span class="kw">:</span><span class="at"> </span><span class="st">"SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"</span></span>
-<span id="cb21-16"><a href=""></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table_predose_visit1_map</span></span>
-<span id="cb21-17"><a href=""></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cards::ard_summary</span></span>
-<span id="cb21-18"><a href=""></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb21-19"><a href=""></a><span class="at">      </span><span class="fu">data</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
-<span id="cb21-20"><a href=""></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
-<span id="cb21-21"><a href=""></a><span class="at">        </span><span class="kw">-</span><span class="at"> AVAL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="arsard-example-considerations" class="slide level2">
-<h2>ARS/ARD Example: Considerations</h2>
+<section id="final-considerations" class="slide level2">
+<h2>Final Considerations</h2>
 <ul>
-<li><p>The primary output (thus far) of these workflows is typically a derived dataset, but persistence (load/save) is intentionally decoupled</p></li>
+<li><p>The primary outputs (thus far) of these workflows is typically a derived dataset, but persistence (load/save) is intentionally decoupled</p></li>
 <li><p>Workflows orchestrate transformation logic; storage strategy is flexible and left to the user/organization</p></li>
-<li><p>Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step</p></li>
+<li><p>Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step/configuration</p></li>
 </ul>
 </section></section>
 <section>
 <section id="enterprise-workr-zelos" class="title-slide slide level1 center">
 <h1>Enterprise {workr} (Zelos?)</h1>
 
+</section>
+<section id="color-demo" class="slide level2">
+<h2>Color demo</h2>
+
+<img data-src="images/color_entry.png" width="450" class="r-stretch"><p><a href="https://zeloszhu.shinyapps.io/color-demo-presenter/">Live Demo</a></p>
 </section>
 <section id="helper-functions" class="slide level2">
 <h2>Helper functions</h2>

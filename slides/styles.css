@@ -1,0 +1,89 @@
+/* Keep code previews from taking over slide height. */
+.reveal pre {
+  margin: 0.3em auto;
+  width: 100%;
+}
+
+.reveal pre.sourceCode {
+  overflow: visible;
+}
+
+.reveal pre.sourceCode > code.sourceCode {
+  display: block;
+  max-height: 13em;
+  overflow-y: auto;
+  overflow-x: auto;
+  line-height: 1.15;
+  padding: 0.5em 0.65em;
+}
+
+/* YAML blocks are often taller because of indentation and comments. */
+.reveal pre.sourceCode.yaml > code.sourceCode,
+.reveal pre.sourceCode.yml > code.sourceCode {
+  max-height: 9em;
+}
+
+/* Keep side-by-side code panes aligned on the CT comparison slide. */
+.reveal section.ct-compare pre.sourceCode > code.sourceCode {
+  min-height: 13em;
+  max-height: 13em;
+  font-size: 0.82em;
+  line-height: 1.1;
+}
+
+/* Keep Step 1 comparison panes aligned as well. */
+.reveal section.step1-compare {
+  font-size: 0.9em;
+}
+
+.reveal section.step1-compare .columns pre.sourceCode > code.sourceCode {
+  min-height: 9em;
+  max-height: 9em;
+}
+
+.reveal section.step1-compare > div.code-copy-outer-scaffold:first-of-type pre.sourceCode > code.sourceCode {
+  min-height: 7.5em;
+  max-height: 7.5em;
+}
+
+/* Tighten the TFL Render Rmarkdown (2) slide to fit on one page. */
+.reveal section.tfl-rmd-notes {
+  font-size: 0.82em;
+}
+
+.reveal section.tfl-rmd-notes h2 {
+  margin-bottom: 0.2em;
+}
+
+.reveal section.tfl-rmd-notes li {
+  line-height: 1.18;
+  margin-bottom: 0.2em;
+}
+
+/* Tighten the TFL Render Rmarkdown (2) slide to fit on one page. */
+.reveal section.tfl-rmd-notes {
+  font-size: 0.82em;
+}
+
+.reveal section.tfl-rmd-notes h2 {
+  margin-bottom: 0.2em;
+}
+
+.reveal section.tfl-rmd-notes li {
+  line-height: 1.18;
+  margin-bottom: 0.2em;
+}
+
+/* Slightly tighten the ADaM MAP notes slide to avoid clipping. */
+.reveal section.adam-map-notes {
+  font-size: 0.86em;
+}
+
+.reveal section.adam-map-notes h2 {
+  margin-bottom: 0.2em;
+}
+
+.reveal section.adam-map-notes li {
+  line-height: 1.18;
+  margin-bottom: 0.25em;
+}

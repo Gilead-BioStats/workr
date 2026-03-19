@@ -3,6 +3,8 @@ title: "Phuse Connect 2026"
 subtitle: "{workr}: a very simple R data pipeline"
 author: "Zelos Zhu + Jeremy Wildfire"
 date: "2025-03-20"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Agenda
@@ -214,10 +216,11 @@ TODO: Run code and tweak as needed
 
 - {sdtm.oak} is a popular R package that modularizes SDTM programming that is EDC/data-standards agnostic
 - The algorithms and sub-algorithms provided can be reused across multiple SDTM domains 
-- We aim to replicate the results of this [vignette](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html) using workflows!
+- We aim to replicate the results of this [vignette](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html) ![](images/sdtm_vignette.png){width=150px}  using workflows!
 
-## SDTM Example: RAW to VS 
+## SDTM Example: RAW to VS {.step1-compare}
 
+What you would run in R
 ```R
 wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/1_RAW_TO_SDTM/VS.yaml"))
 lData <- list(
@@ -231,7 +234,11 @@ RunWorkflow(
 )
 ```
 
-## SDTM Example: Step 1
+Whats happening inside
+
+::: {.columns}
+::: {.column width="48%"}
+
 ```yaml
 meta:
   ID: VS
@@ -254,22 +261,36 @@ steps:
       raw_dat: vs_raw
       pat_var: "PATNUM"
       raw_src: "vitals"
-
 ```
-`lData$vs_raw <- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")`
+:::
 
 
-## SDTM Example: Step 1 (2)
+::: {.column width="4%"}
+=
+:::
+::: {.column width="48%"}
+```R
+lData$vs_raw2 <- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")`
+```
+:::
+:::
+
+## SDTM Example: Naming convention considerations
+
 ```R
 # lData after Step 1
 list(
     vs_raw = {THE RAW DATASET}
-    vs_raw2 = {THE RAW DATASET after we read ran generate_oak_id_vars}
+    vs_raw2 = {THE RAW DATASET after we ran generate_oak_id_vars}
 )
 ```
-It may be important to consider how to treat interim objects along the way in the `lData` dataset, similar to how a team may use pipes, e.g. `%>%` and `|>` to chain together one object, it is left to the user to use new names for output or overwrite objects, in this case `vs_raw`  instead of `vs_raw2` for the example above.
+It is important to define how interim objects are handled within `lData`. As in pipe-based workflows (`%>%` and `|>`), teams can either preserve each step by assigning a new output name or overwrite the existing object; in this example, that means choosing vs_raw2 for traceability or overwriting `vs_raw`.
 
-## SDTM Example: CT assignment Steps
+## SDTM Example: CT assignment Steps {.ct-compare}
+
+::: {.columns}
+::: {.column width="50%"}
+Using workflows
 ```yaml
   # Map topic variable SYSBP and its qualifiers.
   - output: vs_sysbp
@@ -305,9 +326,10 @@ It may be important to consider how to treat interim objects along the way in th
       raw_var: "SYS_BP"
       tgt_var: "VSORRES"
 ```
-This is equivalent to.....
+:::
 
-## SDTM Example: With pipes
+::: {.column width="50%"}
+Using pipes
 
 ```r
 # Map topic variable SYSBP and its qualifiers.
@@ -337,8 +359,8 @@ vs_sysbp <-
     id_vars = oak_id_vars()
   )
 ```
-
-## SDTM Example: With pipes (2)
+:::
+:::
 
 Each pipe statement is equivalent to a step in the workflow; integration of any package would mostly be depend on familiarity with a particular R Package, not necessarily this workr framework.
 
@@ -347,7 +369,10 @@ Each pipe statement is equivalent to a step in the workflow; integration of any 
 - {admiral} is a popular R package that modularizes ADaM programming with many extension packages that address specific therapeutic area needs
 - Here we'll highlight just a few specific functions, but the documentation and user guides for {admiral} are some of the best amongst all R packages
 
-## ADaM Example: VS to ADVS
+## ADaM Example: VS to ADVS (add MAP) {.step1-compare}
+
+What you would run in R
+
 ```R
 wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/ADVS.yaml"))
 sdtm <- list(
@@ -357,7 +382,11 @@ sdtm <- list(
 RunWorkflow(lWorkflow = wf, lData = sdtm)
 ```
 
-## ADaM Example: Create MAP
+Whats happening inside
+
+::: {.columns}
+::: {.column width="48%"}
+
 ```yaml
 meta:
   ID: ADVS
@@ -372,7 +401,7 @@ spec:
     _all:
       required: true
 steps:
-  - output: initial_advs
+  - output: advs
     name: admiral::derive_vars_merged
     params:
       dataset: SDTM_VS
@@ -382,7 +411,7 @@ steps:
   - output: advs
     name: dplyr::mutate
     params:
-      .data: initial_advs
+      .data: advs
       PARAMCD: !expr rlang::expr(.data[["VSTESTCD"]])
       AVAL: !expr rlang::expr(.data[["VSORRES"]])
   - output: advs
@@ -394,23 +423,50 @@ steps:
       diabp_code: 'DIABP'
       get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
 ```
+:::
 
-## ADaM Example: Create MAP (2)
+::: {.column width="4%"}
+=
+:::
 
-- By now, it's clear how to structure a workflow to arrive at a desired object, in this case, an ADaM dataset, after following our previous examples. Here, we highlight the use of `derive_param_map()` which would create an associated mean arterial pressure value based off of `SYSBP` and `DIABP` values.
+::: {.column width="48%"}
 
-## ADaM Example: Create MAP (3)
+```R
+advs <- admiral::derive_vars_merged(
+    dataset = SDTM_VS,
+    dataset_add = SDTM_DM,
+    new_vars =  exprs(TRT01A),
+    by_vars =  exprs(STUDYID, USUBJID)
+  ) %>% 
+  mutate(
+    PARAMCD = VSTESTCD,
+    AVAL = VSORRES
+  ) %>% 
+  derive_param_map(
+    by_vars = exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM),
+    sysbp_code = 'SYSBP',
+    diabp_code = 'DIABP',
+    get_unit_expr = VSORRESU
+  )
+```
+:::
+:::
 
-- Had this been done through a series of tidyverse packages it would probably invoke quite a handful of functions and this is where `admiral` demonstrates is advantages and convenience.
-- So some things to consider as future work/collaboration, especially for admiral, would be how to harmonize the use of expressors/quasiquotations, as it may be confusing to how to necessarily how to handle all the rlang specific uses of `expr()`,  `exprs()`, `!!` , etc.
+## ADaM Example: Create MAP {.adam-map-notes}
+
+- The prior examples establish a consistent workflow pattern for producing an ADaM dataset. In this step, `derive_param_map()` derives mean arterial pressure (MAP) from `SYSBP` and `DIABP`.
+- Compared with stitching together multiple tidyverse transformations, this approach reduces boilerplate and makes the derivation intent clearer.
+- A valuable area for future collaboration, particularly in admiral, is harmonizing quasiquotation patterns to improve readability and adoption, especially around `expr()`, `exprs()`, and `!!`.
 
 ## From ADaM to TFL
 
 - How every team/organization handles data visualizations may just have the most variance
 - We will go over a way that uses a workflow to render Rmarkdown documents with prespecified templates for tables/figures, specifically using `gtsummary` and `safetyCharts`
-- The setup for this would be applicable for shiny apps, static reports, web-based html reports, where to host or view the final object is to be left to the user
+- The setup for this would be applicable for shiny apps, static reports, web-based html reports, where to host or view the final object is left to the user
 
-## TFL Example: ADVS to TFL
+## TFL Example: ADVS to TFL {.step1-compare}
+
+What you would run in R
 ```r
 wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_TFL/WorkProduct1.yaml", package = "workr"), warn = FALSE)
 adam <- list(
@@ -419,7 +475,11 @@ adam <- list(
 workr::RunWorkflows(lWorkflows = wf, lData = adam )
 ```
 
-## TFL Example: Render Rmarkdown
+Whats happening inside
+
+::: {.columns}
+::: {.column width="48%"}
+
 ```yaml
 meta:
   ID: WorkProduct1
@@ -443,21 +503,44 @@ steps:
       envir: !expr new.env(parent = globalenv())
       params: lParams
 ```
+:::
 
+::: {.column width="4%"}
+=
+:::
 
-## TFL Example: Render Rmarkdown (2)
+::: {.column width="48%"}
+
+```R
+lParams <- list(dfADVS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet", package = "workr")))
+table1 <- rmarkdown::render(
+  input = here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd"),
+  output_file = here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html"),
+  envir = new.env(parent = globalenv()),
+  params = lParams
+)
+```
+:::
+:::
+
+## TFL Preview
+![](images/report_picture.png)
+
+## TFL Example: Render Rmarkdown (2) {.tfl-rmd-notes}
 
 - These rendered documents (html in this case) can be mounted into a preferred viewing environment (r shiny apps, websites, pdf over email, etc.) for whoever the end user may be. 
-
 - The methodology & technical infrastructure will be left to the user.
 
-## TFL WorkProduct 1: Parent Rmd
-
-![](images/workproduct1.png)
-
-## TFL WorkProduct 1: Child Rmd(s)
-
+::: {.columns}
+::: {.column width="50%"}
+Parent Rmd
+![](images/workproduct1.png){width=82%}
+:::
+::: {.column width="50%"}
+Child Rmd
 ![](images/table1.png)
+::: 
+::: 
 
 ## TFL Overview
 
@@ -471,7 +554,9 @@ steps:
 
 - It is designed to support automation, reproducibility, reusability, and traceability of analysis results
 
-## ARS/ARD Example: ADVS summary
+## ARS/ARD Example: ADVS summary {.step1-compare}
+
+What you would run in R
 ```R
 wf <- yaml::read_yaml(system.file("demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml"))
 adam <- list(
@@ -480,7 +565,10 @@ adam <- list(
 workr::RunWorkflows(lWorkflows = wf, lData = adam )
 ```
 
-## ARS/ARD Example: Create Summary Statistics
+Whats happening inside
+
+::: {.columns}
+::: {.column width="48%"}
 
 ```yaml
 meta:
@@ -505,16 +593,38 @@ steps:
       variables:
         - AVAL
 ```
+:::
 
-## ARS/ARD Example: Considerations
+::: {.column width="4%"}
+=
+:::
 
-- The primary output (thus far) of these workflows is typically a derived dataset, but persistence (load/save) is intentionally decoupled
+::: {.column width="48%"}
+
+```R
+table_predose_visit1_map  <- adam$ADVS %>% 
+  filter(PARAMCD == 'MAP', VISIT == 'VISIT1', VSTPT == 'PREDOSE') %>% 
+  cards::ard_summary(variables = c(AVAL))
+```
+:::
+:::
+
+## Final Considerations
+
+- The primary outputs (thus far) of these workflows is typically a derived dataset, but persistence (load/save) is intentionally decoupled
 
 - Workflows orchestrate transformation logic; storage strategy is flexible and left to the user/organization
 
-- Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step
+- Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step/configuration
 
 # Enterprise {workr} (Zelos?)
+
+## Color demo
+
+![](images/color_entry.png){width=450px}
+
+
+[Live Demo](https://zeloszhu.shinyapps.io/color-demo-presenter/)
 
 ## Helper functions
 

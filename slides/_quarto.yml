@@ -5,6 +5,7 @@ project:
 format:
   revealjs:
     theme: simple
+    css: styles.css
     transition: slide
     slide-number: true
     link-external-newwindow: true

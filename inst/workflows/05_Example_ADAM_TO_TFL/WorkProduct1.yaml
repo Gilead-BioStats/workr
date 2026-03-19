@@ -1,0 +1,21 @@
+meta:
+  ID: WorkProduct1
+  Type: TFL
+  Description: Create Basic Work Product/Report which can modularize the tables included
+  Priority: 1
+spec:
+  ADVS:
+    _all:
+      required: true
+steps:
+  - output: lParams
+    name: list
+    params:
+      'dfADVS': ADVS
+  - output: table1
+    name: rmarkdown::render
+    params:
+      input: !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")
+      output_file: !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")
+      envir: !expr new.env(parent = globalenv())
+      params: lParams

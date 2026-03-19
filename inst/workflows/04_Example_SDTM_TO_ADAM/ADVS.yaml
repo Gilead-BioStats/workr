@@ -1,0 +1,34 @@
+meta:
+  ID: ADVS
+  Type: ADAM
+  Description: Create Basic ADVS
+  Priority: 1
+spec:
+  SDTM_DM:
+    _all:
+      required: true
+  SDTM_VS:
+    _all:
+      required: true
+steps:
+  - output: initial_advs
+    name: admiral::derive_vars_merged
+    params:
+      dataset: SDTM_VS
+      dataset_add: SDTM_DM
+      new_vars: !expr exprs(TRT01A)
+      by_vars: !expr exprs(STUDYID, USUBJID)
+  - output: advs
+    name: dplyr::mutate
+    params:
+      .data: initial_advs
+      PARAMCD: !expr rlang::expr(.data[["VSTESTCD"]])
+      AVAL: !expr rlang::expr(.data[["VSORRES"]])
+  - output: advs
+    name: admiral::derive_param_map
+    params:
+      dataset: advs
+      by_vars: !expr exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM)
+      sysbp_code: 'SYSBP'
+      diabp_code: 'DIABP'
+      get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])

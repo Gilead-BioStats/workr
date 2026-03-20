@@ -12,23 +12,15 @@ spec:
       required: true
 steps:
   - output: initial_advs
-    name: admiral::derive_vars_merged
+    name: base::merge
     params:
-      dataset: SDTM_VS
-      dataset_add: SDTM_DM
-      new_vars: !expr exprs(TRT01A)
-      by_vars: !expr exprs(STUDYID, USUBJID)
+      x: SDTM_VS
+      "y": SDTM_DM
+      by:
+        - STUDYID
+        - USUBJID
   - output: advs
-    name: dplyr::mutate
+    name: workr::RunQuery
     params:
-      .data: initial_advs
-      PARAMCD: !expr rlang::expr(.data[["VSTESTCD"]])
-      AVAL: !expr rlang::expr(.data[["VSORRES"]])
-  - output: advs
-    name: admiral::derive_param_map
-    params:
-      dataset: advs
-      by_vars: !expr exprs(STUDYID, USUBJID, TRT01A, VSDTC, VISIT, VISITNUM, VSTPT, VSTPTNUM)
-      sysbp_code: 'SYSBP'
-      diabp_code: 'DIABP'
-      get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
+      df: initial_advs
+      strQuery: "SELECT *, VSTESTCD AS PARAMCD, CAST(VSORRES AS DOUBLE) AS AVAL FROM df"

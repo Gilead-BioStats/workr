@@ -1,11 +1,11 @@
 meta:
   ID: subset
-  meta:
-    col: param
-    value: cholesterol
+  Type: Example
+  col: param
+  value: cholesterol
 steps:
-  - name: dplyr::filter
+  - name: workr::RunQuery
     output: df
     params:
-        df: raw
-        expr: !!expr(!!rlang::sym(meta$col) == meta$value)
+      df: raw
+      strQuery: "SELECT * FROM df WHERE param = 'cholesterol'"

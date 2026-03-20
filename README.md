@@ -1,34 +1,38 @@
 # workr
 
-A **very** simple R data pipeline framework.
+A **very** simple R data pipeline framework. {workr} provides a minimal mental model for describing and executing step-by-step workflows. These simple workflows can be combined into configurable data pipelines that can automate large tasks.
 
 ## What is {workr}?
-
-{workr} provides a minimal mental model for describing and executing data workflows:
-
-- **Workflows** are YAML files with `meta` (workflow metadata) and `steps` (ordered list of function calls)
-- **Steps** are functions that accept data and parameters, producing output that gets added to the shared data list
-- **Meta** is workflow-level configuration accessible to all steps
-
-The package provides three core functions:
-
-- `RunStep()` - execute a single workflow step
-- `RunWorkflow()` - execute a workflow specification (YAML)
-- `RunWorkflows()` - run multiple workflows in sequence
-
-## Why {workr}?
 
 {workr} was built to solve a specific problem: **reusable, customizable data pipelines for complex clinical trial monitoring**.
 
 The core functions in {workr} were originally developed as part of the [{gsm} framework](https://gilead-biostats.github.io/gsm.core/index.html) for risk-based quality monitoring (RBQM). The {gsm} team developed a [stable, reusable model for generating metrics](https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html) to monitor clinical trials.
 
-Our challenge was figuring out how to run those metrics across a large portfolio. Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps, and you get 27,000 computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.
+Our challenge was figuring out how to run those metrics across a large portfolio.
 
-{workr}'s solution: Define workflows once, customize via `meta` parameters, and compose them into larger pipelines.
+Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps, and you get 27,000 computations per year. Each study also has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.
 
-The original `gsm::RunWorkflow` functions were developed in a few hours and were seen as a stopgap until we picked a "real" pipeline, but the approach has proven to be surprisingly stable and flexible. So much so that we've created {workr} and started using them outside of our {gsm} pipelines.
+{workr}'s solution: Define workflows once, track customizations in YAML files, and compose them into larger pipelines.
 
-## Quick Start
+The original `gsm::RunWorkflow` functions were developed in a few hours and were seen as a stopgap until we picked a "real" pipeline.
+
+The approach has proven to be surprisingly stable and flexible. So much so that we've created {workr} and started using it outside of our {gsm} pipelines.
+
+## {workr} workflows
+
+{workr} workflows are `list` objects that are typically defined in `yaml` files. Each workflow has the following components:
+
+- **Steps** are functions that accept data and parameters, producing output that gets added to the shared data list
+- **Meta** is workflow-level configuration accessible to all steps
+- **Spec** optional data specification defining expected input data for the workflow.
+
+The package provides three core functions for running workflows:
+
+- `workr::RunStep()` - execute a single workflow step
+- `workr::RunWorkflow()` - execute a workflow specification (YAML)
+- `workr::RunWorkflows()` - run multiple workflows in sequence
+
+### Sample Workflow
 
 Define a workflow in YAML:
 
@@ -63,8 +67,6 @@ result <- workr::RunWorkflow(
 # result = 15.4 (mean of cars$speed)
 ```
 
-## How it works
-
 Each step in a workflow:
 
 1. Calls a function (specified by `step$name`)
@@ -72,9 +74,28 @@ Each step in a workflow:
 3. Saves the result to `lData` using the `output` name
 4. Makes it available for the next step
 
-By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.
+That's it! By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.
 
-## Workflow Snapshots
+## Combining Workflows
+
+{workr} workflows are designed to be chained together. The output of one workflow becomes the input for the next. {workr} provides several tools to support this functionality. 
+
+### `workr::RunWorkflows` calls multiple workflows
+
+While `workr::RunWorkflow` runs all the `steps` in a single workflow, `workr::RunWorkflows` (with an *s*) runs multiple workflows one after the other. Just pass a list of workflows. A few details:
+- `workr::RunWorkflows()` still takes a single `lData` object as input, each workflow makes its updates, and then the updated `lData` object is passed along to the next workflow.
+- `workr::MakeWorkflowList()` is an easy way to read a whole folder of YAML workflows into the format expected for `workr::RunWorkflows()`.
+- `workr::MakeWorkflowList()` reorders workflows based on `meta$priority`, so if you need things to run in a certain order, make sure to set that parameter. If nothing is provided, `priority` is set to 0.
+
+
+TODO add a simple example of chaining workflows. Add a note about `priority` parameter.
+
+### `workr::RunProject` calls multiple sets of workflows **Coming Soon** 
+
+Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject` calls `workr::RunWorkflows()` for every sub-directory in a given location starting with a single `lData` object.
+
+
+### `workr::Snapshot` combines workflows across packages
 
 One nice thing about {workr} workflows is that they can be combined across packages. To support this, {workr} includes tooling for creating reproducible snapshots of workflows from multiple packages.
 
@@ -88,11 +109,18 @@ Snapshots are stored on orphan branches (prefixed `ss-*`) and updated nightly vi
 
 📦 [Demo snapshot (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) — gsm.core, gsm.mapping, gsm.kri, gsm.reporting
 
-## Workflow Explorer
+## Visualizing Workflows
 
-YAMLs can be a little hard to follow, so we've also included a workflow explorer — an interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.
+YAML workflows can be a little hard to follow, especially when you're running a few (or more than a few) in a row, so we've created some tools to help visualize and track workflows.
 
-🔍 [Workflow Explorer](https://gilead-biostats.github.io/workr/dev/explorer/)
+### {workr} Shiny app
+
+(TODO Add summary and link)
+
+### open.gismo
+
+(TODO Add summary and link)
+
 
 ## Automation via GitHub Actions
 

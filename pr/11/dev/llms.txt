@@ -146,8 +146,8 @@ One nice thing about {workr} workflows is that they can be combined
 across packages. To support this, {workr} includes tooling for creating
 reproducible snapshots of workflows from multiple packages.
 
-`pkgSnapshot()` resolves a list of GitHub packages to specific versions
-and generates:
+[`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md)
+resolves a list of GitHub packages to specific versions and generates:
 
 - `manifest.csv` — pinned package versions with SHAs
 - `rproject.toml` — [rv](https://github.com/A2-ai/rv)-compatible
@@ -213,8 +213,31 @@ deployment.
   **\[stable\]** : Run a workflow via it's YAML specification.
 - [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
   : Convenience function to run multiple workflows
+- [`gh_get_sha()`](https://gilead-biostats.github.io/workr/dev/reference/gh_get_sha.md)
+  : Get the commit SHA for a given ref
+- [`gh_get_version()`](https://gilead-biostats.github.io/workr/dev/reference/gh_get_version.md)
+  : Get the package version from DESCRIPTION file at a given SHA
 - [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
   : Load example data for workflow execution
+- [`parse_github_ref()`](https://gilead-biostats.github.io/workr/dev/reference/parse_github_ref.md)
+  : Parse a GitHub ref string into org, repo, and optional ref
+- [`pkgListFromManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgListFromManifest.md)
+  : Generate a package list from a manifest.csv file
+- [`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md)
+  : Snapshot Package List
+- [`pull_workflows()`](https://gilead-biostats.github.io/workr/dev/reference/pull_workflows.md)
+  : Pull workflow files from inst/workflow for each package
+- [`resolve_package()`](https://gilead-biostats.github.io/workr/dev/reference/resolve_package.md)
+  : Resolve a package to its full metadata using the GitHub API via gh
+  CLI
+- [`resolve_ref_by_date()`](https://gilead-biostats.github.io/workr/dev/reference/resolve_ref_by_date.md)
+  : Resolve a ref by date — find the latest release/tag on or before the
+  given date
+- [`resolve_tag_by_date()`](https://gilead-biostats.github.io/workr/dev/reference/resolve_tag_by_date.md)
+  : Resolve a tag by date when no releases exist
+- [`write_rproject_toml()`](https://gilead-biostats.github.io/workr/dev/reference/write_rproject_toml.md)
+  : Write an rproject.toml file compatible with rv
+  (https://github.com/A2-ai/rv)
 
 # Articles
 

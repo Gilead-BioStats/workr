@@ -146,8 +146,8 @@ One nice thing about {workr} workflows is that they can be combined
 across packages. To support this, {workr} includes tooling for creating
 reproducible snapshots of workflows from multiple packages.
 
-`pkgSnapshot()` resolves a list of GitHub packages to specific versions
-and generates:
+[`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md)
+resolves a list of GitHub packages to specific versions and generates:
 
 - `manifest.csv` — pinned package versions with SHAs
 - `rproject.toml` — [rv](https://github.com/A2-ai/rv)-compatible

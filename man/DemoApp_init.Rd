@@ -4,7 +4,11 @@
 \alias{DemoApp_init}
 \title{Launch the workr demo Shiny app}
 \usage{
-DemoApp_init(lWorkflows = NULL, lData = list(), lConfig = NULL)
+DemoApp_init(
+  lWorkflows = NULL,
+  lData = list(value = 2, cars = datasets::cars),
+  lConfig = NULL
+)
 }
 \arguments{
 \item{lWorkflows}{\code{list} A named list of workflows as returned by
@@ -12,7 +16,7 @@ DemoApp_init(lWorkflows = NULL, lData = list(), lConfig = NULL)
 shipped with workr.}
 
 \item{lData}{\code{list} Initial named list of data objects available to
-workflows. Defaults to an empty list.}
+workflows. Defaults to \code{list(value = 2, cars = datasets::cars)}.}
 
 \item{lConfig}{\code{list} Optional configuration hooks passed to workflow runners.
 Defaults to using \code{loadExample()} for \code{LoadData}.}

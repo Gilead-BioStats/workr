@@ -90,9 +90,34 @@ While `workr::RunWorkflow` runs all the `steps` in a single workflow, `workr::Ru
 
 TODO add a simple example of chaining workflows. Add a note about `priority` parameter.
 
-### `workr::RunProject` calls multiple sets of workflows **Coming Soon** 
+### `workr::RunProject` calls multiple sets of workflows
 
-Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject` calls `workr::RunWorkflows()` for every sub-directory in a given location starting with a single `lData` object.
+Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject()` calls `workr::RunWorkflows()` for every sub-directory (phase) in a given project directory, sharing one `lData` object across phases.
+
+```r
+# Project directory structure:
+# project/
+#   01_mapping/
+#     ae.yaml
+#     lb.yaml
+#   02_analysis/
+#     kri.yaml
+
+results <- workr::RunProject(
+  strPath = "project",
+  lData = list(raw_data = my_data)
+)
+# Runs 01_mapping workflows first, then 02_analysis
+# Outputs from 01_mapping are available as inputs to 02_analysis
+```
+
+Key options:
+
+- `strPhases` — run a subset of phases, or control their order
+- `bReturnResult` / `bKeepInputData` — passed through to `RunWorkflows()`
+- `bRecursive` — passed through to `MakeWorkflowList()`
+
+Phases are sorted alphabetically by default (use numeric prefixes like `01_`, `02_` to control order).
 
 
 ### `workr::Snapshot` combines workflows across packages

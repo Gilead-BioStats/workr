@@ -8,7 +8,7 @@
 #'   \code{\link{MakeWorkflowList}}. Defaults to all example workflows
 #'   shipped with workr.
 #' @param lData `list` Initial named list of data objects available to
-#'   workflows. Defaults to an empty list.
+#'   workflows. Defaults to \code{list(value = 2, cars = datasets::cars)}.
 #' @param lConfig `list` Optional configuration hooks passed to workflow runners.
 #'   Defaults to using \code{loadExample()} for \code{LoadData}.
 #'
@@ -22,7 +22,7 @@
 #' @export
 DemoApp_init <- function(
   lWorkflows = NULL,
-  lData = list(),
+  lData = list(value = 2, cars = datasets::cars),
   lConfig = NULL
 ) {
   if (!requireNamespace("shiny", quietly = TRUE)) {
@@ -66,6 +66,11 @@ DemoApp_UI <- function(lWorkflows) {
     workflow_names <- paste0("workflow_", seq_along(lWorkflows))
   }
 
+  workflow_paths <- purrr::map_chr(lWorkflows, function(wf) wf$path %||% "")
+  folder_names <- basename(dirname(workflow_paths))
+  folder_names[folder_names == "."] <- "(root)"
+  folder_choices <- unique(folder_names)
+
   shiny::fluidPage(
     shiny::tags$style(shiny::HTML("
       html, body { height: 100%; margin: 0; overflow: hidden; }
@@ -79,8 +84,20 @@ DemoApp_UI <- function(lWorkflows) {
       .header-row .step-status { color: #888; font-size: 13px; margin-left: auto; }
       .main-row { flex: 1; display: flex; gap: 8px; min-height: 0; overflow: hidden; }
       .yaml-col { flex: 5; display: flex; flex-direction: column; min-height: 0; }
-      .yaml-col textarea { flex: 1; resize: none !important; font-family: monospace; font-size: 12px; }
-      .yaml-col .form-group { flex: 1; display: flex; flex-direction: column; margin: 0; }
+            .yaml-editor-list { flex: 1; min-height: 0; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 6px; }
+            .yaml-workflow-card { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 6px; background: #fff; }
+            .yaml-workflow-card summary { cursor: pointer; padding: 8px 10px; font-weight: 600; user-select: none; transition: background 0.3s, color 0.3s; display: flex; justify-content: space-between; align-items: center; }
+            .yaml-workflow-card .wf-step-count { font-weight: 400; font-size: 12px; color: #aaa; margin-left: auto; }
+            .yaml-workflow-card.wf-complete summary { background: #e6f4ea; color: #1f8a3a; }
+            .yaml-workflow-card.wf-complete .wf-step-count { color: #6abf7b; }
+            .yaml-workflow-card.wf-complete { border-color: #a8dab5; }
+            .yaml-workflow-body { position: relative; border-top: 1px solid #eee; }
+            .yaml-workflow-body .form-group { margin: 0; }
+            .yaml-workflow-body textarea { width: 100%; resize: none !important; font-family: monospace; font-size: 12px;
+               background: transparent; color: transparent; caret-color: #1a1a1a; z-index: 2; border: none; position: absolute; top: 0; left: 0; height: 100%; }
+            .yaml-overlay { padding: 8px 10px; background: #fff; z-index: 1; pointer-events: none; }
+      .yaml-overlay pre { margin: 0; font-family: monospace; font-size: 12px; white-space: pre; color: #1a1a1a; }
+      .yaml-done { color: #1f8a3a; font-weight: 600; }
       .data-keys-col { flex: 1.5; display: flex; flex-direction: column; min-height: 0; }
       .detail-col { flex: 3.5; display: flex; flex-direction: column; min-height: 0; }
       .data-key { cursor: pointer; padding: 3px 8px; border-bottom: 1px solid #eee; font-size: 13px; }
@@ -98,10 +115,39 @@ DemoApp_UI <- function(lWorkflows) {
                    font-size: 11px; background: #1e1e1e; color: #d4d4d4; white-space: pre-wrap; }
       .log-panel #log_output { margin: 0; padding: 0; background: transparent; border: none; color: inherit; }
     ")),
+    shiny::tags$script(shiny::HTML("\
+      Shiny.addCustomMessageHandler('setButtonDisabled', function(message) {\
+        var btn = document.getElementById(message.id);\
+        if (!btn) return;\
+        btn.disabled = !!message.disabled;\
+      });\
+      function syncYamlOverlay(textarea) {\
+        if (!textarea || !textarea.id) return;\
+        var overlayId = textarea.id.replace('yaml_editor_', 'yaml_overlay_');\
+        var ov = document.getElementById(overlayId);\
+        if (!ov) return;\
+        ov.scrollTop = textarea.scrollTop;\
+        ov.scrollLeft = textarea.scrollLeft;\
+      }\
+      document.addEventListener('scroll', function(e) {\
+        if (e.target && e.target.id && e.target.id.indexOf('yaml_editor_') === 0) syncYamlOverlay(e.target);\
+      }, true);\
+      document.addEventListener('input', function(e) {\
+        if (e.target && e.target.id && e.target.id.indexOf('yaml_editor_') === 0) {\
+          syncYamlOverlay(e.target);\
+          if (window.Shiny && window.Shiny.setInputValue) {\
+            window.Shiny.setInputValue(e.target.id, e.target.value, {priority: 'event'});\
+          }\
+        }\
+      }, true);\
+      document.addEventListener('DOMContentLoaded', function() {\
+        document.querySelectorAll('textarea[id^=\"yaml_editor_\"]').forEach(syncYamlOverlay);\
+      });\
+    ")),
     shiny::tags$h2("workr Demo"),
     shiny::tags$div(class = "header-row",
       shiny::tags$div(
-        shiny::selectInput("workflow_select", NULL, choices = workflow_names, width = "250px")
+        shiny::selectInput("folder_select", NULL, choices = folder_choices, width = "250px")
       ),
       shiny::actionButton("run_all", "Run All"),
       shiny::actionButton("run_step", "Run Step"),
@@ -110,8 +156,8 @@ DemoApp_UI <- function(lWorkflows) {
     ),
     shiny::tags$div(class = "main-row",
       shiny::tags$div(class = "yaml-col",
-        shiny::tags$div(class = "col-label", "Workflow YAML"),
-        shiny::textAreaInput("yaml_editor", label = NULL, value = "", width = "100%")
+        shiny::tags$div(class = "col-label", shiny::textOutput("yaml_header", inline = TRUE)),
+        shiny::tags$div(class = "yaml-editor-list", shiny::uiOutput("yaml_editors"))
       ),
       shiny::tags$div(class = "data-keys-col",
         shiny::tags$div(class = "col-label", "lData"),
@@ -164,40 +210,142 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       is.function(lConfig$LoadData) &&
       all(c("lWorkflow", "lConfig", "lData") %in% names(formals(lConfig$LoadData)))
     ) {
-      return(lConfig$LoadData(lWorkflow = wf, lConfig = lConfig, lData = init_lData))
+      return(lConfig$LoadData(lWorkflow = wf, lConfig = lConfig, lData = list()))
     }
     init_lData
   }
 
   function(input, output, session) {
+    workflow_names <- names(lWorkflows)
+    workflow_paths <- purrr::map_chr(lWorkflows, function(wf) wf$path %||% "")
+    workflow_folders <- basename(dirname(workflow_paths))
+    workflow_folders[workflow_folders == "."] <- "(root)"
+    folder_levels <- unique(workflow_folders)
+    folder_map <- split(workflow_names, workflow_folders)
+
+    wf_id <- function(wf_name) gsub("[^A-Za-z0-9_]", "_", wf_name)
+    wf_input_id <- function(wf_name) paste0("yaml_editor_", wf_id(wf_name))
+    wf_overlay_id <- function(wf_name) paste0("yaml_overlay_", wf_id(wf_name))
+
+    default_yaml_cache <- purrr::map(lWorkflows, yaml::as.yaml)
+
     rv <- shiny::reactiveValues(
       lData = init_lData,
-      step_index = 0L,
+      step_state = stats::setNames(rep(0L, length(workflow_names)), workflow_names),
       selected_key = NULL,
-      logs = stats::setNames(rep("", length(lWorkflows)), names(lWorkflows)),
-      current_wf = names(lWorkflows)[1]
+      logs = stats::setNames(rep("", length(folder_levels)), folder_levels),
+      current_folder = folder_levels[[1]],
+      yaml_cache = default_yaml_cache
     )
 
-    # Update YAML editor when workflow selection changes and reset data
-    shiny::observeEvent(input$workflow_select, {
-      wf <- lWorkflows[[input$workflow_select]]
-      yaml_text <- yaml::as.yaml(wf)
-      shiny::updateTextAreaInput(session, "yaml_editor", value = yaml_text)
+    # Keep yaml cache synchronized with live editor input.
+    purrr::walk(workflow_names, function(wf_name) {
+      shiny::observeEvent(input[[wf_input_id(wf_name)]], {
+        new_val <- input[[wf_input_id(wf_name)]]
+        if (is.character(new_val) && length(new_val) == 1) {
+          rv$yaml_cache[[wf_name]] <- new_val
+        }
+      }, ignoreInit = TRUE)
+    })
+
+    normalize_lData <- function(x) {
+      if (!is.list(x) || is.null(names(x))) {
+        return(x)
+      }
+      keep <- !duplicated(names(x), fromLast = TRUE)
+      x[keep]
+    }
+
+    escape_html <- function(x) {
+      x <- gsub("&", "&amp;", x, fixed = TRUE)
+      x <- gsub("<", "&lt;", x, fixed = TRUE)
+      x <- gsub(">", "&gt;", x, fixed = TRUE)
+      x
+    }
+
+    render_yaml_progress <- function(yaml_text, steps_done) {
+      lines <- strsplit(yaml_text %||% "", "\n", fixed = TRUE)[[1]]
+      if (length(lines) == 0) {
+        return(shiny::tags$pre(""))
+      }
+
+      step_starts <- grep("^\\s*-\\s+(name|output):", lines, perl = TRUE)
+      done_line <- rep(FALSE, length(lines))
+      if (length(step_starts) > 0 && steps_done > 0) {
+        step_ends <- c(step_starts[-1] - 1L, length(lines))
+        done_n <- min(steps_done, length(step_starts))
+        for (i in seq_len(done_n)) {
+          done_line[step_starts[i]:step_ends[i]] <- TRUE
+        }
+      }
+
+      html_lines <- vapply(seq_along(lines), function(i) {
+        txt <- escape_html(lines[[i]])
+        if (done_line[[i]]) {
+          paste0('<span class="yaml-done">', txt, "</span>")
+        } else {
+          txt
+        }
+      }, character(1))
+
+      shiny::tags$pre(shiny::HTML(paste(html_lines, collapse = "\n")))
+    }
+
+    get_folder_workflows <- function(folder_name) {
+      folder_map[[folder_name]] %||% character(0)
+    }
+
+    get_workflow_from_editor <- function(wf_name) {
+      yaml_text <- rv$yaml_cache[[wf_name]] %||% yaml::as.yaml(lWorkflows[[wf_name]])
+      lWorkflow <- tryCatch(yaml::yaml.load(yaml_text), error = function(e) NULL)
+      if (is.null(lWorkflow)) {
+        return(NULL)
+      }
+      if (is.null(lWorkflow$path) && !is.null(lWorkflows[[wf_name]]$path)) {
+        lWorkflow$path <- lWorkflows[[wf_name]]$path
+      }
+      lWorkflow
+    }
+
+    initialize_folder_state <- function(folder_name, reset_logs = FALSE) {
+      wf_names <- get_folder_workflows(folder_name)
+      if (length(wf_names) == 0) {
+        rv$lData <- init_lData
+        return(invisible(NULL))
+      }
+
+      first_wf <- lWorkflows[[wf_names[[1]]]]
       rv$lData <- tryCatch(
-        get_workflow_data(wf),
+        normalize_lData(get_workflow_data(first_wf)),
         error = function(e) {
           append_log(paste0("[ERROR] ", conditionMessage(e), "\n"))
           init_lData
         }
       )
-      rv$step_index <- 0L
-      rv$current_wf <- input$workflow_select
-    })
+
+      for (wf_name in wf_names) {
+        rv$yaml_cache[[wf_name]] <- yaml::as.yaml(lWorkflows[[wf_name]])
+        rv$step_state[[wf_name]] <- 0L
+      }
+
+      if (isTRUE(reset_logs)) {
+        rv$logs[[folder_name]] <- ""
+      }
+
+      rv$selected_key <- NULL
+      invisible(NULL)
+    }
+
+    # Initialize and react to folder selection.
+    shiny::observeEvent(input$folder_select, {
+      rv$current_folder <- input$folder_select
+      initialize_folder_state(rv$current_folder)
+    }, ignoreInit = FALSE)
 
     # Helper to append to current workflow's log
     append_log <- function(text) {
-      wf <- rv$current_wf
-      rv$logs[[wf]] <- paste0(rv$logs[[wf]], text)
+      folder <- rv$current_folder
+      rv$logs[[folder]] <- paste0(rv$logs[[folder]], text)
     }
 
     # Helper to capture log messages and errors from workr functions
@@ -222,78 +370,202 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       result
     }
 
-    # Run All: execute the full workflow
-    shiny::observeEvent(input$run_all, {
-      yaml_text <- input$yaml_editor
-      lWorkflow <- tryCatch(yaml::yaml.load(yaml_text), error = function(e) NULL)
-      if (is.null(lWorkflow)) {
-        append_log("[ERROR] Failed to parse YAML\n")
-        return()
+    # Render one collapsible YAML editor per workflow in the selected folder.
+    output$yaml_editors <- shiny::renderUI({
+      wf_names <- get_folder_workflows(rv$current_folder)
+      if (length(wf_names) == 0) {
+        return(shiny::tags$em("No workflows found in this folder."))
       }
-      append_log(paste0("--- Run All: ", lWorkflow$meta$Type, "_", lWorkflow$meta$ID, " ---\n"))
-      result <- capture_log({
-        if (is.null(lWorkflow$path) && !is.null(lWorkflows[[rv$current_wf]]$path)) {
-          lWorkflow$path <- lWorkflows[[rv$current_wf]]$path
+
+      has_multiple <- length(wf_names) > 1
+
+      # Determine which workflow should be expanded: first incomplete one
+      # But only expand if at least one step has been run (collapse all initially)
+      any_started <- any(purrr::map_lgl(wf_names, function(wn) (rv$step_state[[wn]] %||% 0L) > 0L))
+      active_wf <- NULL
+      if (any_started) {
+        for (wn in wf_names) {
+          lw <- get_workflow_from_editor(wn)
+          n_steps <- if (is.null(lw)) 0L else length(lw$steps %||% list())
+          if ((rv$step_state[[wn]] %||% 0L) < n_steps) {
+            active_wf <- wn
+            break
+          }
         }
-        RunWorkflow(lWorkflow, rv$lData, lConfig = lConfig, bReturnResult = FALSE)
-      })
-      if (!is.null(result) && !is.null(result$lData)) {
-        rv$lData <- result$lData
-        rv$step_index <- length(lWorkflow$steps)
+        # If all complete, collapse all
+        # active_wf stays NULL
       }
+
+      shiny::tagList(purrr::map(wf_names, function(wf_name) {
+        input_id <- wf_input_id(wf_name)
+        overlay_id <- wf_overlay_id(wf_name)
+        yaml_text <- rv$yaml_cache[[wf_name]]
+        if (!is.character(yaml_text) || length(yaml_text) != 1) {
+          yaml_text <- yaml::as.yaml(lWorkflows[[wf_name]])
+        }
+        steps_done <- rv$step_state[[wf_name]] %||% 0L
+        lw <- get_workflow_from_editor(wf_name)
+        n_steps <- if (is.null(lw)) 0L else length(lw$steps %||% list())
+        is_complete <- steps_done >= n_steps && n_steps > 0
+
+        card_class <- if (is_complete) "yaml-workflow-card wf-complete" else "yaml-workflow-card"
+        is_open <- identical(wf_name, active_wf)
+
+        body <- shiny::tags$div(
+          class = "yaml-workflow-body",
+          shiny::tags$textarea(
+            id = input_id,
+            class = "yaml-editor-textarea",
+            yaml_text
+          ),
+          shiny::tags$div(id = overlay_id, class = "yaml-overlay", render_yaml_progress(yaml_text, steps_done))
+        )
+
+        step_label <- paste0(steps_done, "/", n_steps)
+        summary_content <- shiny::tagList(
+          shiny::tags$span(wf_name),
+          shiny::tags$span(class = "wf-step-count", step_label)
+        )
+
+        if (has_multiple) {
+          shiny::tags$details(
+            class = card_class,
+            open = if (is_open) "open" else NULL,
+            shiny::tags$summary(summary_content),
+            body
+          )
+        } else {
+          shiny::tags$details(
+            class = card_class,
+            open = if (is_open) "open" else NULL,
+            shiny::tags$summary(summary_content),
+            body
+          )
+        }
+      }))
     })
 
-    # Run Step: execute one step at a time
-    shiny::observeEvent(input$run_step, {
-      yaml_text <- input$yaml_editor
-      lWorkflow <- yaml::yaml.load(yaml_text)
-      n_steps <- length(lWorkflow$steps)
-      next_step <- rv$step_index + 1L
-
-      if (next_step > n_steps) {
-        shiny::showNotification("All steps already executed. Select a new workflow or edit YAML.", type = "message")
+    # Run All: execute all workflows in the selected folder.
+    shiny::observeEvent(input$run_all, {
+      wf_names <- get_folder_workflows(rv$current_folder)
+      if (length(wf_names) == 0) {
+        append_log("[ERROR] No workflows available in selected folder.\n")
         return()
       }
 
-      step <- lWorkflow$steps[[next_step]]
-      append_log(paste0("--- Run Step ", next_step, ": ", step$name, " ---\n"))
+      append_log(paste0("--- Run All Folder: ", rv$current_folder, " ---\n"))
+      current_data <- rv$lData
+
+      for (wf_name in wf_names) {
+        lWorkflow <- get_workflow_from_editor(wf_name)
+        if (is.null(lWorkflow)) {
+          append_log(paste0("[ERROR] Failed to parse YAML for workflow `", wf_name, "`.\n"))
+          break
+        }
+
+        append_log(paste0("--- Workflow: ", wf_name, " ---\n"))
+        result <- capture_log({
+          RunWorkflow(lWorkflow, current_data, lConfig = lConfig, bReturnResult = FALSE)
+        })
+
+        if (is.null(result) || is.null(result$lData)) {
+          break
+        }
+
+        current_data <- normalize_lData(result$lData)
+        rv$step_state[[wf_name]] <- length(lWorkflow$steps %||% list())
+      }
+
+      rv$lData <- normalize_lData(current_data)
+    })
+
+    # Run Step: execute next pending step across workflows in selected folder.
+    shiny::observeEvent(input$run_step, {
+      wf_names <- get_folder_workflows(rv$current_folder)
+      if (length(wf_names) == 0) {
+        shiny::showNotification("No workflows available in selected folder.", type = "message")
+        return()
+      }
+
+      picked_wf <- NULL
+      picked_workflow <- NULL
+      next_step <- NULL
+
+      for (wf_name in wf_names) {
+        lWorkflow <- get_workflow_from_editor(wf_name)
+        if (is.null(lWorkflow)) {
+          next
+        }
+        n_steps <- length(lWorkflow$steps %||% list())
+        wf_done <- rv$step_state[[wf_name]] %||% 0L
+        if (wf_done < n_steps) {
+          picked_wf <- wf_name
+          picked_workflow <- lWorkflow
+          next_step <- wf_done + 1L
+          break
+        }
+      }
+
+      if (is.null(picked_wf)) {
+        shiny::showNotification("All steps already executed. Reset to run again.", type = "message")
+        return()
+      }
+
+      step <- picked_workflow$steps[[next_step]]
+      append_log(paste0("--- ", picked_wf, " | Run Step ", next_step, ": ", step$name, " ---\n"))
       result <- capture_log({
         RunStep(
           lStep = step,
           lData = rv$lData,
-          lMeta = lWorkflow$meta,
-          lSpec = lWorkflow$spec
+          lMeta = picked_workflow$meta,
+          lSpec = picked_workflow$spec
         )
       })
       if (!is.null(result)) {
         rv$lData[[step$output]] <- result
+        rv$lData <- normalize_lData(rv$lData)
       }
-      rv$step_index <- next_step
+      rv$step_state[[picked_wf]] <- next_step
     })
 
-    # Step status display
-    output$step_status <- shiny::renderText({
-      yaml_text <- input$yaml_editor
-      lWorkflow <- tryCatch(yaml::yaml.load(yaml_text), error = function(e) NULL)
-      n_steps <- if (!is.null(lWorkflow)) length(lWorkflow$steps) else 0
-      paste0("Step ", rv$step_index, " of ", n_steps)
+    # Disable run buttons when all steps are complete; re-enable otherwise.
+    shiny::observe({
+      wf_names <- get_folder_workflows(rv$current_folder)
+      if (length(wf_names) == 0) {
+        done <- TRUE
+      } else {
+        done <- all(purrr::map_lgl(wf_names, function(wf_name) {
+          lWorkflow <- get_workflow_from_editor(wf_name)
+          if (is.null(lWorkflow)) {
+            return(FALSE)
+          }
+          n_steps <- length(lWorkflow$steps %||% list())
+          (rv$step_state[[wf_name]] %||% 0L) >= n_steps
+        }))
+      }
+      session$sendCustomMessage("setButtonDisabled", list(id = "run_all", disabled = done))
+      session$sendCustomMessage("setButtonDisabled", list(id = "run_step", disabled = done))
     })
+
+    # Compute workflow/step summary (shared by header and yaml label)
+    wf_summary <- shiny::reactive({
+      wf_names <- get_folder_workflows(rv$current_folder)
+      if (length(wf_names) == 0) return("No workflows")
+      totals <- purrr::map_int(wf_names, function(wf_name) {
+        lWorkflow <- get_workflow_from_editor(wf_name)
+        if (is.null(lWorkflow)) 0L else length(lWorkflow$steps %||% list())
+      })
+      done <- purrr::map_int(wf_names, function(wf_name) rv$step_state[[wf_name]] %||% 0L)
+      wf_complete <- sum(done >= totals & totals > 0L)
+      paste0("Workflow ", wf_complete, "/", length(wf_names), ". Step ", sum(done), "/", sum(totals))
+    })
+
+    output$step_status <- shiny::renderText({ wf_summary() })
+    output$yaml_header <- shiny::renderText({ wf_summary() })
 
     # Reset: clear log for current workflow, reset data and step counter
     shiny::observeEvent(input$reset, {
-      wf <- lWorkflows[[input$workflow_select]]
-      yaml_text <- yaml::as.yaml(wf)
-      shiny::updateTextAreaInput(session, "yaml_editor", value = yaml_text)
-      rv$lData <- tryCatch(
-        get_workflow_data(wf),
-        error = function(e) {
-          append_log(paste0("[ERROR] ", conditionMessage(e), "\n"))
-          init_lData
-        }
-      )
-      rv$step_index <- 0L
-      rv$selected_key <- NULL
-      rv$logs[[rv$current_wf]] <- ""
+      initialize_folder_state(rv$current_folder, reset_logs = TRUE)
     })
 
     # Track selected data key
@@ -370,7 +642,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
     # Log output — show current workflow's log
     output$log_output <- shiny::renderText({
-      rv$logs[[rv$current_wf]]
+      rv$logs[[rv$current_folder]]
     })
   }
 }

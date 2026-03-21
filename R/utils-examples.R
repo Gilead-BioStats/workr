@@ -56,5 +56,7 @@ loadExample <- function(lWorkflow, lConfig = NULL, lData = NULL) {
     cli_detail = "h3"
   )
 
-  c(lData, initList)
+  # Merge defaults from initData with caller-provided lData without
+  # creating duplicate names; caller values take precedence.
+  utils::modifyList(initList, lData)
 }

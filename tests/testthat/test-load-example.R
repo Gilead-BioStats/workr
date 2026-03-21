@@ -44,3 +44,25 @@ test_that("loadExample validates initData return type", {
   wf <- list(path = file.path(td, "example.yaml"))
   expect_error(loadExample(wf, lData = list()), "must return a list")
 })
+
+test_that("loadExample does not create duplicate names on repeated calls", {
+  td <- tempfile("workflow_dir_")
+  dir.create(td, recursive = TRUE)
+
+  init_path <- file.path(td, "initData.R")
+  writeLines(
+    c(
+      "initData <- function() {",
+      "  list(df = datasets::cars)",
+      "}"
+    ),
+    init_path
+  )
+
+  wf <- list(path = file.path(td, "example.yaml"))
+  l1 <- loadExample(wf, lData = list())
+  l2 <- loadExample(wf, lData = l1)
+
+  expect_equal(anyDuplicated(names(l2)), 0)
+  expect_true("df" %in% names(l2))
+})

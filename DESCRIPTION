@@ -36,6 +36,7 @@ Suggests:
     rmarkdown,
     safetyCharts,
     sdtm.oak,
+    shiny,
     testthat (>= 3.0.0),
     yaml
 Remotes:

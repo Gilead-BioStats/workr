@@ -156,7 +156,7 @@ DemoApp_UI <- function(lWorkflows) {
     ),
     shiny::tags$div(class = "main-row",
       shiny::tags$div(class = "yaml-col",
-        shiny::tags$div(class = "col-label", shiny::textOutput("yaml_header", inline = TRUE)),
+        shiny::tags$div(class = "col-label", "lWorkflows"),
         shiny::tags$div(class = "yaml-editor-list", shiny::uiOutput("yaml_editors"))
       ),
       shiny::tags$div(class = "data-keys-col",
@@ -396,7 +396,8 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         # active_wf stays NULL
       }
 
-      shiny::tagList(purrr::map(wf_names, function(wf_name) {
+      shiny::tagList(lapply(seq_along(wf_names), function(i) {
+        wf_name <- wf_names[[i]]
         input_id <- wf_input_id(wf_name)
         overlay_id <- wf_overlay_id(wf_name)
         yaml_text <- rv$yaml_cache[[wf_name]]
@@ -422,8 +423,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         )
 
         step_label <- paste0(steps_done, "/", n_steps)
+        display_name <- paste0("Workflow ", i, ": ", wf_name)
         summary_content <- shiny::tagList(
-          shiny::tags$span(wf_name),
+          shiny::tags$span(display_name),
           shiny::tags$span(class = "wf-step-count", step_label)
         )
 
@@ -561,7 +563,6 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     })
 
     output$step_status <- shiny::renderText({ wf_summary() })
-    output$yaml_header <- shiny::renderText({ wf_summary() })
 
     # Reset: clear log for current workflow, reset data and step counter
     shiny::observeEvent(input$reset, {

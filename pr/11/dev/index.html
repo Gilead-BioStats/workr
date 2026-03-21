@@ -154,11 +154,37 @@
 <p>TODO add a simple example of chaining workflows. Add a note about <code>priority</code> parameter.</p>
 </div>
 <div class="section level3">
-<h3 id="workrrunproject-calls-multiple-sets-of-workflows-coming-soon">
-<code>workr::RunProject</code> calls multiple sets of workflows <strong>Coming Soon</strong>
-<a class="anchor" aria-label="anchor" href="#workrrunproject-calls-multiple-sets-of-workflows-coming-soon"></a>
+<h3 id="workrrunproject-calls-multiple-sets-of-workflows">
+<code>workr::RunProject</code> calls multiple sets of workflows<a class="anchor" aria-label="anchor" href="#workrrunproject-calls-multiple-sets-of-workflows"></a>
 </h3>
-<p>Last but not least, sometimes you want to chain multiple calls of <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. <code>workr::RunProject</code> calls <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> for every sub-directory in a given location starting with a single <code>lData</code> object.</p>
+<p>Last but not least, sometimes you want to chain multiple calls of <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. <code><a href="reference/RunProject.html">workr::RunProject()</a></code> calls <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> for every sub-directory (phase) in a given project directory, sharing one <code>lData</code> object across phases.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Project directory structure:</span></span>
+<span><span class="co"># project/</span></span>
+<span><span class="co">#   01_mapping/</span></span>
+<span><span class="co">#     ae.yaml</span></span>
+<span><span class="co">#     lb.yaml</span></span>
+<span><span class="co">#   02_analysis/</span></span>
+<span><span class="co">#     kri.yaml</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="reference/RunProject.html">RunProject</a></span><span class="op">(</span></span>
+<span>  strPath <span class="op">=</span> <span class="st">"project"</span>,</span>
+<span>  lData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>raw_data <span class="op">=</span> <span class="va">my_data</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Runs 01_mapping workflows first, then 02_analysis</span></span>
+<span><span class="co"># Outputs from 01_mapping are available as inputs to 02_analysis</span></span></code></pre></div>
+<p>Key options:</p>
+<ul>
+<li>
+<code>strPhases</code> — run a subset of phases, or control their order</li>
+<li>
+<code>bReturnResult</code> / <code>bKeepInputData</code> — passed through to <code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code>
+</li>
+<li>
+<code>bRecursive</code> — passed through to <code><a href="reference/MakeWorkflowList.html">MakeWorkflowList()</a></code>
+</li>
+</ul>
+<p>Phases are sorted alphabetically by default (use numeric prefixes like <code>01_</code>, <code>02_</code> to control order).</p>
 </div>
 <div class="section level3">
 <h3 id="workrsnapshot-combines-workflows-across-packages">

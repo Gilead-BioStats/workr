@@ -7,7 +7,11 @@ left and the resulting data on the right.
 ## Usage
 
 ``` r
-DemoApp_init(lWorkflows = NULL, lData = list(), lConfig = NULL)
+DemoApp_init(
+  lWorkflows = NULL,
+  lData = list(value = 2, cars = datasets::cars),
+  lConfig = NULL
+)
 ```
 
 ## Arguments
@@ -21,7 +25,7 @@ DemoApp_init(lWorkflows = NULL, lData = list(), lConfig = NULL)
 - lData:
 
   `list` Initial named list of data objects available to workflows.
-  Defaults to an empty list.
+  Defaults to `list(value = 2, cars = datasets::cars)`.
 
 - lConfig:
 

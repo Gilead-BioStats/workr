@@ -59,7 +59,11 @@ YAML (editable) on the left and the resulting data on the right.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">DemoApp_init</span><span class="op">(</span>lWorkflows <span class="op">=</span> <span class="cn">NULL</span>, lData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>, lConfig <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">DemoApp_init</span><span class="op">(</span></span>
+<span>  lWorkflows <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  lData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>value <span class="op">=</span> <span class="fl">2</span>, cars <span class="op">=</span> <span class="fu">datasets</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/r/datasets/cars.html" class="external-link">cars</a></span><span class="op">)</span>,</span>
+<span>  lConfig <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -74,7 +78,7 @@ shipped with workr.</p></dd>
 
 <dt id="arg-ldata">lData<a class="anchor" aria-label="anchor" href="#arg-ldata"></a></dt>
 <dd><p><code>list</code> Initial named list of data objects available to
-workflows. Defaults to an empty list.</p></dd>
+workflows. Defaults to <code>list(value = 2, cars = datasets::cars)</code>.</p></dd>
 
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>

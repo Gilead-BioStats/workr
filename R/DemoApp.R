@@ -246,6 +246,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       yaml_cache = default_yaml_cache
     )
 
+    html_resource_aliases <- new.env(parent = emptyenv())
+    html_resource_counter <- 0L
+
     # Keep yaml cache synchronized with live editor input.
     purrr::walk(workflow_names, function(wf_name) {
       shiny::observeEvent(input[[wf_input_id(wf_name)]], {
@@ -269,6 +272,37 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       x <- gsub("<", "&lt;", x, fixed = TRUE)
       x <- gsub(">", "&gt;", x, fixed = TRUE)
       x
+    }
+
+    is_html_file_path <- function(x) {
+      is.character(x) &&
+        length(x) == 1 &&
+        !is.na(x) &&
+        grepl("\\.html?$", x, ignore.case = TRUE) &&
+        file.exists(x)
+    }
+
+    get_html_resource_src <- function(path) {
+      norm_path <- tryCatch(
+        normalizePath(path, winslash = "/", mustWork = TRUE),
+        error = function(e) NULL
+      )
+      if (is.null(norm_path)) {
+        return(NULL)
+      }
+
+      dir_path <- dirname(norm_path)
+      if (exists(dir_path, envir = html_resource_aliases, inherits = FALSE)) {
+        alias <- get(dir_path, envir = html_resource_aliases, inherits = FALSE)
+      } else {
+        html_resource_counter <<- html_resource_counter + 1L
+        alias <- paste0("workr_html_", html_resource_counter)
+        shiny::addResourcePath(alias, dir_path)
+        assign(dir_path, alias, envir = html_resource_aliases)
+      }
+
+      file_name <- utils::URLencode(basename(norm_path), reserved = TRUE)
+      paste0("/", alias, "/", file_name)
     }
 
     render_yaml_progress <- function(yaml_text, steps_done) {
@@ -630,9 +664,28 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       obj <- rv$lData[[key]]
       if (is.data.frame(obj)) {
         shiny::tableOutput("detail_table")
+      } else if (is_html_file_path(obj)) {
+        shiny::uiOutput("detail_html")
       } else {
         shiny::verbatimTextOutput("detail_print")
       }
+    })
+
+    # HTML renderer for file path values that point to .html files
+    output$detail_html <- shiny::renderUI({
+      key <- rv$selected_key
+      if (is.null(key) || !key %in% names(rv$lData)) return(NULL)
+      obj <- rv$lData[[key]]
+      if (!is_html_file_path(obj)) return(NULL)
+      src <- get_html_resource_src(obj)
+      if (is.null(src)) {
+        return(shiny::tags$em("Unable to load HTML file."))
+      }
+
+      shiny::tags$iframe(
+        src = src,
+        style = "width: 100%; height: 100%; min-height: 420px; border: 0;"
+      )
     })
 
     # Table renderer for data.frames
@@ -640,7 +693,22 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       key <- rv$selected_key
       if (is.null(key) || !key %in% names(rv$lData)) return(NULL)
       obj <- rv$lData[[key]]
-      if (is.data.frame(obj)) obj else NULL
+      if (!is.data.frame(obj)) return(NULL)
+
+      # renderTable() uses xtable internally, which cannot print list columns.
+      has_list_cols <- vapply(obj, is.list, logical(1))
+      if (any(has_list_cols)) {
+        obj[has_list_cols] <- lapply(obj[has_list_cols], function(col) {
+          vapply(col, function(cell) {
+            if (is.null(cell)) return("NULL")
+            if (length(cell) == 0) return("[]")
+            if (is.atomic(cell) && length(cell) == 1) return(as.character(cell))
+            paste(capture.output(str(cell, give.attr = FALSE)), collapse = " ")
+          }, character(1))
+        })
+      }
+
+      obj
     })
 
     # Print renderer for everything else
@@ -649,6 +717,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       if (is.null(key) || !key %in% names(rv$lData)) return(invisible())
       obj <- rv$lData[[key]]
       if (is.data.frame(obj)) return(invisible())
+      if (is_html_file_path(obj)) return(invisible())
       str(obj)
     })
 

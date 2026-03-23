@@ -1,13 +1,5 @@
 initData <- function() {
   list(
-    ADVS = data.frame(
-      STUDYID = "test_study",
-      USUBJID = "test_study-001",
-      PARAMCD = "MAP",
-      VISIT = "VISIT1",
-      VSTPT = "PREDOSE",
-      AVAL = 93,
-      stringsAsFactors = FALSE
-    )
+    ADVS = arrow::read_parquet("inst/demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet")
   )
 }

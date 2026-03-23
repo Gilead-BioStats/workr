@@ -227,7 +227,15 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     wf_input_id <- function(wf_name) paste0("yaml_editor_", wf_id(wf_name))
     wf_overlay_id <- function(wf_name) paste0("yaml_overlay_", wf_id(wf_name))
 
-    default_yaml_cache <- purrr::map(lWorkflows, yaml::as.yaml)
+    workflow_to_yaml_text <- function(wf) {
+      wf_path <- wf$path %||% ""
+      if (is.character(wf_path) && length(wf_path) == 1 && nzchar(wf_path) && file.exists(wf_path)) {
+        return(paste(readLines(wf_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n"))
+      }
+      yaml::as.yaml(wf)
+    }
+
+    default_yaml_cache <- purrr::map(lWorkflows, workflow_to_yaml_text)
 
     rv <- shiny::reactiveValues(
       lData = init_lData,
@@ -297,7 +305,10 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
     get_workflow_from_editor <- function(wf_name) {
       yaml_text <- rv$yaml_cache[[wf_name]] %||% yaml::as.yaml(lWorkflows[[wf_name]])
-      lWorkflow <- tryCatch(yaml::yaml.load(yaml_text), error = function(e) NULL)
+      lWorkflow <- tryCatch(
+        yaml::yaml.load(yaml_text, eval.expr = TRUE),
+        error = function(e) NULL
+      )
       if (is.null(lWorkflow)) {
         return(NULL)
       }
@@ -324,7 +335,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       )
 
       for (wf_name in wf_names) {
-        rv$yaml_cache[[wf_name]] <- yaml::as.yaml(lWorkflows[[wf_name]])
+        rv$yaml_cache[[wf_name]] <- workflow_to_yaml_text(lWorkflows[[wf_name]])
         rv$step_state[[wf_name]] <- 0L
       }
 

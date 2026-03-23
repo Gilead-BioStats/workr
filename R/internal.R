@@ -42,6 +42,12 @@ GetStrFunctionIfNamespaced <- function(strName) {
     return(get(strName, envir = asNamespace("workr"), inherits = TRUE))
   }
 
+  # Fallback to the user search path so base/attached package functions
+  # like read.csv are available without explicit namespace qualification.
+  if (exists(strName, envir = .GlobalEnv, mode = "function", inherits = TRUE)) {
+    return(get(strName, envir = .GlobalEnv, mode = "function", inherits = TRUE))
+  }
+
   stop(glue::glue("Function '{strName}' not found."))
 }
 

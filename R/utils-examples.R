@@ -30,7 +30,9 @@ loadExample <- function(lWorkflow, lConfig = NULL, lData = NULL) {
     return(lData)
   }
 
-  initEnv <- new.env(parent = baseenv())
+  # Use the user's search path as parent so initData.R can call attached
+  # package functions (e.g., read.csv) without explicit namespace.
+  initEnv <- new.env(parent = globalenv())
   sys.source(initPath, envir = initEnv)
 
   stop_if(!exists("initData", envir = initEnv, mode = "function"),

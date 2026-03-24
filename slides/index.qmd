@@ -270,7 +270,11 @@ steps:
 :::
 ::: {.column width="48%"}
 ```R
-lData$vs_raw2 <- generate_oak_id_vars(raw_dat = lData$vs_raw, pat_var = "PATNUM", raw_src = "vitals")`
+lData$vs_raw2 <- generate_oak_id_vars(
+  raw_dat = lData$vs_raw,
+  pat_var = "PATNUM",
+  raw_src = "vitals"
+)
 ```
 :::
 :::

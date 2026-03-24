@@ -91,13 +91,10 @@ DemoApp_UI <- function(lWorkflows) {
             .yaml-workflow-card.wf-complete summary { background: #e6f4ea; color: #1f8a3a; }
             .yaml-workflow-card.wf-complete .wf-step-count { color: #6abf7b; }
             .yaml-workflow-card.wf-complete { border-color: #a8dab5; }
-            .yaml-workflow-body { position: relative; border-top: 1px solid #eee; }
-            .yaml-workflow-body .form-group { margin: 0; }
-            .yaml-workflow-body textarea { width: 100%; resize: none !important; font-family: monospace; font-size: 12px;
-               background: transparent; color: transparent; caret-color: #1a1a1a; z-index: 2; border: none; position: absolute; top: 0; left: 0; height: 100%; }
-            .yaml-overlay { padding: 8px 10px; background: #fff; z-index: 1; pointer-events: none; }
-      .yaml-overlay pre { margin: 0; font-family: monospace; font-size: 12px; white-space: pre; color: #1a1a1a; }
-      .yaml-done { color: #1f8a3a; font-weight: 600; }
+            .yaml-workflow-body { border-top: 1px solid #eee; padding: 8px 10px; max-height: 300px; overflow-y: auto; }
+            .yaml-workflow-body pre { margin: 0; font-family: monospace; font-size: 12px; white-space: pre; color: #1a1a1a; }
+            .yaml-done { color: #1f8a3a; font-weight: 600; }
+            .yaml-workflow-card .wf-edit-btn { font-size: 11px; padding: 2px 8px; margin-left: 8px; }
       .data-keys-col { flex: 1.5; display: flex; flex-direction: column; min-height: 0; }
       .detail-col { flex: 3.5; display: flex; flex-direction: column; min-height: 0; }
       .data-key { cursor: pointer; padding: 3px 8px; border-bottom: 1px solid #eee; font-size: 13px; }
@@ -120,28 +117,6 @@ DemoApp_UI <- function(lWorkflows) {
         var btn = document.getElementById(message.id);\
         if (!btn) return;\
         btn.disabled = !!message.disabled;\
-      });\
-      function syncYamlOverlay(textarea) {\
-        if (!textarea || !textarea.id) return;\
-        var overlayId = textarea.id.replace('yaml_editor_', 'yaml_overlay_');\
-        var ov = document.getElementById(overlayId);\
-        if (!ov) return;\
-        ov.scrollTop = textarea.scrollTop;\
-        ov.scrollLeft = textarea.scrollLeft;\
-      }\
-      document.addEventListener('scroll', function(e) {\
-        if (e.target && e.target.id && e.target.id.indexOf('yaml_editor_') === 0) syncYamlOverlay(e.target);\
-      }, true);\
-      document.addEventListener('input', function(e) {\
-        if (e.target && e.target.id && e.target.id.indexOf('yaml_editor_') === 0) {\
-          syncYamlOverlay(e.target);\
-          if (window.Shiny && window.Shiny.setInputValue) {\
-            window.Shiny.setInputValue(e.target.id, e.target.value, {priority: 'event'});\
-          }\
-        }\
-      }, true);\
-      document.addEventListener('DOMContentLoaded', function() {\
-        document.querySelectorAll('textarea[id^=\"yaml_editor_\"]').forEach(syncYamlOverlay);\
       });\
     ")),
     shiny::tags$h2("workr Demo"),
@@ -224,8 +199,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     folder_map <- split(workflow_names, workflow_folders)
 
     wf_id <- function(wf_name) gsub("[^A-Za-z0-9_]", "_", wf_name)
-    wf_input_id <- function(wf_name) paste0("yaml_editor_", wf_id(wf_name))
-    wf_overlay_id <- function(wf_name) paste0("yaml_overlay_", wf_id(wf_name))
+    wf_edit_btn_id <- function(wf_name) paste0("yaml_edit_", wf_id(wf_name))
 
     workflow_to_yaml_text <- function(wf) {
       wf_path <- wf$path %||% ""
@@ -249,14 +223,47 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     html_resource_aliases <- new.env(parent = emptyenv())
     html_resource_counter <- 0L
 
-    # Keep yaml cache synchronized with live editor input.
+    # Track which workflow is being edited in the modal.
+    editing_wf_name <- shiny::reactiveVal(NULL)
+
+    # Edit button observers: open a modal for each workflow.
     purrr::walk(workflow_names, function(wf_name) {
-      shiny::observeEvent(input[[wf_input_id(wf_name)]], {
-        new_val <- input[[wf_input_id(wf_name)]]
-        if (is.character(new_val) && length(new_val) == 1) {
-          rv$yaml_cache[[wf_name]] <- new_val
-        }
+      shiny::observeEvent(input[[wf_edit_btn_id(wf_name)]], {
+        yaml_text <- rv$yaml_cache[[wf_name]] %||% yaml::as.yaml(lWorkflows[[wf_name]])
+        editing_wf_name(wf_name)
+        shiny::showModal(shiny::modalDialog(
+          title = paste0("Edit: ", wf_name),
+          shiny::textAreaInput(
+            "modal_yaml_editor",
+            label = NULL,
+            value = yaml_text,
+            width = "100%",
+            height = "400px"
+          ),
+          shiny::tags$style(".modal-body #modal_yaml_editor { font-family: monospace; font-size: 13px; }"),
+          footer = shiny::tagList(
+            shiny::modalButton("Cancel"),
+            shiny::actionButton("modal_yaml_save", "Save & Reset", class = "btn-primary")
+          ),
+          size = "l",
+          easyClose = TRUE
+        ))
       }, ignoreInit = TRUE)
+    })
+
+    # Modal save: update cache, reset that workflow's folder, close modal.
+    shiny::observeEvent(input$modal_yaml_save, {
+      new_yaml <- input$modal_yaml_editor
+      wf_name <- editing_wf_name()
+      if (is.character(new_yaml) && length(new_yaml) == 1 &&
+          is.character(wf_name) && length(wf_name) == 1 && nzchar(wf_name)) {
+        rv$yaml_cache[[wf_name]] <- new_yaml
+        # Reset the folder so the change takes effect (but keep edited yaml)
+        initialize_folder_state(rv$current_folder, reset_logs = FALSE, reset_yaml = FALSE)
+        append_log(paste0("[INFO] YAML updated for `", wf_name, "`. Workflow reset.\n"))
+      }
+      editing_wf_name(NULL)
+      shiny::removeModal()
     })
 
     normalize_lData <- function(x) {
@@ -352,7 +359,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       lWorkflow
     }
 
-    initialize_folder_state <- function(folder_name, reset_logs = FALSE) {
+    initialize_folder_state <- function(folder_name, reset_logs = FALSE, reset_yaml = TRUE) {
       wf_names <- get_folder_workflows(folder_name)
       if (length(wf_names) == 0) {
         rv$lData <- init_lData
@@ -369,7 +376,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       )
 
       for (wf_name in wf_names) {
-        rv$yaml_cache[[wf_name]] <- workflow_to_yaml_text(lWorkflows[[wf_name]])
+        if (isTRUE(reset_yaml)) {
+          rv$yaml_cache[[wf_name]] <- workflow_to_yaml_text(lWorkflows[[wf_name]])
+        }
         rv$step_state[[wf_name]] <- 0L
       }
 
@@ -422,8 +431,6 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         return(shiny::tags$em("No workflows found in this folder."))
       }
 
-      has_multiple <- length(wf_names) > 1
-
       # Determine which workflow should be expanded: first incomplete one
       # But only expand if at least one step has been run (collapse all initially)
       any_started <- any(purrr::map_lgl(wf_names, function(wn) (rv$step_state[[wn]] %||% 0L) > 0L))
@@ -443,8 +450,6 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
       shiny::tagList(lapply(seq_along(wf_names), function(i) {
         wf_name <- wf_names[[i]]
-        input_id <- wf_input_id(wf_name)
-        overlay_id <- wf_overlay_id(wf_name)
         yaml_text <- rv$yaml_cache[[wf_name]]
         if (!is.character(yaml_text) || length(yaml_text) != 1) {
           yaml_text <- yaml::as.yaml(lWorkflows[[wf_name]])
@@ -459,36 +464,27 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
         body <- shiny::tags$div(
           class = "yaml-workflow-body",
-          shiny::tags$textarea(
-            id = input_id,
-            class = "yaml-editor-textarea",
-            yaml_text
-          ),
-          shiny::tags$div(id = overlay_id, class = "yaml-overlay", render_yaml_progress(yaml_text, steps_done))
+          render_yaml_progress(yaml_text, steps_done)
         )
 
         step_label <- paste0(steps_done, "/", n_steps)
         display_name <- paste0("Workflow ", i, ": ", wf_name)
         summary_content <- shiny::tagList(
           shiny::tags$span(display_name),
+          shiny::actionButton(
+            wf_edit_btn_id(wf_name), "Edit",
+            class = "btn-xs wf-edit-btn",
+            onclick = "event.stopPropagation(); event.preventDefault();"
+          ),
           shiny::tags$span(class = "wf-step-count", step_label)
         )
 
-        if (has_multiple) {
-          shiny::tags$details(
-            class = card_class,
-            open = if (is_open) "open" else NULL,
-            shiny::tags$summary(summary_content),
-            body
-          )
-        } else {
-          shiny::tags$details(
-            class = card_class,
-            open = if (is_open) "open" else NULL,
-            shiny::tags$summary(summary_content),
-            body
-          )
-        }
+        shiny::tags$details(
+          class = card_class,
+          open = if (is_open) "open" else NULL,
+          shiny::tags$summary(summary_content),
+          body
+        )
       }))
     })
 

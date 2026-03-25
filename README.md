@@ -87,9 +87,6 @@ While `workr::RunWorkflow` runs all the `steps` in a single workflow, `workr::Ru
 - `workr::MakeWorkflowList()` is an easy way to read a whole folder of YAML workflows into the format expected for `workr::RunWorkflows()`.
 - `workr::MakeWorkflowList()` reorders workflows based on `meta$priority`, so if you need things to run in a certain order, make sure to set that parameter. If nothing is provided, `priority` is set to 0.
 
-
-TODO add a simple example of chaining workflows. Add a note about `priority` parameter.
-
 ### `workr::RunProject` calls multiple sets of workflows
 
 Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject()` calls `workr::RunWorkflows()` for every sub-directory (phase) in a given project directory, sharing one `lData` object across phases.
@@ -140,12 +137,16 @@ YAML workflows can be a little hard to follow, especially when you're running a 
 
 ### {workr} Shiny app
 
-(TODO Add summary and link)
+![](slides/images/example3.png)
+
+`workr::DemoApp_init()` launches a simple Shiny app application that lets you explore and run workflows in real time. 
+
 
 ### open.gismo
 
-(TODO Add summary and link)
+![](slides/images/gsmexplorer.png)
 
+[open.gismo](https://github.com/Gilead-BioStats/open.gismo) is an end-to-end platform for running {workr} projects on GitHub. 
 
 ## Automation via GitHub Actions
 

@@ -26,7 +26,7 @@ A **very** simple R data pipeline
 TODO: Add hex logo when available
 :::
 
-## {workr} workflows are `lists` saved as YAML files
+## {workr} workflows are YAML files <above>easily parsed to an R `list` </above>
 
 ```yaml
 # hello_cars.yaml
@@ -62,7 +62,7 @@ steps:
     params:
       lData: speed
 ```
-## `steps` list function calls
+## `steps` are function calls
 
 ```{.yaml code-line-numbers="5-14"}
 # hello_cars.yaml
@@ -128,7 +128,7 @@ steps:
 
 ## <above>`workr::demoApp()`</above> Example 2: Chaining Workflows
 
-TODO: screenshot Shiny APP
+![](images/example2.png)
 
 ## That’s really about it
 
@@ -204,7 +204,7 @@ TODO: screenshot Shiny APP
 
 ## <above>`workr::demoApp()`</above> Example 3: AE KRI Workflow 
 
-TODO screenshot Shiny APP
+![](images/example3.png)
 
 ## <above> {gsm} extensions </above> Robust Reporting and Visualization Layer
 
@@ -250,7 +250,6 @@ TODO screenshot Shiny APP
 ![](images/report-gsm-deep-dive-app.png){fig-alt="{gsm} Deep Dive App screenshot"}
 
 <p class="img-caption"><a href="https://rinpharma.shinyapps.io/gsm-app/">Open app</a></p>
-
 
 ## Overall study workflow
 ![](images/data_model_simple.png)

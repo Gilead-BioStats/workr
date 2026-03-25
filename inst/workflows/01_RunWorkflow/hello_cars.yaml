@@ -3,6 +3,10 @@ meta:
   Type: Example
   col: speed
 steps:
+  - name: get # function to be called
+    output: df # output saved as `lData$df`
+    params:
+      x: "cars" # `cars` dataset
   - name: dplyr::pull # function to be called
     output: speed # output saved as `lData$speed`
     params:

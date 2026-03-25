@@ -1,0 +1,17 @@
+meta:
+  ID: mean
+  Type: Example
+  Description: Calculate mean of siresn column
+  Priority: 2
+  col: siresn
+steps:
+  - name: dplyr::pull
+    output: values
+    params:
+      .data: df
+      var: col
+  - name: mean
+    output: result
+    params:
+      'x': values
+      na.rm: true

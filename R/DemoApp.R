@@ -82,8 +82,11 @@ DemoApp_UI <- function(lWorkflows) {
       .header-row select { height: 30px; padding: 2px 8px; }
       .header-row .btn { padding: 4px 12px; }
       .header-row .step-status { color: #888; font-size: 13px; margin-left: auto; }
-      .main-row { flex: 1; display: flex; gap: 8px; min-height: 0; overflow: hidden; }
-      .yaml-col { flex: 5; display: flex; flex-direction: column; min-height: 0; }
+      .main-row { flex: 1; display: flex; gap: 0; min-height: 0; overflow: hidden; }
+      .panel-resize-handle { width: 5px; cursor: col-resize; background: #e0e0e0; flex-shrink: 0;
+                             transition: background 0.2s; }
+      .panel-resize-handle:hover, .panel-resize-handle.dragging { background: #337ab7; }
+      .yaml-col { flex: 5; display: flex; flex-direction: column; min-height: 0; min-width: 100px; }
             .yaml-editor-list { flex: 1; min-height: 0; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 6px; }
             .yaml-workflow-card { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 6px; background: #fff; }
             .yaml-workflow-card summary { cursor: pointer; padding: 8px 10px; font-weight: 600; user-select: none; transition: background 0.3s, color 0.3s; display: flex; justify-content: space-between; align-items: center; }
@@ -95,20 +98,24 @@ DemoApp_UI <- function(lWorkflows) {
             .yaml-workflow-body pre { margin: 0; font-family: monospace; font-size: 12px; white-space: pre; color: #1a1a1a; }
             .yaml-done { color: #1f8a3a; font-weight: 600; }
             .yaml-workflow-card .wf-edit-btn { font-size: 11px; padding: 2px 8px; margin-left: 8px; }
-      .data-keys-col { flex: 1.5; display: flex; flex-direction: column; min-height: 0; }
-      .detail-col { flex: 3.5; display: flex; flex-direction: column; min-height: 0; }
+      .data-keys-col { flex: 1.5; display: flex; flex-direction: column; min-height: 0; min-width: 80px; }
+      .detail-col { flex: 3.5; display: flex; flex-direction: column; min-height: 0; min-width: 100px; }
       .data-key { cursor: pointer; padding: 3px 8px; border-bottom: 1px solid #eee; font-size: 13px; }
       .data-key:hover { background: #f0f0f0; }
       .data-key.active { background: #337ab7; color: #fff; }
       .data-key-list { border: 1px solid #ddd; border-radius: 4px; overflow-y: auto; flex: 1; }
       .data-detail { border: 1px solid #ddd; border-radius: 4px; padding: 8px; overflow: auto; flex: 1; }
+      .data-detail table { white-space: nowrap; }
       .col-label { font-weight: bold; font-size: 13px; margin-bottom: 2px; flex-shrink: 0; }
-      .log-section { flex-shrink: 0; margin-top: 4px; }
+      .log-section { flex-shrink: 0; margin-top: 0; }
+      .log-resize-handle { height: 5px; cursor: row-resize; background: #e0e0e0; flex-shrink: 0;
+                          transition: background 0.2s; }
+      .log-resize-handle:hover, .log-resize-handle.dragging { background: #337ab7; }
       .log-toggle { cursor: pointer; padding: 4px 10px; background: #f5f5f5; border: 1px solid #ddd;
                     border-radius: 4px 4px 0 0; font-weight: bold; user-select: none; font-size: 12px; }
       .log-toggle:hover { background: #e8e8e8; }
       .log-panel { border: 1px solid #ddd; border-top: none; border-radius: 0 0 4px 4px;
-                   max-height: 120px; overflow-y: auto; padding: 6px; font-family: monospace;
+                   height: 120px; overflow-y: auto; padding: 6px; font-family: monospace;
                    font-size: 11px; background: #1e1e1e; color: #d4d4d4; white-space: pre-wrap; }
       .log-panel #log_output { margin: 0; padding: 0; background: transparent; border: none; color: inherit; }
     ")),
@@ -117,6 +124,65 @@ DemoApp_UI <- function(lWorkflows) {
         var btn = document.getElementById(message.id);\
         if (!btn) return;\
         btn.disabled = !!message.disabled;\
+      });\
+      document.addEventListener('DOMContentLoaded', function() {\
+        document.querySelectorAll('.panel-resize-handle').forEach(function(handle) {\
+          handle.addEventListener('mousedown', function(e) {\
+            e.preventDefault();\
+            var prev = handle.previousElementSibling;\
+            var next = handle.nextElementSibling;\
+            if (!prev || !next) return;\
+            handle.classList.add('dragging');\
+            var startX = e.clientX;\
+            var prevW = prev.getBoundingClientRect().width;\
+            var nextW = next.getBoundingClientRect().width;\
+            function onMove(e2) {\
+              var dx = e2.clientX - startX;\
+              var newPrev = Math.max(80, prevW + dx);\
+              var newNext = Math.max(80, nextW - dx);\
+              prev.style.flex = 'none';\
+              next.style.flex = 'none';\
+              prev.style.width = newPrev + 'px';\
+              next.style.width = newNext + 'px';\
+            }\
+            function onUp() {\
+              handle.classList.remove('dragging');\
+              document.removeEventListener('mousemove', onMove);\
+              document.removeEventListener('mouseup', onUp);\
+            }\
+            document.addEventListener('mousemove', onMove);\
+            document.addEventListener('mouseup', onUp);\
+          });\
+        });\
+        var logHandle = document.querySelector('.log-resize-handle');\
+        if (logHandle) {\
+          logHandle.addEventListener('mousedown', function(e) {\
+            e.preventDefault();\
+            var logPanel = document.getElementById('log-panel');\
+            var mainRow = document.querySelector('.main-row');\
+            if (!logPanel || !mainRow) return;\
+            logHandle.classList.add('dragging');\
+            var startY = e.clientY;\
+            var logH = logPanel.getBoundingClientRect().height;\
+            var mainH = mainRow.getBoundingClientRect().height;\
+            function onMove(e2) {\
+              var dy = startY - e2.clientY;\
+              var newLogH = Math.max(40, logH + dy);\
+              var newMainH = Math.max(80, mainH - dy);\
+              logPanel.style.height = newLogH + 'px';\
+              logPanel.style.maxHeight = 'none';\
+              mainRow.style.flex = 'none';\
+              mainRow.style.height = newMainH + 'px';\
+            }\
+            function onUp() {\
+              logHandle.classList.remove('dragging');\
+              document.removeEventListener('mousemove', onMove);\
+              document.removeEventListener('mouseup', onUp);\
+            }\
+            document.addEventListener('mousemove', onMove);\
+            document.addEventListener('mouseup', onUp);\
+          });\
+        }\
       });\
     ")),
     shiny::tags$h2("workr Demo"),
@@ -134,12 +200,14 @@ DemoApp_UI <- function(lWorkflows) {
         shiny::tags$div(class = "col-label", "lWorkflows"),
         shiny::tags$div(class = "yaml-editor-list", shiny::uiOutput("yaml_editors"))
       ),
+      shiny::tags$div(class = "panel-resize-handle"),
       shiny::tags$div(class = "data-keys-col",
         shiny::tags$div(class = "col-label", "lData"),
         shiny::tags$div(class = "data-key-list",
           shiny::uiOutput("data_keys")
         )
       ),
+      shiny::tags$div(class = "panel-resize-handle"),
       shiny::tags$div(class = "detail-col",
         shiny::tags$div(class = "col-label", shiny::textOutput("detail_title", inline = TRUE)),
         shiny::tags$div(class = "data-detail",
@@ -147,6 +215,7 @@ DemoApp_UI <- function(lWorkflows) {
         )
       )
     ),
+    shiny::tags$div(class = "log-resize-handle"),
     shiny::tags$div(class = "log-section",
       shiny::tags$div(
         class = "log-toggle",
@@ -520,6 +589,8 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       }
 
       rv$lData <- normalize_lData(current_data)
+      keys <- names(rv$lData)
+      if (length(keys) > 0) rv$selected_key <- keys[[length(keys)]]
     })
 
     # Run Step: execute next pending step across workflows in selected folder.
@@ -567,6 +638,7 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       if (!is.null(result)) {
         rv$lData[[step$output]] <- result
         rv$lData <- normalize_lData(rv$lData)
+        rv$selected_key <- step$output
       }
       rv$step_state[[picked_wf]] <- next_step
     })

@@ -4,14 +4,18 @@ project:
 
 format:
   revealjs:
-    theme: simple
+    theme: black
     css: styles.css
-    transition: slide
     slide-number: true
+    hash: true
+    transition: none
+    background-transition: none
+    controls-tutorial: false
+    navigation-mode: linear
     link-external-newwindow: true
 
-author: "TBD"
-date: "2026-02"
+author: "Zelos Zhu + Jeremy Wildfire"
+date: "2025-03-20"
 
 execute:
   echo: true

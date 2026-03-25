@@ -45,6 +45,29 @@
 RunStep <- function(lStep, lData, lMeta, lSpec = NULL) {
   params <- lStep$params
 
+  parse_expr_param <- function(paramVal) {
+    if (!is.character(paramVal) || length(paramVal) != 1) {
+      return(paramVal)
+    }
+
+    txt <- trimws(paramVal)
+    if (!grepl("^(rlang::)?exprs?\\(", txt)) {
+      return(paramVal)
+    }
+
+    if (grepl("^exprs\\(", txt)) {
+      txt <- sub("^exprs\\(", "rlang::exprs(", txt)
+    } else if (grepl("^expr\\(", txt)) {
+      txt <- sub("^expr\\(", "rlang::expr(", txt)
+    }
+
+    parsed <- tryCatch(
+      eval(parse(text = txt), envir = globalenv()),
+      error = function(e) paramVal
+    )
+    parsed
+  }
+
   if (is.null(params)) {
     params <- list()
   }
@@ -56,7 +79,7 @@ RunStep <- function(lStep, lData, lMeta, lSpec = NULL) {
 
   for (paramName in names(params)) {
     paramVal <- params[[paramName]]
-    if (length(paramVal) == 1) {
+    if (length(paramVal) == 1 && is.character(paramVal)) {
       if (paramVal == "lMeta") {
         LogMessage(
           level = "info",
@@ -93,11 +116,21 @@ RunStep <- function(lStep, lData, lMeta, lSpec = NULL) {
         )
         params[[paramName]] <- lData[[paramVal]]
       } else {
-        LogMessage(
-          level = "info",
-          message = "{paramName} = {paramVal}: No matching data found. Passing '{paramVal}' as a string.",
-          cli_detail = "alert_info"
-        )
+        parsed_val <- parse_expr_param(paramVal)
+        if (!identical(parsed_val, paramVal)) {
+          LogMessage(
+            level = "info",
+            message = "{paramName} = {paramVal}: Parsed expression parameter.",
+            cli_detail = "alert_success"
+          )
+          params[[paramName]] <- parsed_val
+        } else {
+          LogMessage(
+            level = "info",
+            message = "{paramName} = {paramVal}: No matching data found. Passing '{paramVal}' as a string.",
+            cli_detail = "alert_info"
+          )
+        }
       }
     } else {
       LogMessage(

@@ -15,7 +15,8 @@ steps:
   - output: table1
     name: rmarkdown::render
     params:
-      input: !expr  here::here("demo_gsmpharmaverse", "report_templates", "WorkProduct1.Rmd")
-      output_file: !expr   here::here("demo_gsmpharmaverse", "TFLS", "WorkProduct1.html")
-      envir: !expr new.env(parent = globalenv())
+      input: inst/demo_gsmpharmaverse/report_templates/WorkProduct1.Rmd
+      output_file: WorkProduct1.html
+      output_dir: inst/demo_gsmpharmaverse/TFLS
+      envir: render_env
       params: lParams

@@ -1,0 +1,9 @@
+meta:
+  Type: phase2
+  ID: add_twenty
+steps:
+  - name: sum_step
+    output: result_p2
+    params:
+      lData: lData
+      "y": value

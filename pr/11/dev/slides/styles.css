@@ -1,3 +1,184 @@
+/* ============================================================
+   SlideAI framework (from github.com/jwildfire/slideai)
+   ============================================================ */
+
+/* --- Typography: disable forced uppercase on headings --- */
+.reveal .slides section h1,
+.reveal .slides section h2,
+.reveal .slides section h3,
+.reveal .slides section h4,
+.reveal .slides section h5,
+.reveal .slides section h6,
+.reveal #title-slide .title,
+.reveal #title-slide .subtitle {
+  text-transform: none !important;
+}
+
+/* --- <above> super-heading pattern --- */
+.reveal .slides section h1 above,
+.reveal .slides section h2 above,
+.reveal .slides section h3 above,
+.reveal .slides section h4 above {
+  display: block;
+  font-size: 50%;
+  line-height: 1.1;
+}
+
+/* --- Image captions --- */
+.reveal .slides section .img-caption {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.52em;
+  line-height: 1.2;
+  opacity: 0.88;
+  text-align: center;
+}
+
+/* --- Table-of-contents box --- */
+.reveal .slides section .tocbox {
+  position: relative;
+  margin-top: 0.8rem;
+  padding: 1.3rem 2.6rem 1.2rem 1.5rem;
+  border: 1px solid currentColor;
+  border-radius: 14px;
+  background: rgba(127, 127, 127, 0.08);
+  text-align: left;
+}
+
+.reveal .slides section .tocbox::before {
+  content: "☰";
+  position: absolute;
+  top: 0.45rem;
+  right: 0.55rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  background: inherit;
+}
+
+.reveal .slides section .tocbox ol {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+
+.reveal .slides section .tocbox li {
+  margin: 0.1rem 0;
+}
+
+/* --- Auto-reference list --- */
+.reveal .auto-ref-list {
+  font-size: 0.62em;
+  line-height: 1.35;
+}
+
+.reveal .auto-ref-list li {
+  margin-bottom: 0.35em;
+  word-break: break-all;
+}
+
+.reveal .slides section a.auto-inline-ref,
+.reveal .slides section a.auto-inline-ref:visited {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-color: #4ea1ff;
+  text-underline-offset: 0.08em;
+}
+
+.reveal .slides section a.auto-inline-ref .auto-inline-ref-mark {
+  color: #4ea1ff;
+}
+
+/* --- Small callouts --- */
+.reveal .slides section .callout-note.small,
+.reveal .slides section .callout-important.small,
+.reveal .slides section .callout-tip.small {
+  font-size: 0.72em;
+  line-height: 1.25;
+  opacity: 0.9;
+}
+
+/* --- Full-image slide pattern --- */
+.reveal .slides section.full-image-slide {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 0 !important;
+}
+
+.reveal .slides section.full-image-slide > h2 {
+  order: 2;
+  margin: 0.3rem 0.8rem 0.25rem;
+  font-size: 1.24em;
+  line-height: 1.1;
+  text-align: left;
+}
+
+.reveal .slides section.full-image-slide > p:first-of-type {
+  order: 1;
+  margin: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.reveal .slides section.full-image-slide > p:first-of-type img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  margin: 0;
+}
+
+.reveal .slides section.full-image-slide > p:not(:first-of-type) {
+  order: 3;
+  margin: 0 0.8rem 0.25rem;
+  font-size: 0.42em;
+  line-height: 1.2;
+  text-align: left;
+}
+
+/* --- Chat-message bubble --- */
+.reveal .slides section .chat-message {
+  position: relative;
+  margin-top: 0.8rem;
+  padding: 1.1rem 2.6rem 1.05rem 1.2rem;
+  border: none;
+  border-radius: 14px;
+  background: #0a84ff;
+  color: #ffffff;
+  font-size: 0.62em;
+  text-align: left;
+  line-height: 1.28;
+}
+
+.reveal .slides section .chat-message p,
+.reveal .slides section .chat-message li,
+.reveal .slides section .chat-message span {
+  font-size: inherit;
+}
+
+.reveal .slides section .chat-message a,
+.reveal .slides section .chat-message a:visited {
+  color: #ffffff;
+}
+
+.reveal .slides section .chat-message::before {
+  content: "💬";
+  position: absolute;
+  top: 0.45rem;
+  right: 0.55rem;
+  font-size: 0.72rem;
+}
+
+/* ============================================================
+   workr deck customizations
+   ============================================================ */
+
 /* Keep code previews from taking over slide height. */
 .reveal pre {
   margin: 0.3em auto;
@@ -10,8 +191,8 @@
 
 .reveal pre.sourceCode > code.sourceCode {
   display: block;
-  max-height: 13em;
-  overflow-y: auto;
+  max-height: none;
+  overflow-y: visible;
   overflow-x: auto;
   line-height: 1.15;
   padding: 0.5em 0.65em;
@@ -20,7 +201,7 @@
 /* YAML blocks are often taller because of indentation and comments. */
 .reveal pre.sourceCode.yaml > code.sourceCode,
 .reveal pre.sourceCode.yml > code.sourceCode {
-  max-height: 9em;
+  max-height: none;
 }
 
 /* Keep side-by-side code panes aligned on the CT comparison slide. */
@@ -60,20 +241,6 @@
   margin-bottom: 0.2em;
 }
 
-/* Tighten the TFL Render Rmarkdown (2) slide to fit on one page. */
-.reveal section.tfl-rmd-notes {
-  font-size: 0.82em;
-}
-
-.reveal section.tfl-rmd-notes h2 {
-  margin-bottom: 0.2em;
-}
-
-.reveal section.tfl-rmd-notes li {
-  line-height: 1.18;
-  margin-bottom: 0.2em;
-}
-
 /* Slightly tighten the ADaM MAP notes slide to avoid clipping. */
 .reveal section.adam-map-notes {
   font-size: 0.86em;
@@ -86,4 +253,96 @@
 .reveal section.adam-map-notes li {
   line-height: 1.18;
   margin-bottom: 0.25em;
+}
+
+/* --- Workflow grid cards (from gsm.core IntroGsmSlides) --- */
+
+.reveal .slides section .workflow-grid {
+  margin-top: 0.04rem;
+  font-size: 0.39em;
+  line-height: 1.08;
+}
+
+.reveal .slides section .workflow-grid .columns {
+  display: flex;
+  gap: 0.28rem;
+}
+
+.reveal .slides section .workflow-grid .column {
+  display: flex;
+  flex-direction: column;
+}
+
+.reveal .slides section .workflow-grid h3 {
+  margin: 0 0 0.04rem;
+  text-align: center;
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.reveal .slides section .workflow-card {
+  margin: 0 0 5px;
+  padding: 0.03rem 0.14rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  text-align: left;
+  font-size: 0.84em;
+  line-height: 1;
+}
+
+.reveal .slides section .workflow-card strong {
+  display: block;
+  margin: 0;
+  font-size: 1.5em;
+  line-height: 1.02;
+}
+
+.reveal .slides section .workflow-card br {
+  display: none;
+}
+
+.reveal .slides section .workflow-card.role-human {
+  border-color: #4ea1ff;
+  background: rgba(78, 161, 255, 0.24);
+}
+
+.reveal .slides section .workflow-card.role-human strong {
+  color: #7fc0ff;
+}
+
+.reveal .slides section .workflow-card.role-automated {
+  border-color: #5fd08a;
+  background: rgba(95, 208, 138, 0.24);
+}
+
+.reveal .slides section .workflow-card.role-automated strong {
+  color: #9ff0bf;
+}
+
+.reveal .slides section .workflow-grid.workflow-multi-kri {
+  margin-top: 0.08rem;
+}
+
+.reveal .slides section .workflow-grid.workflow-multi-kri .workflow-row {
+  display: flex;
+  gap: 0.22rem;
+  margin-bottom: 0.18rem;
+}
+
+.reveal .slides section .workflow-grid.workflow-multi-kri .workflow-row .workflow-card {
+  flex: 1 1 auto;
+  margin: 0;
+}
+
+.reveal .slides section .workflow-grid.workflow-multi-kri .workflow-row.ten-up .workflow-card {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.02rem 0.06rem;
+}
+
+.reveal .slides section .workflow-grid.workflow-multi-kri .workflow-row.ten-up .workflow-card strong {
+  font-size: 1.15em;
+  text-align: center;
+}
 }

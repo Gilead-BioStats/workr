@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="index.html">workr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.99.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,41 +70,42 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="workr">workr<a class="anchor" aria-label="anchor" href="#workr"></a>
 </h1></div>
-<p>A <strong>very</strong> simple R data pipeline framework.</p>
+<p>A <strong>very</strong> simple R data pipeline framework. {workr} provides a minimal mental model for describing and executing step-by-step workflows. These simple workflows can be combined into configurable data pipelines that can automate large tasks.</p>
 <div class="section level2">
 <h2 id="what-is-workr">What is {workr}?<a class="anchor" aria-label="anchor" href="#what-is-workr"></a>
 </h2>
-<p>{workr} provides a minimal mental model for describing and executing data workflows:</p>
+<p>{workr} was built to solve a specific problem: <strong>reusable, customizable data pipelines for complex clinical trial monitoring</strong>.</p>
+<p>The core functions in {workr} were originally developed as part of the <a href="https://gilead-biostats.github.io/gsm.core/index.html" class="external-link">{gsm} framework</a> for risk-based quality monitoring (RBQM). The {gsm} team developed a <a href="https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html" class="external-link">stable, reusable model for generating metrics</a> to monitor clinical trials.</p>
+<p>Our challenge was figuring out how to run those metrics across a large portfolio.</p>
+<p>Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps, and you get 27,000 computations per year. Each study also has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.</p>
+<p>{workr}’s solution: Define workflows once, track customizations in YAML files, and compose them into larger pipelines.</p>
+<p>The original <code>gsm::RunWorkflow</code> functions were developed in a few hours and were seen as a stopgap until we picked a “real” pipeline.</p>
+<p>The approach has proven to be surprisingly stable and flexible. So much so that we’ve created {workr} and started using it outside of our {gsm} pipelines.</p>
+</div>
+<div class="section level2">
+<h2 id="workr-workflows">{workr} workflows<a class="anchor" aria-label="anchor" href="#workr-workflows"></a>
+</h2>
+<p>{workr} workflows are <code>list</code> objects that are typically defined in <code>yaml</code> files. Each workflow has the following components:</p>
 <ul>
-<li>
-<strong>Workflows</strong> are YAML files with <code>meta</code> (workflow metadata) and <code>steps</code> (ordered list of function calls)</li>
 <li>
 <strong>Steps</strong> are functions that accept data and parameters, producing output that gets added to the shared data list</li>
 <li>
 <strong>Meta</strong> is workflow-level configuration accessible to all steps</li>
+<li>
+<strong>Spec</strong> optional data specification defining expected input data for the workflow.</li>
 </ul>
-<p>The package provides three core functions:</p>
+<p>The package provides three core functions for running workflows:</p>
 <ul>
 <li>
-<code><a href="reference/RunStep.html">RunStep()</a></code> - execute a single workflow step</li>
+<code><a href="reference/RunStep.html">workr::RunStep()</a></code> - execute a single workflow step</li>
 <li>
-<code><a href="reference/RunWorkflow.html">RunWorkflow()</a></code> - execute a workflow specification (YAML)</li>
+<code><a href="reference/RunWorkflow.html">workr::RunWorkflow()</a></code> - execute a workflow specification (YAML)</li>
 <li>
-<code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code> - run multiple workflows in sequence</li>
+<code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> - run multiple workflows in sequence</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="why-workr">Why {workr}?<a class="anchor" aria-label="anchor" href="#why-workr"></a>
-</h2>
-<p>{workr} was built to solve a specific problem: <strong>reusable, customizable data pipelines for complex clinical trial monitoring</strong>.</p>
-<p>The core functions in {workr} were originally developed as part of the <a href="https://gilead-biostats.github.io/gsm.core/index.html" class="external-link">{gsm} framework</a> for risk-based quality monitoring (RBQM). The {gsm} team developed a <a href="https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html" class="external-link">stable, reusable model for generating metrics</a> to monitor clinical trials.</p>
-<p>Our challenge was figuring out how to run those metrics across a large portfolio. Take 30 studies with monthly snapshots, each needing 15 metrics computed in 5 steps, and you get 27,000 computations per year. To make things more complex, each study has slightly different requirements, so maintaining individual scripts quickly becomes a massive pain.</p>
-<p>{workr}’s solution: Define workflows once, customize via <code>meta</code> parameters, and compose them into larger pipelines.</p>
-<p>The original <code>gsm::RunWorkflow</code> functions were developed in a few hours and were seen as a stopgap until we picked a “real” pipeline, but the approach has proven to be surprisingly stable and flexible. So much so that we’ve created {workr} and started using them outside of our {gsm} pipelines.</p>
-</div>
-<div class="section level2">
-<h2 id="quick-start">Quick Start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
-</h2>
+<div class="section level3">
+<h3 id="sample-workflow">Sample Workflow<a class="anchor" aria-label="anchor" href="#sample-workflow"></a>
+</h3>
 <p>Define a workflow in YAML:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># hello_cars.yaml</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">meta</span><span class="kw">:</span></span>
@@ -131,10 +132,6 @@
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># result = 15.4 (mean of cars$speed)</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="how-it-works">How it works<a class="anchor" aria-label="anchor" href="#how-it-works"></a>
-</h2>
 <p>Each step in a workflow:</p>
 <ol style="list-style-type: decimal">
 <li>Calls a function (specified by <code>step$name</code>)</li>
@@ -142,13 +139,58 @@
 <li>Saves the result to <code>lData</code> using the <code>output</code> name</li>
 <li>Makes it available for the next step</li>
 </ol>
-<p>By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
+<p>That’s it! By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="workflow-snapshots">Workflow Snapshots<a class="anchor" aria-label="anchor" href="#workflow-snapshots"></a>
+<h2 id="combining-workflows">Combining Workflows<a class="anchor" aria-label="anchor" href="#combining-workflows"></a>
 </h2>
+<p>{workr} workflows are designed to be chained together. The output of one workflow becomes the input for the next. {workr} provides several tools to support this functionality.</p>
+<div class="section level3">
+<h3 id="workrrunworkflows-calls-multiple-workflows">
+<code>workr::RunWorkflows</code> calls multiple workflows<a class="anchor" aria-label="anchor" href="#workrrunworkflows-calls-multiple-workflows"></a>
+</h3>
+<p>While <code><a href="reference/RunWorkflow.html">workr::RunWorkflow</a></code> runs all the <code>steps</code> in a single workflow, <code><a href="reference/RunWorkflows.html">workr::RunWorkflows</a></code> (with an <em>s</em>) runs multiple workflows one after the other. Just pass a list of workflows. A few details: - <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> still takes a single <code>lData</code> object as input, each workflow makes its updates, and then the updated <code>lData</code> object is passed along to the next workflow. - <code><a href="reference/MakeWorkflowList.html">workr::MakeWorkflowList()</a></code> is an easy way to read a whole folder of YAML workflows into the format expected for <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. - <code><a href="reference/MakeWorkflowList.html">workr::MakeWorkflowList()</a></code> reorders workflows based on <code>meta$priority</code>, so if you need things to run in a certain order, make sure to set that parameter. If nothing is provided, <code>priority</code> is set to 0.</p>
+</div>
+<div class="section level3">
+<h3 id="workrrunproject-calls-multiple-sets-of-workflows">
+<code>workr::RunProject</code> calls multiple sets of workflows<a class="anchor" aria-label="anchor" href="#workrrunproject-calls-multiple-sets-of-workflows"></a>
+</h3>
+<p>Last but not least, sometimes you want to chain multiple calls of <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. <code><a href="reference/RunProject.html">workr::RunProject()</a></code> calls <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> for every sub-directory (phase) in a given project directory, sharing one <code>lData</code> object across phases.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Project directory structure:</span></span>
+<span><span class="co"># project/</span></span>
+<span><span class="co">#   01_mapping/</span></span>
+<span><span class="co">#     ae.yaml</span></span>
+<span><span class="co">#     lb.yaml</span></span>
+<span><span class="co">#   02_analysis/</span></span>
+<span><span class="co">#     kri.yaml</span></span>
+<span></span>
+<span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu">workr</span><span class="fu">::</span><span class="fu"><a href="reference/RunProject.html">RunProject</a></span><span class="op">(</span></span>
+<span>  strPath <span class="op">=</span> <span class="st">"project"</span>,</span>
+<span>  lData <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>raw_data <span class="op">=</span> <span class="va">my_data</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co"># Runs 01_mapping workflows first, then 02_analysis</span></span>
+<span><span class="co"># Outputs from 01_mapping are available as inputs to 02_analysis</span></span></code></pre></div>
+<p>Key options:</p>
+<ul>
+<li>
+<code>strPhases</code> — run a subset of phases, or control their order</li>
+<li>
+<code>bReturnResult</code> / <code>bKeepInputData</code> — passed through to <code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code>
+</li>
+<li>
+<code>bRecursive</code> — passed through to <code><a href="reference/MakeWorkflowList.html">MakeWorkflowList()</a></code>
+</li>
+</ul>
+<p>Phases are sorted alphabetically by default (use numeric prefixes like <code>01_</code>, <code>02_</code> to control order).</p>
+</div>
+<div class="section level3">
+<h3 id="workrsnapshot-combines-workflows-across-packages">
+<code>workr::Snapshot</code> combines workflows across packages<a class="anchor" aria-label="anchor" href="#workrsnapshot-combines-workflows-across-packages"></a>
+</h3>
 <p>One nice thing about {workr} workflows is that they can be combined across packages. To support this, {workr} includes tooling for creating reproducible snapshots of workflows from multiple packages.</p>
-<p><code>pkgSnapshot()</code> resolves a list of GitHub packages to specific versions and generates:</p>
+<p><code><a href="reference/pkgSnapshot.html">pkgSnapshot()</a></code> resolves a list of GitHub packages to specific versions and generates:</p>
 <ul>
 <li>
 <code>manifest.csv</code> — pinned package versions with SHAs</li>
@@ -161,11 +203,23 @@
 <p>Snapshots are stored on orphan branches (prefixed <code>ss-*</code>) and updated nightly via GitHub Actions.</p>
 <p>📦 <a href="https://github.com/Gilead-BioStats/workr/tree/ss-demo" class="external-link">Demo snapshot (<code>ss-demo</code>)</a> — gsm.core, gsm.mapping, gsm.kri, gsm.reporting</p>
 </div>
+</div>
 <div class="section level2">
-<h2 id="workflow-explorer">Workflow Explorer<a class="anchor" aria-label="anchor" href="#workflow-explorer"></a>
+<h2 id="visualizing-workflows">Visualizing Workflows<a class="anchor" aria-label="anchor" href="#visualizing-workflows"></a>
 </h2>
-<p>YAMLs can be a little hard to follow, so we’ve also included a workflow explorer — an interactive single-page app for browsing workflow pipelines across snapshot branches. Workflows are grouped by phase, sorted by priority, and searchable. Each card links to the source YAML and opens a detail modal with metadata, input spec, step-by-step pipeline, and raw YAML toggle.</p>
-<p>🔍 <a href="https://gilead-biostats.github.io/workr/dev/explorer/">Workflow Explorer</a></p>
+<p>YAML workflows can be a little hard to follow, especially when you’re running a few (or more than a few) in a row, so we’ve created some tools to help visualize and track workflows.</p>
+<div class="section level3">
+<h3 id="workr-shiny-app">{workr} Shiny app<a class="anchor" aria-label="anchor" href="#workr-shiny-app"></a>
+</h3>
+<p><img src="slides/images/example3.png"></p>
+<p><code><a href="reference/DemoApp_init.html">workr::DemoApp_init()</a></code> launches a simple Shiny app application that lets you explore and run workflows in real time.</p>
+</div>
+<div class="section level3">
+<h3 id="opengismo">open.gismo<a class="anchor" aria-label="anchor" href="#opengismo"></a>
+</h3>
+<p><img src="slides/images/gsmexplorer.png"></p>
+<p><a href="https://github.com/Gilead-BioStats/open.gismo" class="external-link">open.gismo</a> is an end-to-end platform for running {workr} projects on GitHub.</p>
+</div>
 </div>
 <div class="section level2">
 <h2 id="automation-via-github-actions">Automation via GitHub Actions<a class="anchor" aria-label="anchor" href="#automation-via-github-actions"></a>

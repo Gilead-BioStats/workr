@@ -1,0 +1,23 @@
+meta:
+  ID: subset
+  Type: Example
+  Description: Subset labs by column value
+  Priority: 1
+  col: lbtstnam
+  value: "Cholesterol (High Performance)"
+steps:
+  - name: sprintf
+    output: filter_str
+    params:
+      fmt: "%s == '%s'"
+      x: col
+      y: value
+  - name: rlang::parse_expr
+    output: filter_expr
+    params:
+      x: filter_str
+  - name: base::subset
+    output: df
+    params:
+      x: raw
+      subset: filter_expr

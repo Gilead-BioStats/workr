@@ -60,6 +60,63 @@ jobs:
         run: |
           mkdir -p pkgdown/assets/slides
           cp -r slides/_site/* pkgdown/assets/slides
+
+      - name: Build workflow explorer
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build explorer data and app
+        run: |
+          set -euo pipefail
+          git fetch --all
+          mkdir -p explorer-build/data
+
+          PATTERN="ss-*"
+          MATCHED=$(git branch -r --list "origin/$PATTERN" | sed 's|origin/||' | tr -d ' ' || true)
+          ALL=$(echo "$MATCHED" | tr ' ' '\n' | sort -u | grep -v '^$')
+
+          FOUND_BRANCHES=()
+          for BRANCH in $ALL; do
+            if ! git rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
+              continue
+            fi
+            echo "── $BRANCH ──"
+            DEST="explorer-build/data/$BRANCH"
+            mkdir -p "$DEST"
+
+            HAS_WORKFLOWS=$(git ls-tree "origin/$BRANCH" --name-only -d | grep -x 'workflows' || true)
+            if [ -n "$HAS_WORKFLOWS" ]; then
+              git archive "origin/$BRANCH" -- workflows/ | tar -x -C "$DEST"
+              find "$DEST/workflows" -name '*.yaml' -type f \
+                | sed "s|$DEST/||" | sort \
+                | python3 -c "import sys,json; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))" \
+                > "$DEST/_index.json"
+            else
+              echo '[]' > "$DEST/_index.json"
+            fi
+
+            if git cat-file -e "origin/$BRANCH:manifest.csv" 2>/dev/null; then
+              git show "origin/$BRANCH:manifest.csv" > "$DEST/manifest.csv"
+              git log -1 --format="%ci" "origin/$BRANCH" -- manifest.csv | cut -d' ' -f1 > "$DEST/_snapshot_date.txt"
+            fi
+            FOUND_BRANCHES+=("$BRANCH")
+          done
+
+          python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "${FOUND_BRANCHES[@]}" > explorer-build/data/branches.json
+
+          cd site
+          npm ci
+          npm run build
+          cd ..
+
+          # docs/ has the built single-file index.html — merge with data
+          cp docs/index.html explorer-build/
+
+      - name: Copy explorer to pkgdown site
+        run: |
+          mkdir -p pkgdown/assets/explorer
+          cp -r explorer-build/* pkgdown/assets/explorer
           
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)

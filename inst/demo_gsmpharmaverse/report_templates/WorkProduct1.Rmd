@@ -16,7 +16,7 @@ library(gtsummary)
 library(safetyCharts)
 
 table1 <- knitr::knit_child(
-    here::here("demo_gsmpharmaverse", "report_templates", "Table1.Rmd"),
+  here::here("inst", "demo_gsmpharmaverse", "report_templates", "Table1.Rmd"),
     envir = list(
       table1_params = list(dfADVS = params$dfADVS)
     ),
@@ -28,7 +28,7 @@ cat(table1, sep = "\n")
 # Figure 1 with `safetyCharts`
 ```{r, echo = FALSE, results='asis'} 
 figure1 <- knitr::knit_child(
-    here::here("demo_gsmpharmaverse", "report_templates", "Figure1.Rmd"),
+  here::here("inst", "demo_gsmpharmaverse", "report_templates", "Figure1.Rmd"),
     envir = list(
       figure1_params = list(dfADVS = params$dfADVS)
     ),

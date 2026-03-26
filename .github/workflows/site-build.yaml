@@ -1,36 +1,35 @@
-name: Deploy to GitHub Pages
+name: Build Workflow Explorer
 
 on:
-  push:
-    branches: ['ss-*']
-  schedule:
-    - cron: '30 2 * * *'   # nightly at 2:30 AM UTC
-  workflow_dispatch:
+  workflow_call:
     inputs:
       branch_pattern:
         description: 'Glob pattern for snapshot branches (e.g. ss-*, release-*)'
         required: false
+        type: string
         default: 'ss-*'
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: true
+      output_path:
+        description: 'Directory to write built site into'
+        required: false
+        type: string
+        default: 'explorer-build'
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout caller repository (for ss-* branch data)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Checkout workr site sources
+        uses: actions/checkout@v4
+        with:
+          repository: Gilead-BioStats/workr
+          ref: dev
+          path: _workr
+          sparse-checkout: site
 
       - uses: actions/setup-node@v4
         with:
@@ -42,10 +41,9 @@ jobs:
           set -euo pipefail
           mkdir -p docs/data
 
-          PATTERN="${{ inputs.branch_pattern || 'ss-*' }}"
+          PATTERN="${{ inputs.branch_pattern }}"
           echo "Branch pattern: $PATTERN"
 
-          # Discover branches matching the pattern
           MATCHED=$(git branch -r --list "origin/$PATTERN" | sed 's|origin/||' | tr -d ' ' || true)
           ALL=$(echo "$MATCHED" | tr ' ' '\n' | sort -u | grep -v '^$')
 
@@ -60,7 +58,6 @@ jobs:
             DEST="docs/data/$BRANCH"
             mkdir -p "$DEST"
 
-            # Check if workflows/ directory exists on this branch
             HAS_WORKFLOWS=$(git ls-tree "origin/$BRANCH" --name-only -d | grep -x 'workflows' || true)
             if [ -n "$HAS_WORKFLOWS" ]; then
               git archive "origin/$BRANCH" -- workflows/ | tar -x -C "$DEST"
@@ -75,10 +72,8 @@ jobs:
               echo '[]' > "$DEST/_index.json"
             fi
 
-            # Copy manifest.csv if it exists
             if git cat-file -e "origin/$BRANCH:manifest.csv" 2>/dev/null; then
               git show "origin/$BRANCH:manifest.csv" > "$DEST/manifest.csv"
-              # Write snapshot date (last commit date of manifest.csv on this branch)
               git log -1 --format="%ci" "origin/$BRANCH" -- manifest.csv | cut -d' ' -f1 > "$DEST/_snapshot_date.txt"
               echo "  manifest.csv: yes (snapshot: $(cat "$DEST/_snapshot_date.txt"))"
             else
@@ -88,19 +83,16 @@ jobs:
             FOUND_BRANCHES+=("$BRANCH")
           done
 
-          # Write branches.json
           python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "${FOUND_BRANCHES[@]}" > docs/data/branches.json
           echo "branches.json: $(cat docs/data/branches.json)"
 
       - name: Build Vite app
         run: |
-          cd site
+          cd _workr/site
           npm ci
-          npm run build
+          npx vite build --outDir ../../docs --emptyOutDir false
 
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          path: docs
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          name: ${{ inputs.output_path }}
+          path: docs/

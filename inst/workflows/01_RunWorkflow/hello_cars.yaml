@@ -1,0 +1,18 @@
+meta:
+  ID: hello_cars
+  Type: Example
+  col: speed
+steps:
+  - name: get # function to be called
+    output: df # output saved as `lData$df`
+    params:
+      x: "cars" # `cars` dataset
+  - name: dplyr::pull # function to be called
+    output: speed # output saved as `lData$speed`
+    params:
+      .data: df # `lData$df` (`cars`) passed as `.data` argument
+      var: col # `meta$col` (`"speed"`) passed as `var` argument
+  - name: mean        # function to be called
+    output: result    # output saved as `lData$result`
+    params:
+      'x': speed    # `lData$speed` passed as `lData` argument

@@ -2,7 +2,7 @@
 title: "Figure1 with safetyCharts"
 ---
 
-```{r, echo=FALSE, results='asis'}
+```{r, echo=FALSE, warning = FALSE, results='asis'}
 settings <- list(
     value_col = "AVAL",
     measure_col = "PARAMCD",

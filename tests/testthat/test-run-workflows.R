@@ -45,9 +45,9 @@ test_that("Example workflows run as expected", {
 
   lData <- list(value = 2, cars = cars)
 
-  hw <- yaml::read_yaml(system.file("workflows", "helloworld.yaml", package = "workr"))
-  ts <- yaml::read_yaml(system.file("workflows", "two_steps.yaml", package = "workr"))
-  carswf <- yaml::read_yaml(system.file("workflows", "cars.yaml", package = "workr"))
+  hw <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "helloworld.yaml"))
+  ts <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "two_steps.yaml"))
+  carswf <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "cars.yaml"))
 
   expect_equal(RunWorkflow(hw, lData), 4)
   expect_equal(RunWorkflow(ts, lData), 4)

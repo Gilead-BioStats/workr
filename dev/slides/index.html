@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.9.36">
 
   <meta name="author" content="Zelos Zhu + Jeremy Wildfire">
-  <meta name="dcterms.date" content="2025-03-20">
+  <meta name="dcterms.date" content="2026-03-26">
   <title>{workr}: a very simple R data pipeline</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -209,36 +209,23 @@ Zelos Zhu + Jeremy Wildfire
 </div>
 </div>
 
-  <p class="date">2025-03-20</p>
+  <p class="date">2026-03-26</p>
 </section>
 <section id="agenda" class="slide level2">
 <h2>Agenda</h2>
 <div class="tocbox">
 <ol type="1">
 <li>What is {workr}?</li>
-<li>Why did we build this?</li>
+<li>Why {workr}?</li>
 <li>{workr} ❤️ {pharmaverse}</li>
-<li>Automating {workr} 🤖</li>
+<li>{workr} Apps</li>
 </ol>
 </div>
 </section>
 <section>
 <section id="what-is-workr" class="title-slide slide level1 center">
 <h1>What is {workr}?</h1>
-<p>A <strong>very</strong> simple R data pipeline <br> <small>(almost too simple?)</small></p>
-<aside class="notes">
-<p>TODO: Add hex logo when available</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+<p>A <strong>very</strong> simple R data pipeline</p>
 </section>
 <section id="workr-workflows-are-yaml-files-easily-parsed-to-an-r-list" class="slide level2">
 <h2>{workr} workflows are YAML files <above>easily parsed to an R <code>list</code> </above></h2>
@@ -367,7 +354,7 @@ Zelos Zhu + Jeremy Wildfire
 <section>
 <section id="why-workr" class="title-slide slide level1 center">
 <h1>Why {workr}?</h1>
-
+<p>Scalable Clinical Trial Operations</p>
 </section>
 <section id="from-safety-monitoring" class="slide level2">
 <h2>From Safety Monitoring …</h2>
@@ -392,20 +379,21 @@ Zelos Zhu + Jeremy Wildfire
 <li>~27,000 metrics / year</li>
 </ul>
 </section>
-<section id="but-clinical-trials-are-complicated" class="slide level2">
-<h2>But clinical trials are complicated</h2>
+<section id="but-science-is-hard" class="slide level2">
+<h2>But Science is Hard</h2>
+<p>Clinical trials are complex</p>
 <ul>
 <li>Study designs vary</li>
 <li>Metrics need tweaks</li>
 <li>Study-level (and sometimes metric-level) customization required</li>
 </ul>
 </section>
-<section id="study-scripts" class="slide level2">
-<h2>🚫 30 study scripts 🚫</h2>
+<section id="custom-study-scripts" class="slide level2">
+<h2>🚫 Custom Study Scripts 🚫</h2>
 <ul>
 <li>Needed reusable pipelines / workflows</li>
 <li>Existing tools felt a bit complicated (<code>targets</code>, <code>glue</code>, etc.)</li>
-<li>So we created <code>gsm::runWorkflow()</code> in April 2022</li>
+<li>So we created <code>gsm::RunWorkflow()</code> in April 2022</li>
 <li>Migrated to <code>{workr}</code> for better modularity and extensibility</li>
 </ul>
 </section>
@@ -443,8 +431,8 @@ Zelos Zhu + Jeremy Wildfire
 <h2><above><code>workr::demoApp()</code></above> Example 3: AE KRI Workflow</h2>
 
 <img data-src="images/example3.png" class="r-stretch"></section>
-<section id="gsm-extensions-robust-reporting-and-visualization-layer" class="slide level2">
-<h2><above> {gsm} extensions </above> Robust Reporting and Visualization Layer</h2>
+<section id="gsm-extensions-reporting-and-visualization-layer" class="slide level2">
+<h2><above> {gsm} extensions </above> Reporting and Visualization Layer</h2>
 <ul>
 <li><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html">Site KRI Report</a></li>
 <li><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CountryReport.html">Country KRI Report</a></li>
@@ -454,11 +442,11 @@ Zelos Zhu + Jeremy Wildfire
 <li><a href="https://rinpharma.shinyapps.io/gsm-app/">{gsm} Deep Dive App</a></li>
 </ul>
 </section>
-<section id="cross-study-kri-report" class="slide level2 full-image-slide">
-<h2>Cross-Study KRI Report</h2>
+<section id="site-kri-report" class="slide level2 full-image-slide">
+<h2>Site KRI Report</h2>
 
-<img data-src="images/report-cross-study-kri-report.png" alt="Cross-Study KRI Report screenshot" class="r-stretch"><p class="img-caption">
-<a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CrossStudySRS.html">Open report</a>
+<img data-src="images/report-site-kri-report.png" alt="Site KRI Report screenshot" class="r-stretch"><p class="img-caption">
+<a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html">Open report</a>
 </p>
 </section>
 <section id="country-kri-report" class="slide level2 full-image-slide">
@@ -468,18 +456,18 @@ Zelos Zhu + Jeremy Wildfire
 <a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CountryReport.html">Open report</a>
 </p>
 </section>
+<section id="cross-study-kri-report" class="slide level2 full-image-slide">
+<h2>Cross-Study KRI Report</h2>
+
+<img data-src="images/report-cross-study-kri-report.png" alt="Cross-Study KRI Report screenshot" class="r-stretch"><p class="img-caption">
+<a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CrossStudySRS.html">Open report</a>
+</p>
+</section>
 <section id="eligibility-report" class="slide level2 full-image-slide">
 <h2>Eligibility Report</h2>
 
 <img data-src="images/report-eligibility-report.png" alt="Eligibility Report screenshot" class="r-stretch"><p class="img-caption">
 <a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_Eligibility.html">Open report</a>
-</p>
-</section>
-<section id="site-kri-report" class="slide level2 full-image-slide">
-<h2>Site KRI Report</h2>
-
-<img data-src="images/report-site-kri-report.png" alt="Site KRI Report screenshot" class="r-stretch"><p class="img-caption">
-<a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html">Open report</a>
 </p>
 </section>
 <section id="qtl-report" class="slide level2 full-image-slide">
@@ -496,12 +484,17 @@ Zelos Zhu + Jeremy Wildfire
 <a href="https://rinpharma.shinyapps.io/gsm-app/">Open app</a>
 </p>
 </section>
-<section id="overall-study-workflow" class="slide level2">
-<h2>Overall study workflow</h2>
+<section id="full-gsm-data-model" class="slide level2">
+<h2>Full {gsm} Data Model</h2>
 
 <img data-src="images/data_model_simple.png" class="r-stretch"></section>
-<section id="workr-study-setup" class="slide level2">
-<h2>{workr} Study Setup</h2>
+<section id="gsm-workr" class="slide level2">
+<h2>{gsm} ❤️ {workr}</h2>
+
+<img data-src="images/gsmexplorer.png" class="r-stretch"><p><a href="https://gilead-biostats.github.io/workr/dev/explorer/">workr explorer</a></p>
+</section>
+<section id="gsm-workr-study-operations" class="slide level2">
+<h2>{gsm} + {workr} Study Operations</h2>
 <ul>
 <li><code>workr::snapshot()</code> combines workflows across packages
 <ul>
@@ -510,25 +503,37 @@ Zelos Zhu + Jeremy Wildfire
 </ul></li>
 <li>GitHub repo for each study
 <ul>
-<li>Clone default workflows</li>
-<li>Customize as needed</li>
+<li>Clone default workflows, customize as needed</li>
 </ul></li>
 <li><code>workr::runProject()</code> runs folders of workflows
 <ul>
-<li>Monthly or as needed</li>
-<li>Outputs saved to preferred location (folder, database, S3, etc.)</li>
+<li>Schedule monthly and/or trigger as needed</li>
+<li>Load/save hooks for preferred locations
+<ul>
+<li>folder, database, S3, etc.</li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
-<section id="core-gsm-snapshot" class="slide level2">
-<h2>Core {gsm} snapshot</h2>
+<section id="gxp-considerations" class="slide level2">
+<h2>GxP Considerations</h2>
+<ul>
+<li>Extensive qualification via <a href="https://github.com/Gilead-BioStats/qcthat">{qcthat}</a></li>
+<li>{workr}-driven Action Log
+<ul>
+<li>SMEs assess and address detected risks</li>
+</ul></li>
+<li>In use on 20+ studies.</li>
+</ul>
+</section>
+<section id="san-antonio-130-230-pm" class="slide level2">
+<h2>San Antonio | 1:30-2:30 PM</h2>
 
-<img data-src="images/data_analysis.png" class="r-stretch"><p><a href="https://gilead-biostats.github.io/workr/dev/explorer/">workr explorer</a></p>
-</section></section>
+<img data-src="images/qcthat.png" class="r-stretch"></section></section>
 <section>
-<section id="workr-pharmaverse-zelos" class="title-slide slide level1 center">
-<h1>{workr} ❤️ {pharmaverse} (Zelos)</h1>
-
+<section id="workr-pharmaverse" class="title-slide slide level1 center">
+<h1>{workr} ❤️ {pharmaverse}</h1>
+<p>Not just for ClinOps!</p>
 </section>
 <section id="from-raw-to-sdtm" class="slide level2">
 <h2>From Raw to SDTM</h2>
@@ -551,7 +556,7 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb5-8"><a href=""></a>  <span class="at">lWorkflow =</span> wf,</span>
 <span id="cb5-9"><a href=""></a>  <span class="at">lData =</span> lData</span>
 <span id="cb5-10"><a href=""></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Whats happening inside</p>
+<p>What’s happening inside</p>
 <div class="columns">
 <div class="column" style="width:48%;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb6-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
@@ -679,7 +684,7 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb11-4"><a href=""></a>  <span class="at">SDTM_VS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
 <span id="cb11-5"><a href=""></a>)</span>
 <span id="cb11-6"><a href=""></a><span class="fu">RunWorkflow</span>(<span class="at">lWorkflow =</span> wf, <span class="at">lData =</span> sdtm)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Whats happening inside</p>
+<p>What’s happening inside</p>
 <div class="columns">
 <div class="column" style="width:48%;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
@@ -761,7 +766,7 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb14-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
 <span id="cb14-4"><a href=""></a>)</span>
 <span id="cb14-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Whats happening inside</p>
+<p>What’s happening inside</p>
 <div class="columns">
 <div class="column" style="width:48%;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
@@ -837,7 +842,7 @@ Zelos Zhu + Jeremy Wildfire
 <span id="cb17-3"><a href=""></a>  <span class="at">ADVS =</span> arrow<span class="sc">::</span><span class="fu">read_parquet</span>(<span class="fu">system.file</span>(<span class="st">"demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet"</span>, <span class="at">package =</span> <span class="st">"workr"</span>))</span>
 <span id="cb17-4"><a href=""></a>)</span>
 <span id="cb17-5"><a href=""></a>workr<span class="sc">::</span><span class="fu">RunWorkflows</span>(<span class="at">lWorkflows =</span> wf, <span class="at">lData =</span> adam )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Whats happening inside</p>
+<p>What’s happening inside</p>
 <div class="columns">
 <div class="column" style="width:48%;">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb18-1"><a href=""></a><span class="fu">meta</span><span class="kw">:</span></span>
@@ -878,8 +883,8 @@ Zelos Zhu + Jeremy Wildfire
 </ul>
 </section></section>
 <section>
-<section id="enterprise-workr" class="title-slide slide level1 center">
-<h1>Enterprise {workr}</h1>
+<section id="workr-apps" class="title-slide slide level1 center">
+<h1>{workr} Apps</h1>
 
 </section>
 <section id="color-demo" class="slide level2">
@@ -887,15 +892,60 @@ Zelos Zhu + Jeremy Wildfire
 
 <img data-src="images/color_entry.png" width="450" class="r-stretch"><p><a href="https://zeloszhu.shinyapps.io/color-demo-presenter/">Live Demo</a></p>
 </section>
-<section id="open.gismo" class="slide level2">
-<h2>open.gismo</h2>
-<p>A web-based interface for exploring and running {workr} workflows across packages, with user authentication and role-based access control.</p>
+<section id="enterprise-workr-platform-gismo" class="slide level2">
+<h2><above> Enterprise {workr} Platform </above> gismo</h2>
 
+<img data-src="images/gismo1.png" class="r-stretch"></section>
+<section id="enterprise-workr-platform-gismo-1" class="slide level2">
+<h2><above> Enterprise {workr} Platform </above> gismo</h2>
+
+<img data-src="images/gismo2.png" class="r-stretch"></section>
+<section id="enterprise-workr-platform-gismo-2" class="slide level2">
+<h2><above> Enterprise {workr} Platform </above> gismo</h2>
+
+<img data-src="images/gismo3.png" class="r-stretch"></section>
+<section id="enterprise-workr-platform-gismo-3" class="slide level2">
+<h2><above> Enterprise {workr} Platform </above> gismo</h2>
+
+<img data-src="images/gismo4.png" class="r-stretch"></section>
+<section id="enterprise-workr-platform-gismo-4" class="slide level2">
+<h2><above> Enterprise {workr} Platform </above> gismo</h2>
+
+<img data-src="images/gismo5.png" class="r-stretch"></section>
+<section id="github-workr-platform-open.gismo" class="slide level2">
+<h2><above> GitHub {workr} Platform </above> open.gismo</h2>
+
+<img data-src="images/opengismo1.png" class="r-stretch"><p><a href="https://gilead-biostats.github.io/open.gismo/">open.gismo demo</a></p>
+</section>
+<section id="github-workr-platform-open.gismo-1" class="slide level2">
+<h2><above> GitHub {workr} Platform </above> open.gismo</h2>
+
+<img data-src="images/opengismo2.png" class="r-stretch"><p><a href="https://gilead-biostats.github.io/open.gismo/">open.gismo demo</a></p>
 </section></section>
+<section id="workr" class="title-slide slide level1 center">
+<h1>{workr} ❤️ 🤖</h1>
+<ul>
+<li>Designed for use with Agentic AI</li>
+<li>Breaks down complex tasks into modular steps</li>
+<li>Agents can generate and execute workflows</li>
+<li>{gsm} and {workr} skills coming soon!</li>
+</ul>
+</section>
+
+<section id="workr-you" class="title-slide slide level1 center">
+<h1>{workr} 🙏 you!</h1>
+<ul>
+<li>Simple R workflows</li>
+<li>Highly scalable and flexible</li>
+<li>Designed for GxP use</li>
+<li>Open source and extensible</li>
+</ul>
+
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-
+<p><a href="https://gilead-biostats.github.io/workr/">gilead-biostats.github.io/workr/</a></p>
 </div>
 </div></div>
 

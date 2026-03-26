@@ -2,7 +2,7 @@
 title: "{workr}: a very simple R data pipeline"
 subtitle: "Phuse Connect 2026"
 author: "Zelos Zhu + Jeremy Wildfire"
-date: "2025-03-20"
+date: "2026-03-26"
 editor_options: 
   chunk_output_type: console
 ---
@@ -10,21 +10,15 @@ editor_options:
 ## Agenda
 
 ::: {.tocbox}
-1. What is {workr}?
-2. Why did we build this?
+1. What is {workr}? 
+2. Why {workr}?
 3. {workr} ❤️ {pharmaverse}
-4. Automating {workr} 🤖
+4. {workr} Apps
 :::
 
 # What is {workr}? 
 
 A **very** simple R data pipeline 
-<br>
-<small>(almost too simple?)</small>
-
-::: {.notes}
-TODO: Add hex logo when available
-:::
 
 ## {workr} workflows are YAML files <above>easily parsed to an R `list` </above>
 
@@ -138,6 +132,8 @@ steps:
 
 # Why {workr}? 
 
+Scalable Clinical Trial Operations
+
 ## From Safety Monitoring ... 
 ![](images/safetyGraphics.png)
 
@@ -157,17 +153,19 @@ steps:
 - Data pipeline: 30 studies × monthly snapshots × 15 metrics × 5 steps
 - ~27,000 metrics / year
 
-## But clinical trials are complicated
+## But Science is Hard 
+
+Clinical trials are complex
 
 - Study designs vary
 - Metrics need tweaks
 - Study-level (and sometimes metric-level) customization required
 
-## 🚫 30 study scripts 🚫 
+## 🚫 Custom Study Scripts 🚫 
 
 - Needed reusable pipelines / workflows
 - Existing tools felt a bit complicated (`targets`, `glue`, etc.)
-- So we created `gsm::runWorkflow()` in April 2022
+- So we created `gsm::RunWorkflow()` in April 2022
 - Migrated to `{workr}` for better modularity and extensibility
 
 ## {gsm} metrics 
@@ -206,7 +204,7 @@ steps:
 
 ![](images/example3.png)
 
-## <above> {gsm} extensions </above> Robust Reporting and Visualization Layer
+## <above> {gsm} extensions </above> Reporting and Visualization Layer
 
 - [Site KRI Report](https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html)
 - [Country KRI Report](https://gilead-biostats.github.io/gsm.kri/examples/Example_CountryReport.html)
@@ -215,11 +213,12 @@ steps:
 - [QTL Report](https://gilead-biostats.github.io/gsm.qtl/examples/Example_QTL.html)
 - [{gsm} Deep Dive App](https://rinpharma.shinyapps.io/gsm-app/)
 
-## Cross-Study KRI Report {.full-image-slide}
 
-![](images/report-cross-study-kri-report.png){fig-alt="Cross-Study KRI Report screenshot"}
+## Site KRI Report {.full-image-slide}
 
-<p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CrossStudySRS.html">Open report</a></p>
+![](images/report-site-kri-report.png){fig-alt="Site KRI Report screenshot"}
+
+<p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html">Open report</a></p>
 
 ## Country KRI Report {.full-image-slide}
 
@@ -227,17 +226,17 @@ steps:
 
 <p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CountryReport.html">Open report</a></p>
 
+## Cross-Study KRI Report {.full-image-slide}
+
+![](images/report-cross-study-kri-report.png){fig-alt="Cross-Study KRI Report screenshot"}
+
+<p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_CrossStudySRS.html">Open report</a></p>
+
 ## Eligibility Report {.full-image-slide}
 
 ![](images/report-eligibility-report.png){fig-alt="Eligibility Report screenshot"}
 
 <p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_Eligibility.html">Open report</a></p>
-
-## Site KRI Report {.full-image-slide}
-
-![](images/report-site-kri-report.png){fig-alt="Site KRI Report screenshot"}
-
-<p class="img-caption"><a href="https://gilead-biostats.github.io/gsm.kri/examples/Example_SiteReport.html">Open report</a></p>
 
 ## QTL Report {.full-image-slide}
 
@@ -251,28 +250,40 @@ steps:
 
 <p class="img-caption"><a href="https://rinpharma.shinyapps.io/gsm-app/">Open app</a></p>
 
-## Overall study workflow
+## Full {gsm} Data Model
 ![](images/data_model_simple.png)
 
-## {workr} Study Setup
+## {gsm} ❤️ {workr}
+
+![](images/gsmexplorer.png)
+
+[workr explorer](https://gilead-biostats.github.io/workr/dev/explorer/)
+
+## {gsm} + {workr} Study Operations
 
 - `workr::snapshot()` combines workflows across packages
   - Quarterly snapshots of {gsm} workflows
   - `rv` for managing package versions
 - GitHub repo for each study
-  - Clone default workflows
-  - Customize as needed
+  - Clone default workflows, customize as needed
 - `workr::runProject()` runs folders of workflows
-  - Monthly or as needed
-  - Outputs saved to preferred location (folder, database, S3, etc.)
+  - Schedule monthly and/or trigger as needed
+  - Load/save hooks for preferred locations
+    - folder, database, S3, etc.
 
-## Core {gsm} snapshot
+## GxP Considerations
 
-![](images/data_analysis.png)
+- Extensive qualification via [{qcthat}](https://github.com/Gilead-BioStats/qcthat)
+- {workr}-driven Action Log 
+  - SMEs assess and address detected risks
+- In use on 20+ studies.
 
-[workr explorer](https://gilead-biostats.github.io/workr/dev/explorer/)
+## San Antonio | 1:30-2:30 PM
+![](images/qcthat.png)
 
-# {workr} ❤️ {pharmaverse} (Zelos)
+# {workr} ❤️ {pharmaverse}
+
+Not just for ClinOps!
 
 ## From Raw to SDTM
 
@@ -296,7 +307,7 @@ RunWorkflow(
 )
 ```
 
-Whats happening inside
+What's happening inside
 
 ::: {.columns}
 ::: {.column width="48%"}
@@ -448,7 +459,7 @@ sdtm <- list(
 RunWorkflow(lWorkflow = wf, lData = sdtm)
 ```
 
-Whats happening inside
+What's happening inside
 
 ::: {.columns}
 ::: {.column width="48%"}
@@ -541,7 +552,7 @@ adam <- list(
 workr::RunWorkflows(lWorkflows = wf, lData = adam )
 ```
 
-Whats happening inside
+What's happening inside
 
 ::: {.columns}
 ::: {.column width="48%"}
@@ -631,7 +642,7 @@ adam <- list(
 workr::RunWorkflows(lWorkflows = wf, lData = adam )
 ```
 
-Whats happening inside
+What's happening inside
 
 ::: {.columns}
 ::: {.column width="48%"}
@@ -683,7 +694,7 @@ table_predose_visit1_map  <- adam$ADVS %>%
 
 - Saving outputs (e.g., .csv, .parquet, .json, or a data lake) can be implemented as an additional workflow step/configuration
 
-# Enterprise {workr} 
+# {workr} Apps
 
 ## Color demo
 
@@ -691,6 +702,52 @@ table_predose_visit1_map  <- adam$ADVS %>%
 
 [Live Demo](https://zeloszhu.shinyapps.io/color-demo-presenter/)
 
-## open.gismo
+## <above> Enterprise {workr} Platform </above> gismo 
 
-A web-based interface for exploring and running {workr} workflows across packages, with user authentication and role-based access control.
+![](images/gismo1.png)
+
+## <above> Enterprise {workr} Platform </above> gismo 
+
+![](images/gismo2.png)
+
+
+## <above> Enterprise {workr} Platform </above> gismo 
+
+![](images/gismo3.png)
+
+## <above> Enterprise {workr} Platform </above> gismo 
+
+![](images/gismo4.png)
+
+
+## <above> Enterprise {workr} Platform </above> gismo 
+
+![](images/gismo5.png)
+
+## <above> GitHub {workr} Platform </above> open.gismo
+
+![](images/opengismo1.png)
+
+[open.gismo demo](https://gilead-biostats.github.io/open.gismo/)
+
+
+## <above> GitHub {workr} Platform </above> open.gismo
+
+![](images/opengismo2.png)
+
+[open.gismo demo](https://gilead-biostats.github.io/open.gismo/)
+
+# {workr} ❤️ 🤖
+
+- Designed for use with Agentic AI
+- Breaks down complex tasks into modular steps 
+- Agents can generate and execute workflows
+- {gsm} and {workr} skills coming soon!
+
+# {workr} 🙏 you!
+
+- Simple R workflows
+- Highly scalable and flexible
+- Designed for GxP use
+- Open source and extensible
+

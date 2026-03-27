@@ -10,7 +10,7 @@ params:
 ---
 
 # Table 1 with `gtsummary`
-```{r, echo = FALSE, results='asis'} 
+```{r, echo = FALSE, results='asis', warning = FALSE, message = FALSE} 
 library(dplyr)
 library(gtsummary)
 

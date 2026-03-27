@@ -13,7 +13,6 @@ library(purrr)
 library(rlang)
 library(admiral)
 library(gtsummary)
-library(safetyCharts)
 library(gt)
 options("yaml.eval.expr" = TRUE) # needs for admiral -- suggest gsm ecoystem write documentation
 ```

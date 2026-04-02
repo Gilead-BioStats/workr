@@ -156,9 +156,7 @@ We provide several GitHub Actions to automate snapshot creation and site deploym
 |---|---|---|
 | `snapshot.yaml` | Reusable / manual | Resolve packages and generate snapshot artifacts on an orphan `ss-*` branch |
 | `nightly-snapshot.yaml` | Cron (2am UTC) / manual | Runs `snapshot.yaml` for configured snapshot branches |
-| `site-build.yaml` | Reusable | Build the workflow explorer app from `ss-*` branch data |
-| `site-deploy.yaml` | Push to `ss-*` / cron / manual | Standalone Pages deploy for repos without pkgdown |
-| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples, slides, and explorer |
+| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples and slides |
 | `pkgdown-cleanup.yaml` | PR close | Remove PR preview deployments from gh-pages |
 | `R-CMD-check.yaml` | Push to main / PR | Standard R CMD check |
 | `R-CMD-check-dev.yaml` | Push to dev / PR | R CMD check against dev dependencies |

@@ -11,7 +11,7 @@ development:
 
 navbar:
   structure:
-    left: [articles, reference, examples, slides, explorer, news]
+    left: [articles, reference, examples, slides, news]
     right: [search, github]
   components:
     github:
@@ -35,6 +35,3 @@ navbar:
     slides:
       text: Slides
       href: slides/
-    explorer:
-      text: Explorer
-      href: explorer/

@@ -34,13 +34,10 @@ Suggests:
     knitr,
     quarto,
     rmarkdown,
-    safetyCharts,
     sdtm.oak,
     shiny,
     testthat (>= 3.0.0),
     yaml
-Remotes:
-    SafetyGraphics/safetyCharts
 Config/testthat/edition: 3
 VignetteBuilder:
     knitr

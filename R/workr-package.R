@@ -5,6 +5,7 @@
 
 #' @importFrom dplyr %>%
 #' @importFrom glue glue
+#' @importFrom lifecycle badge
 #' @importFrom purrr keep map map2 map_chr map_dbl imap
 #' @import rlang
 ## usethis namespace: end

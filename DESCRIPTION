@@ -24,6 +24,7 @@ Imports:
     dplyr,
     duckdb,
     glue,
+    lifecycle,
     purrr,
     rlang
 Suggests:

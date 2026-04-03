@@ -1,0 +1,14 @@
+name: Nightly Manifests
+
+on:
+  schedule:
+    # Run nightly at 2am UTC
+    - cron: '0 2 * * *'  # Update package manifests nightly
+  workflow_dispatch:
+
+jobs:
+  demo-manifest:
+    uses: ./.github/workflows/manifest.yaml
+    with:
+      branch: ss-demo
+      pkg_branch: dev

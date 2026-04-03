@@ -14,11 +14,11 @@ Character vector of GitHub refs in "org/repo" format.
 }
 \description{
 Reads a manifest.csv and returns a character vector of GitHub refs
-formatted for use with \code{pkgSnapshot()}.
+formatted for use with \code{pkgManifest()}.
 }
 \examples{
 \dontrun{
 pkgs <- pkgListFromManifest("manifest.csv")
-pkgSnapshot(packageList = pkgs, branch = "dev")
+pkgManifest(packageList = pkgs, branch = "dev")
 }
 }

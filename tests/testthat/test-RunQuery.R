@@ -63,7 +63,6 @@ test_that("RunQuery checks if strQuery contains 'FROM df' #26", {
 test_that("RunQuery applies schema appropriately #26", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
-  skip("Schema tests require dplyr namespace fix in RunQuery")
 
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
@@ -100,7 +99,6 @@ test_that("RunQuery applies schema appropriately #26", {
 test_that("RunQuery applies incomplete schema appropriately #26", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
-  skip("Schema tests require dplyr namespace fix in RunQuery")
 
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
@@ -127,7 +125,6 @@ test_that("RunQuery applies incomplete schema appropriately #26", {
 test_that("RunQuery parses invalid date/times correctly #26", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
-  skip("Schema tests require dplyr namespace fix in RunQuery")
 
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),

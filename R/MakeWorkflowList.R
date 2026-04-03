@@ -72,7 +72,11 @@ MakeWorkflowList <- function(
     names(yaml_files),
     function(yaml_file, file_name) {
       # read the individual YAML file
-      workflow <- yaml::read_yaml(yaml_file)
+      # Note: YAML may contain !expr tags which are kept as-is (not evaluated here)
+      # They will be evaluated later when needed (e.g., during RunStep execution)
+      # Suppress parser warnings for !expr tags and minor file-format issues
+      # because workflow expressions are intentionally handled at execution time.
+      workflow <- suppressWarnings(yaml::read_yaml(yaml_file))
 
       # set the `path` for logging purposes
       workflow$path <- yaml_file

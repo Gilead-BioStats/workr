@@ -121,7 +121,7 @@ jobs:
         run: |
           BRANCH="${{ inputs.branch }}"
 
-          # Save snapshot output to /tmp so it survives branch switches
+          # Save manifest output to /tmp so it survives branch switches
           cp -r manifest_output /tmp/manifest_output
 
           # Check if the branch already exists on the remote
@@ -135,7 +135,7 @@ jobs:
             git rm -rf .
           fi
 
-          # Copy snapshot artifacts into the working tree
+          # Copy manifest artifacts into the working tree
           cp -f /tmp/manifest_output/manifest.csv . 2>/dev/null || true
           cp -f /tmp/manifest_output/rproject.toml . 2>/dev/null || true
           if [ -d /tmp/manifest_output/workflows ]; then

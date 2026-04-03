@@ -17,6 +17,8 @@
 #'
 #' @return `data.frame` containing the results of the SQL query.
 #'
+#' @importFrom dplyr select
+#'
 #' @examplesIf rlang::is_installed(c("DBI", "dbplyr", "duckdb"))
 #' df <- data.frame(
 #'   Name = c("John", "Jane", "Bob"),
@@ -128,7 +130,7 @@ RunQuery <- function(strQuery, df, bUseSchema = FALSE, lColumnMapping = NULL) {
               error = function(e) NA_real_
             ))
 
-            parsed <- flatten_dbl(parsed) %>% as.POSIXct(origin = "1970-01-01", tz = "UTC")
+            parsed <- purrr::list_c(parsed) %>% as.POSIXct(origin = "1970-01-01", tz = "UTC")
 
             if (mapping$type == "Date") {
               parsed <- as.Date(parsed)

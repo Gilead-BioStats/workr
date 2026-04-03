@@ -1,4 +1,4 @@
-name: Nightly Snapshots
+name: Nightly Manifests
 
 on:
   schedule:
@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  demo-snapshot:
-    uses: ./.github/workflows/snapshot.yaml
+  demo-manifest:
+    uses: ./.github/workflows/manifest.yaml
     with:
       branch: ss-demo
       pkg_branch: dev

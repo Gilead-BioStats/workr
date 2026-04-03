@@ -1,5 +1,7 @@
 # Run a multi-phase workflow project
 
+**\[experimental\]**
+
 `RunProject()` runs multiple workflow phase folders in sequence, sharing
 one `lData` object across phases. Each subdirectory of `strPath` is
 treated as a phase. Phases are executed in sorted order (or in the order

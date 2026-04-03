@@ -1,19 +1,22 @@
-# Snapshot Package List
+# Create a Package Manifest
 
-Creates a reproducible snapshot of a list of GitHub-hosted R packages,
+Creates a reproducible manifest of a list of GitHub-hosted R packages,
 generating a manifest.csv, rproject.toml, and pulling workflow files.
+This function captures the versions and workflow definitions for a set
+of packages at a given point in time, enabling reproducible package
+environments.
 
 ## Usage
 
 ``` r
-pkgSnapshot(path = ".", packageList = character(), date = NULL, branch = NULL)
+pkgManifest(path = ".", packageList = character(), date = NULL, branch = NULL)
 ```
 
 ## Arguments
 
 - path:
 
-  Character. Path to save the snapshot output. Default: "."
+  Character. Path to save the manifest output. Default: "."
 
 - packageList:
 
@@ -39,7 +42,7 @@ Invisibly returns the manifest data frame.
 
 ``` r
 if (FALSE) { # \dontrun{
-pkgSnapshot(
+pkgManifest(
   path = "2025-q4-release",
   packageList = c(
     "Gilead-BioStats/gsm@v1.8.4",

@@ -166,13 +166,14 @@ Key options:
 Phases are sorted alphabetically by default (use numeric prefixes like
 `01_`, `02_` to control order).
 
-### `workr::Snapshot` combines workflows across packages
+### `workr::Manifest` — Reproducible Package Environments
 
 One nice thing about {workr} workflows is that they can be combined
 across packages. To support this, {workr} includes tooling for creating
-reproducible snapshots of workflows from multiple packages.
+reproducible **manifests** — versioned snapshots of packages and their
+workflows at a point in time.
 
-[`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md)
+[`pkgManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgManifest.md)
 resolves a list of GitHub packages to specific versions and generates:
 
 - `manifest.csv` — pinned package versions with SHAs
@@ -181,8 +182,10 @@ resolves a list of GitHub packages to specific versions and generates:
 - `workflows/` — merged workflow YAML files pulled from each package’s
   `inst/workflow/`
 
-Snapshots are stored on orphan branches (prefixed `ss-*`) and updated
-nightly via GitHub Actions.
+Package manifests are stored on orphan branches (prefixed `ss-*` for
+“snapshot-source”) and updated nightly via GitHub Actions. These
+branches serve as the source of truth for reproducible package
+environments.
 
 📦 [Demo snapshot
 (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) —
@@ -216,8 +219,8 @@ deployment.
 
 | Workflow                     | Trigger                        | Purpose                                                                     |
 |------------------------------|--------------------------------|-----------------------------------------------------------------------------|
-| `snapshot.yaml`              | Reusable / manual              | Resolve packages and generate snapshot artifacts on an orphan `ss-*` branch |
-| `nightly-snapshot.yaml`      | Cron (2am UTC) / manual        | Runs `snapshot.yaml` for configured snapshot branches                       |
+| `manifest.yaml`              | Reusable / manual              | Resolve packages and generate manifest artifacts on an orphan `ss-*` branch |
+| `nightly-manifest.yaml`      | Cron (2am UTC) / manual        | Runs `manifest.yaml` for configured manifest branches                       |
 | `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples and slides                                 |
 | `pkgdown-cleanup.yaml`       | PR close                       | Remove PR preview deployments from gh-pages                                 |
 | `R-CMD-check.yaml`           | Push to main / PR              | Standard R CMD check                                                        |

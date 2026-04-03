@@ -30,8 +30,8 @@
   : Parse a GitHub ref string into org, repo, and optional ref
 - [`pkgListFromManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgListFromManifest.md)
   : Generate a package list from a manifest.csv file
-- [`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md)
-  : Snapshot Package List
+- [`pkgManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgManifest.md)
+  : Create a Package Manifest
 - [`pull_workflows()`](https://gilead-biostats.github.io/workr/dev/reference/pull_workflows.md)
   : Pull workflow files from inst/workflow for each package
 - [`resolve_package()`](https://gilead-biostats.github.io/workr/dev/reference/resolve_package.md)

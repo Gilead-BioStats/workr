@@ -2,7 +2,7 @@
 
 Reads a manifest.csv and returns a character vector of GitHub refs
 formatted for use with
-[`pkgSnapshot()`](https://gilead-biostats.github.io/workr/dev/reference/pkgSnapshot.md).
+[`pkgManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgManifest.md).
 
 ## Usage
 
@@ -25,6 +25,6 @@ Character vector of GitHub refs in "org/repo" format.
 ``` r
 if (FALSE) { # \dontrun{
 pkgs <- pkgListFromManifest("manifest.csv")
-pkgSnapshot(packageList = pkgs, branch = "dev")
+pkgManifest(packageList = pkgs, branch = "dev")
 } # }
 ```

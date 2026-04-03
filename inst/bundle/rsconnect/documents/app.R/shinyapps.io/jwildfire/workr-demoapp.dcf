@@ -1,0 +1,10 @@
+name: workr-demoapp
+title:
+username: jwildfire
+account: jwildfire
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16989901
+bundleId: 11763753
+url: https://jwildfire.shinyapps.io/workr-demoapp/
+version: 1

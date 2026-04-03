@@ -1,0 +1,175 @@
+name: Create Package Manifest
+
+on:
+  workflow_call:
+    inputs:
+      branch:
+        description: 'Branch to commit manifest output to'
+        required: true
+        type: string
+      target:
+        description: 'Target branch for PR (leave empty to skip PR creation)'
+        required: false
+        type: string
+        default: ''
+      pkg_branch:
+        description: 'Branch to resolve untagged packages from'
+        required: false
+        type: string
+        default: ''
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to commit manifest output to'
+        required: true
+        default: 'ss-demo'
+      target:
+        description: 'Target branch for PR (leave empty to skip PR creation)'
+        required: false
+        default: ''
+      pkg_branch:
+        description: 'Branch to resolve untagged packages from'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout caller repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout workr R sources
+        uses: actions/checkout@v4
+        with:
+          repository: Gilead-BioStats/workr
+          ref: dev
+          path: _workr
+          sparse-checkout: R
+
+      - name: Read packages.yaml from manifest branch
+        run: |
+          BRANCH="${{ inputs.branch }}"
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            if git show "origin/$BRANCH:packages.yaml" > /tmp/packages.yaml 2>/dev/null; then
+              echo "Found packages.yaml on branch '$BRANCH'"
+              cat /tmp/packages.yaml
+            else
+              echo "::error::packages.yaml not found on branch '$BRANCH'. Run init-manifest first."
+              exit 1
+            fi
+          else
+            echo "::error::Branch '$BRANCH' does not exist. Run init-manifest first."
+            exit 1
+          fi
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4'
+
+      - name: Install R dependencies
+        run: |
+          install.packages(c("base64enc", "yaml"))
+        shell: Rscript {0}
+
+      - name: Create manifest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Source R files (workr checkout or local)
+          r_dir <- if (dir.exists("_workr/R")) "_workr/R" else "R"
+          r_files <- list.files(r_dir, pattern = "\\.R$", full.names = TRUE)
+          for (f in r_files) source(f)
+
+          # Read package list from packages.yaml
+          config <- yaml::read_yaml("/tmp/packages.yaml")
+          pkglist <- config$packages
+
+          if (is.null(pkglist) || length(pkglist) == 0) {
+            stop("No packages found in packages.yaml")
+          }
+
+          message("Packages: ", paste(pkglist, collapse = ", "))
+
+          # Create manifest
+          pkg_branch_input <- "${{ inputs.pkg_branch }}"
+          pkg_branch <- if (nchar(trimws(pkg_branch_input)) > 0) trimws(pkg_branch_input) else NULL
+
+          pkgManifest(
+            path = "manifest_output",
+            packageList = pkglist,
+            branch = pkg_branch
+          )
+        shell: Rscript {0}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push to branch
+        run: |
+          BRANCH="${{ inputs.branch }}"
+
+          # Save manifest output to /tmp so it survives branch switches
+          cp -r manifest_output /tmp/manifest_output
+
+          # Check if the branch already exists on the remote
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "Branch '$BRANCH' exists — checking out"
+            git fetch origin "$BRANCH"
+            git checkout "$BRANCH"
+          else
+            echo "Branch '$BRANCH' does not exist — creating orphan"
+            git checkout --orphan "$BRANCH"
+            git rm -rf .
+          fi
+
+          # Copy manifest artifacts into the working tree
+          cp -f /tmp/manifest_output/manifest.csv . 2>/dev/null || true
+          cp -f /tmp/manifest_output/rproject.toml . 2>/dev/null || true
+          if [ -d /tmp/manifest_output/workflows ]; then
+            rm -rf workflows
+            cp -r /tmp/manifest_output/workflows .
+          fi
+
+          # Stage and commit
+          git add manifest.csv rproject.toml workflows/ 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            echo "HAS_CHANGES=false" >> $GITHUB_ENV
+          else
+            git commit -m "chore: update package manifest $(date +%Y-%m-%d)"
+            git push origin "$BRANCH"
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          fi
+
+      - name: Create PR if target specified
+        if: env.HAS_CHANGES == 'true' && inputs.target != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="${{ inputs.branch }}"
+          TARGET="${{ inputs.target }}"
+
+          EXISTING_PR=$(gh pr list --head "$BRANCH" --base "$TARGET" --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+          if [ -z "$EXISTING_PR" ]; then
+            gh pr create \
+              --head "$BRANCH" \
+              --base "$TARGET" \
+              --title "chore: package manifest update $(date +%Y-%m-%d)" \
+              --body "Automated package manifest update."
+          else
+            echo "PR #$EXISTING_PR already exists for $BRANCH -> $TARGET"
+          fi

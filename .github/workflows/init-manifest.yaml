@@ -1,0 +1,87 @@
+name: Init Manifest Branch
+
+on:
+  workflow_call:
+    inputs:
+      srcBranch:
+        description: 'Source branch with manifest config'
+        required: false
+        type: string
+        default: 'main'
+      targetBranch:
+        description: 'Manifest branch to create (e.g., ss-dev)'
+        required: true
+        type: string
+      pkgconfig:
+        description: 'Path to manifest config (packages.yaml) on srcBranch'
+        required: false
+        type: string
+        default: 'packages.yaml'
+
+  workflow_dispatch:
+    inputs:
+      srcBranch:
+        description: 'Source branch with manifest config'
+        required: false
+        default: 'main'
+      targetBranch:
+        description: 'Manifest branch to create (e.g., ss-dev)'
+        required: true
+        default: 'ss-dev'
+      pkgconfig:
+        description: 'Path to manifest config (packages.yaml) on srcBranch'
+        required: false
+        default: 'packages.yaml'
+
+permissions:
+  contents: write
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.srcBranch }}
+
+      - name: Validate config file exists
+        run: |
+          if [ ! -f "${{ inputs.pkgconfig }}" ]; then
+            echo "::error::Config file '${{ inputs.pkgconfig }}' not found on branch '${{ inputs.srcBranch }}'"
+            exit 1
+          fi
+          echo "Found ${{ inputs.pkgconfig }}:"
+          cat "${{ inputs.pkgconfig }}"
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create orphan branch with packages.yaml
+        run: |
+          TARGET="${{ inputs.targetBranch }}"
+          CONFIG="${{ inputs.pkgconfig }}"
+
+          # Save the config file
+          cp "$CONFIG" /tmp/packages.yaml
+
+          # Check if branch already exists
+          if git ls-remote --exit-code --heads origin "$TARGET" >/dev/null 2>&1; then
+            echo "::error::Branch '$TARGET' already exists. Delete it first or use manifest.yaml directly."
+            exit 1
+          fi
+
+          # Create orphan branch
+          git checkout --orphan "$TARGET"
+          git rm -rf .
+
+          # Copy config file as packages.yaml
+          cp /tmp/packages.yaml packages.yaml
+          git add packages.yaml
+          git commit -m "chore: init manifest branch with packages.yaml"
+          git push origin "$TARGET"
+
+          echo "✅ Created orphan branch '$TARGET' with packages.yaml"

@@ -25,8 +25,12 @@ deploy_demo_app <- function(app_name = "workr-demoapp", account = NULL, server =
 
   app_dir <- find_package_root()
 
+  all_files <- list.files(app_dir, recursive = TRUE, all.files = FALSE)
+  app_files <- all_files[grepl("^(R/|inst/bundle/|inst/workflows/|DESCRIPTION$|NAMESPACE$)", all_files)]
+
   rsconnect::deployApp(
     appDir = app_dir,
+    appFiles = app_files,
     appPrimaryDoc = "inst/bundle/app.R",
     appName = app_name,
     account = account,

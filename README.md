@@ -139,7 +139,7 @@ YAML workflows can be a little hard to follow, especially when you're running a 
 
 ![](slides/images/example3.png)
 
-`workr::DemoApp_init()` launches a simple Shiny app application that lets you explore and run workflows in real time. 
+`workr::DemoApp_init()` launches a simple Shiny app application that lets you explore and run workflows in real time. A hosted version is available at [jwildfire.shinyapps.io/workr-demoapp](https://jwildfire.shinyapps.io/workr-demoapp/).
 
 
 ### open.gismo

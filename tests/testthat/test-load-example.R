@@ -1,11 +1,11 @@
-test_that("loadExample returns input data when initData.R is missing #26", {
+test_that("loadExample returns input data when initData.R is missing (#9, #26)", {
   wf <- list(path = tempfile(fileext = ".yaml"))
   lData <- list(x = 1)
 
   expect_equal(loadExample(wf, lData = lData), lData)
 })
 
-test_that("loadExample loads initData.R and merges with lData #26", {
+test_that("loadExample loads initData.R and merges with lData (#9, #26)", {
   td <- tempfile("workflow_dir_")
   dir.create(td, recursive = TRUE)
 
@@ -27,7 +27,7 @@ test_that("loadExample loads initData.R and merges with lData #26", {
   expect_equal(result$c, 3)
 })
 
-test_that("loadExample validates initData return type #26", {
+test_that("loadExample validates initData return type (#9, #26)", {
   td <- tempfile("workflow_dir_")
   dir.create(td, recursive = TRUE)
 
@@ -45,7 +45,7 @@ test_that("loadExample validates initData return type #26", {
   expect_error(loadExample(wf, lData = list()), "must return a list")
 })
 
-test_that("loadExample does not create duplicate names on repeated calls #26", {
+test_that("loadExample does not create duplicate names on repeated calls (#9, #26)", {
   td <- tempfile("workflow_dir_")
   dir.create(td, recursive = TRUE)
 

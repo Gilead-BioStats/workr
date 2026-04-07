@@ -160,4 +160,5 @@ We provide several GitHub Actions to automate snapshot creation and site deploym
 | `pkgdown-cleanup.yaml` | PR close | Remove PR preview deployments from gh-pages |
 | `R-CMD-check.yaml` | Push to main / PR | Standard R CMD check |
 | `R-CMD-check-dev.yaml` | Push to dev / PR | R CMD check against dev dependencies |
+| `qcthat.yaml` | PR / release / issue-close / manual | Generate issue-test coverage + UAT reports and fail on uncovered completed issues |
 | `r-releaser-caller.yaml` | Manual | Release automation via r-releaser |

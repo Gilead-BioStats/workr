@@ -45,9 +45,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="all-functions">All functions<a class="anchor" aria-label="anchor" href="#all-functions"></a></h2>
+      <h2 id="workflow-execution">Workflow Execution<a class="anchor" aria-label="anchor" href="#workflow-execution"></a></h2>
 
-
+      <div class="section-desc"><p>Core functions for running workflows and individual steps.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -56,52 +56,10 @@
 
       <dl><dt>
 
-          <code><a href="DemoApp_Server.html">DemoApp_Server()</a></code>
+          <code><a href="RunWorkflows.html">RunWorkflows()</a></code>
 
         </dt>
-        <dd>Demo app server</dd>
-
-        <dt>
-
-          <code><a href="DemoApp_UI.html">DemoApp_UI()</a></code>
-
-        </dt>
-        <dd>Demo app UI</dd>
-
-        <dt>
-
-          <code><a href="DemoApp_init.html">DemoApp_init()</a></code>
-
-        </dt>
-        <dd>Launch the workr demo Shiny app</dd>
-
-        <dt>
-
-          <code><a href="MakeWorkflowList.html">MakeWorkflowList()</a></code>
-          <span class="badge lifecycle lifecycle-stable">stable</span>
-        </dt>
-        <dd>Load workflows from a package/directory.</dd>
-
-        <dt>
-
-          <code><a href="RunProject.html">RunProject()</a></code>
-          <span class="badge lifecycle lifecycle-experimental">experimental</span>
-        </dt>
-        <dd>Run a multi-phase workflow project</dd>
-
-        <dt>
-
-          <code><a href="RunQuery.html">RunQuery()</a></code>
-          <span class="badge lifecycle lifecycle-stable">stable</span>
-        </dt>
-        <dd>Run a SQL query on a data frame or DuckDB table</dd>
-
-        <dt>
-
-          <code><a href="RunStep.html">RunStep()</a></code>
-
-        </dt>
-        <dd>Run a single step in a workflow.</dd>
+        <dd>Convenience function to run multiple workflows</dd>
 
         <dt>
 
@@ -112,12 +70,88 @@
 
         <dt>
 
-          <code><a href="RunWorkflows.html">RunWorkflows()</a></code>
+          <code><a href="RunStep.html">RunStep()</a></code>
 
         </dt>
-        <dd>Convenience function to run multiple workflows</dd>
+        <dd>Run a single step in a workflow.</dd>
 
         <dt>
+
+          <code><a href="RunQuery.html">RunQuery()</a></code>
+          <span class="badge lifecycle lifecycle-stable">stable</span>
+        </dt>
+        <dd>Run a SQL query on a data frame or DuckDB table</dd>
+      </dl></div><div class="section level2">
+      <h2 id="project-management">Project Management<a class="anchor" aria-label="anchor" href="#project-management"></a></h2>
+
+      <div class="section-desc"><p>Utilities for managing workflow projects and loading examples.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="RunProject.html">RunProject()</a></code>
+          <span class="badge lifecycle lifecycle-experimental">experimental</span>
+        </dt>
+        <dd>Run a multi-phase workflow project</dd>
+
+        <dt>
+
+          <code><a href="MakeWorkflowList.html">MakeWorkflowList()</a></code>
+          <span class="badge lifecycle lifecycle-stable">stable</span>
+        </dt>
+        <dd>Load workflows from a package/directory.</dd>
+
+        <dt>
+
+          <code><a href="loadExample.html">loadExample()</a></code>
+
+        </dt>
+        <dd>Load example data for workflow execution</dd>
+      </dl></div><div class="section level2">
+      <h2 id="demo-app">Demo App<a class="anchor" aria-label="anchor" href="#demo-app"></a></h2>
+
+      <div class="section-desc"><p>Interactive Shiny application for exploring workflows.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="DemoApp_init.html">DemoApp_init()</a></code>
+
+        </dt>
+        <dd>Launch the workr demo Shiny app</dd>
+
+        <dt>
+
+          <code><a href="DemoApp_UI.html">DemoApp_UI()</a></code>
+
+        </dt>
+        <dd>Demo app UI</dd>
+
+        <dt>
+
+          <code><a href="DemoApp_Server.html">DemoApp_Server()</a></code>
+
+        </dt>
+        <dd>Demo app server</dd>
+      </dl></div><div class="section level2">
+      <h2 id="internal-helpers">Internal / Helpers<a class="anchor" aria-label="anchor" href="#internal-helpers"></a></h2>
+
+
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
 
           <code><a href="gh_get_sha.html">gh_get_sha()</a></code>
 
@@ -130,13 +164,6 @@
 
         </dt>
         <dd>Get the package version from DESCRIPTION file at a given SHA</dd>
-
-        <dt>
-
-          <code><a href="loadExample.html">loadExample()</a></code>
-
-        </dt>
-        <dd>Load example data for workflow execution</dd>
 
         <dt>
 
@@ -194,7 +221,8 @@
         </dt>
         <dd>Write an rproject.toml file compatible with rv (https://github.com/A2-ai/rv)</dd>
       </dl></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

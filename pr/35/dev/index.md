@@ -1,0 +1,230 @@
+# workr
+
+A **very** simple R data pipeline framework. {workr} provides a minimal
+mental model for describing and executing step-by-step workflows. These
+simple workflows can be combined into configurable data pipelines that
+can automate large tasks.
+
+## What is {workr}?
+
+{workr} was built to solve a specific problem: **reusable, customizable
+data pipelines for complex clinical trial monitoring**.
+
+The core functions in {workr} were originally developed as part of the
+[{gsm} framework](https://gilead-biostats.github.io/gsm.core/index.html)
+for risk-based quality monitoring (RBQM). The {gsm} team developed a
+[stable, reusable model for generating
+metrics](https://gilead-biostats.github.io/gsm.core/articles/DataAnalysis.html)
+to monitor clinical trials.
+
+Our challenge was figuring out how to run those metrics across a large
+portfolio.
+
+Take 30 studies with monthly snapshots, each needing 15 metrics computed
+in 5 steps, and you get 27,000 computations per year. Each study also
+has slightly different requirements, so maintaining individual scripts
+quickly becomes a massive pain.
+
+{workr}’s solution: Define workflows once, track customizations in YAML
+files, and compose them into larger pipelines.
+
+The original `gsm::RunWorkflow` functions were developed in a few hours
+and were seen as a stopgap until we picked a “real” pipeline.
+
+The approach has proven to be surprisingly stable and flexible. So much
+so that we’ve created {workr} and started using it outside of our {gsm}
+pipelines.
+
+## {workr} workflows
+
+{workr} workflows are `list` objects that are typically defined in
+`yaml` files. Each workflow has the following components:
+
+- **Steps** are functions that accept data and parameters, producing
+  output that gets added to the shared data list
+- **Meta** is workflow-level configuration accessible to all steps
+- **Spec** optional data specification defining expected input data for
+  the workflow.
+
+The package provides three core functions for running workflows:
+
+- [`workr::RunStep()`](https://gilead-biostats.github.io/workr/dev/reference/RunStep.md) -
+  execute a single workflow step
+- [`workr::RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md) -
+  execute a workflow specification (YAML)
+- [`workr::RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md) -
+  run multiple workflows in sequence
+
+### Sample Workflow
+
+Define a workflow in YAML:
+
+``` yaml
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull 
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
+
+Run it from R:
+
+``` r
+wf <- yaml::read_yaml("hello_cars.yaml")
+lData <- list(df = cars)
+
+result <- workr::RunWorkflow(
+  lWorkflow = wf,
+  lData = lData
+)
+
+# result = 15.4 (mean of cars$speed)
+```
+
+Each step in a workflow:
+
+1.  Calls a function (specified by `step$name`)
+2.  Passes parameters from `params` (resolving references to `lData`,
+    `meta`, or literal values)
+3.  Saves the result to `lData` using the `output` name
+4.  Makes it available for the next step
+
+That’s it! By chaining steps (and even whole workflows) together, you
+can build complex pipelines from simple, reusable components.
+
+## Combining Workflows
+
+{workr} workflows are designed to be chained together. The output of one
+workflow becomes the input for the next. {workr} provides several tools
+to support this functionality.
+
+### `workr::RunWorkflows` calls multiple workflows
+
+While
+[`workr::RunWorkflow`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+runs all the `steps` in a single workflow,
+[`workr::RunWorkflows`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+(with an *s*) runs multiple workflows one after the other. Just pass a
+list of workflows. A few details: -
+[`workr::RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+still takes a single `lData` object as input, each workflow makes its
+updates, and then the updated `lData` object is passed along to the next
+workflow. -
+[`workr::MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+is an easy way to read a whole folder of YAML workflows into the format
+expected for
+[`workr::RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md). -
+[`workr::MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+reorders workflows based on `meta$priority`, so if you need things to
+run in a certain order, make sure to set that parameter. If nothing is
+provided, `priority` is set to 0.
+
+### `workr::RunProject` calls multiple sets of workflows
+
+Last but not least, sometimes you want to chain multiple calls of
+[`workr::RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+[`workr::RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+calls
+[`workr::RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+for every sub-directory (phase) in a given project directory, sharing
+one `lData` object across phases.
+
+``` r
+# Project directory structure:
+# project/
+#   01_mapping/
+#     ae.yaml
+#     lb.yaml
+#   02_analysis/
+#     kri.yaml
+
+results <- workr::RunProject(
+  strPath = "project",
+  lData = list(raw_data = my_data)
+)
+# Runs 01_mapping workflows first, then 02_analysis
+# Outputs from 01_mapping are available as inputs to 02_analysis
+```
+
+Key options:
+
+- `strPhases` — run a subset of phases, or control their order
+- `bReturnResult` / `bKeepInputData` — passed through to
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+- `bRecursive` — passed through to
+  [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+
+Phases are sorted alphabetically by default (use numeric prefixes like
+`01_`, `02_` to control order).
+
+### `workr::Manifest` — Reproducible Package Environments
+
+One nice thing about {workr} workflows is that they can be combined
+across packages. To support this, {workr} includes tooling for creating
+reproducible **manifests** — versioned snapshots of packages and their
+workflows at a point in time.
+
+[`pkgManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgManifest.md)
+resolves a list of GitHub packages to specific versions and generates:
+
+- `manifest.csv` — pinned package versions with SHAs
+- `rproject.toml` — [rv](https://github.com/A2-ai/rv)-compatible
+  dependency file
+- `workflows/` — merged workflow YAML files pulled from each package’s
+  `inst/workflow/`
+
+Package manifests are stored on orphan branches (prefixed `ss-*` for
+“snapshot-source”) and updated nightly via GitHub Actions. These
+branches serve as the source of truth for reproducible package
+environments.
+
+📦 [Demo snapshot
+(`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) —
+gsm.core, gsm.mapping, gsm.kri, gsm.reporting
+
+## Visualizing Workflows
+
+YAML workflows can be a little hard to follow, especially when you’re
+running a few (or more than a few) in a row, so we’ve created some tools
+to help visualize and track workflows.
+
+### {workr} Shiny app
+
+![](slides/images/example3.png)
+
+[`workr::DemoApp_init()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_init.md)
+launches a simple Shiny app application that lets you explore and run
+workflows in real time. A hosted version is available at
+[jwildfire.shinyapps.io/workr-demoapp](https://jwildfire.shinyapps.io/workr-demoapp/).
+
+### open.gismo
+
+![](slides/images/gsmexplorer.png)
+
+[open.gismo](https://github.com/Gilead-BioStats/open.gismo) is an
+end-to-end platform for running {workr} projects on GitHub.
+
+## Automation via GitHub Actions
+
+We provide several GitHub Actions to automate snapshot creation and site
+deployment.
+
+| Workflow                     | Trigger                             | Purpose                                                                           |
+|------------------------------|-------------------------------------|-----------------------------------------------------------------------------------|
+| `manifest.yaml`              | Reusable / manual                   | Resolve packages and generate manifest artifacts on an orphan `ss-*` branch       |
+| `nightly-manifest.yaml`      | Cron (2am UTC) / manual             | Runs `manifest.yaml` for configured manifest branches                             |
+| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual      | Build pkgdown site with examples and slides                                       |
+| `pkgdown-cleanup.yaml`       | PR close                            | Remove PR preview deployments from gh-pages                                       |
+| `R-CMD-check.yaml`           | Push to main / PR                   | Standard R CMD check                                                              |
+| `R-CMD-check-dev.yaml`       | Push to dev / PR                    | R CMD check against dev dependencies                                              |
+| `qcthat.yaml`                | PR / release / issue-close / manual | Generate issue-test coverage + UAT reports and fail on uncovered completed issues |
+| `r-releaser-caller.yaml`     | Manual                              | Release automation via r-releaser                                                 |

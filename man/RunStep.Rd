@@ -20,6 +20,8 @@ include the name of the function to run (\code{lStep$name}), name of the object 
 \code{list} containing the results of the \code{lStep$name} function call.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Runs a single step of an assessment workflow. This function is called by \code{RunWorkflow} for each
 step in the workflow. It prepares the parameters for the function call and then calls the function
 specified in \code{lStep$name} with the prepared parameters.

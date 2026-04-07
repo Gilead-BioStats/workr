@@ -35,3 +35,24 @@ navbar:
     slides:
       text: Slides
       href: slides/
+
+reference:
+  - title: "Workflow Execution"
+    desc: "Core functions for running workflows and individual steps."
+    contents:
+      - RunWorkflows
+      - RunWorkflow
+      - RunStep
+      - RunQuery
+  - title: "Project Management"
+    desc: "Utilities for managing workflow projects and loading examples."
+    contents:
+      - RunProject
+      - MakeWorkflowList
+      - loadExample
+  - title: "Demo App"
+    desc: "Interactive Shiny application for exploring workflows."
+    contents:
+      - DemoApp_init
+      - DemoApp_UI
+      - DemoApp_Server

@@ -13,5 +13,5 @@ DemoApp_UI(lWorkflows)
 A Shiny UI definition.
 }
 \description{
-Demo app UI
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 }

@@ -206,6 +206,13 @@ launches a simple Shiny app application that lets you explore and run
 workflows in real time. A hosted version is available at
 [jwildfire.shinyapps.io/workr-demoapp](https://jwildfire.shinyapps.io/workr-demoapp/).
 
+> **Note:** The hosted app includes only the basic workflow examples
+> (`01_RunWorkflow` and `02_RunWorkflows`) to stay within shinyapps.io
+> memory limits. Run
+> [`workr::DemoApp_init()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_init.md)
+> locally to explore all examples, including the KRI and data
+> transformation workflows.
+
 ### open.gismo
 
 ![](slides/images/gsmexplorer.png)

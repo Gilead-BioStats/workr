@@ -30,12 +30,22 @@ find_package_root <- function(path = getwd()) {
   }
 }
 
+pkg_root <- find_package_root()
+
 pkgload::load_all(
-  path = find_package_root(),
+  path = pkg_root,
   export_all = FALSE,
   helpers = FALSE,
   attach_testthat = FALSE,
   quiet = TRUE
 )
 
-workr::DemoApp_init()
+# Hosted app loads only lightweight workflows (01, 02) to stay within
+# shinyapps.io memory limits. Run DemoApp_init() locally for all examples.
+wf_root <- file.path(pkg_root, "inst", "workflows")
+lWorkflows <- c(
+  workr::MakeWorkflowList(strPath = file.path(wf_root, "01_RunWorkflow")),
+  workr::MakeWorkflowList(strPath = file.path(wf_root, "02_RunWorkflows"))
+)
+
+workr::DemoApp_init(lWorkflows = lWorkflows)

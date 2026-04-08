@@ -5,6 +5,6 @@ account: jwildfire
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 16989901
-bundleId: 11763753
+bundleId: 11821284
 url: https://jwildfire.shinyapps.io/workr-demoapp/
 version: 1

@@ -56,3 +56,15 @@ reference:
       - DemoApp_init
       - DemoApp_UI
       - DemoApp_Server
+  - title: "Internal / Helpers"
+    contents:
+      - gh_get_sha
+      - gh_get_version
+      - parse_github_ref
+      - pkgListFromManifest
+      - pkgManifest
+      - pull_workflows
+      - resolve_package
+      - resolve_ref_by_date
+      - resolve_tag_by_date
+      - write_rproject_toml

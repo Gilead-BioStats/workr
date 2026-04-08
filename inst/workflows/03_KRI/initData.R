@@ -1,13 +1,9 @@
 initData <- function() {
-  dm <- gsm.core::lSource$Raw_SUBJ
-  ae <- gsm.core::lSource$Raw_AE
-  pd <- gsm.core::lSource$Raw_PD
+  dm <- clindata::rawplus_dm
+  ae <- clindata::rawplus_ae
 
-  AE_data <- list(
+  list(
     Raw_SUBJ = dm,
-    Raw_AE = ae,
-    Raw_PD = pd
+    Raw_AE = ae
   )
-  
-  return(AE_data)
 }

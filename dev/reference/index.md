@@ -5,11 +5,11 @@
 Core functions for running workflows and individual steps.
 
 - [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
-  : Convenience function to run multiple workflows
+  **\[stable\]** : Convenience function to run multiple workflows
 - [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
   **\[stable\]** : Run a workflow via it's YAML specification.
 - [`RunStep()`](https://gilead-biostats.github.io/workr/dev/reference/RunStep.md)
-  : Run a single step in a workflow.
+  **\[stable\]** : Run a single step in a workflow.
 - [`RunQuery()`](https://gilead-biostats.github.io/workr/dev/reference/RunQuery.md)
   **\[stable\]** : Run a SQL query on a data frame or DuckDB table
 
@@ -22,18 +22,18 @@ Utilities for managing workflow projects and loading examples.
 - [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
   **\[stable\]** : Load workflows from a package/directory.
 - [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
-  : Load example data for workflow execution
+  **\[stable\]** : Load example data for workflow execution
 
 ## Demo App
 
 Interactive Shiny application for exploring workflows.
 
 - [`DemoApp_init()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_init.md)
-  : Launch the workr demo Shiny app
+  **\[stable\]** : Launch the workr demo Shiny app
 - [`DemoApp_UI()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_UI.md)
-  : Demo app UI
+  **\[stable\]** : Demo app UI
 - [`DemoApp_Server()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_Server.md)
-  : Demo app server
+  **\[stable\]** : Demo app server
 
 ## Internal / Helpers
 

@@ -1,6 +1,6 @@
 # Demo app UI
 
-Demo app UI
+**\[stable\]**
 
 ## Usage
 

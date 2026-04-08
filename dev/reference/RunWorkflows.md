@@ -1,5 +1,7 @@
 # Convenience function to run multiple workflows
 
+**\[stable\]**
+
 This function takes a list of workflows and a list of data as input. It
 runs each workflow and returns the results as a named list where the
 names of the list correspond to the workflow ID (`meta$ID`).

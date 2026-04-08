@@ -1,5 +1,7 @@
 # Launch the workr demo Shiny app
 
+**\[stable\]**
+
 Initializes and runs an interactive Shiny application that demonstrates
 core workr functionality. The app shows workflow YAML (editable) on the
 left and the resulting data on the right.

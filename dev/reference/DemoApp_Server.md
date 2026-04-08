@@ -1,6 +1,6 @@
 # Demo app server
 
-Demo app server
+**\[stable\]**
 
 ## Usage
 

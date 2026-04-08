@@ -1,5 +1,7 @@
 # Load example data for workflow execution
 
+**\[stable\]**
+
 `loadExample()` is a convenience `LoadData` hook for
 [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
 and

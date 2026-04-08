@@ -1,6 +1,8 @@
 #' Load example data for workflow execution
 #'
 #' @description
+#' `r lifecycle::badge("stable")`
+#'
 #' `loadExample()` is a convenience `LoadData` hook for `RunWorkflow()` and
 #' `RunWorkflows()`. If an `initData.R` file exists in the same folder as the
 #' workflow YAML, it sources that script and calls `initData()` to get starter

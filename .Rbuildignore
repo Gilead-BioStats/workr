@@ -8,4 +8,5 @@
 ^docs$
 ^pkgdown$
 ^slides$
+^\.rsconnectignore$
 ^LICENSE\.md$

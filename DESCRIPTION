@@ -1,7 +1,7 @@
 Package: workr
 Type: Package
 Title: Workflow Execution Helpers
-Version: 0.99.0
+Version: 1.0.0
 Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
 Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
 Authors@R: c(

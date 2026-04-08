@@ -28,17 +28,18 @@ Imports:
     purrr,
     rlang
 Suggests:
-    admiral,
-    arrow,
-    gt,
-    gtsummary,
     knitr,
-    quarto,
     rmarkdown,
-    sdtm.oak,
     shiny,
     testthat (>= 3.0.0),
     yaml
 Config/testthat/edition: 3
+Config/Needs/website:
+    admiral,
+    arrow,
+    cards,
+    gt,
+    gtsummary,
+    sdtm.oak
 VignetteBuilder:
     knitr

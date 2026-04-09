@@ -27,6 +27,7 @@
 #'   branch = "dev"
 #' )
 #' }
+#' @export
 pkgManifest <- function(path = ".", packageList = character(), date = NULL, branch = NULL) {
   if (length(packageList) == 0) {
     stop("packageList must contain at least one GitHub ref (e.g., 'org/repo@tag')")

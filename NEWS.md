@@ -29,8 +29,10 @@
 
 * `manifest.yaml` — reusable workflow for generating manifest artifacts
 * `nightly-manifest.yaml` — scheduled manifest updates
-* `r-check.yaml` — R CMD check CI
-* `pkgdown.yaml` — pkgdown site deployment
+* `R-CMD-check.yaml` — R CMD check CI
+* `R-CMD-check-dev.yaml` — development R CMD check CI
+* `pkgdown-with-examples.yaml` — pkgdown site deployment
+* `pkgdown-cleanup.yaml` — pkgdown cleanup
 
 ### Documentation
 

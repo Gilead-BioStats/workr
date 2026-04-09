@@ -41,7 +41,10 @@ steps:
   df <- data.frame(x = 1:10, y = 11:20)
   lData <- list(df = df)
   lMeta <- workflows$pull_x$meta
-  lSpec <- workflows$pull_x$spec %||% NULL
+  lSpec <- workflows$pull_x$spec
+  if (is.null(lSpec)) {
+    lSpec <- NULL
+  }
   lStep <- workflows$pull_x$steps[[1]]
   
   # RunStep should execute dplyr::pull to extract column x

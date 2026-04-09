@@ -11,6 +11,7 @@
 #' pkgs <- pkgListFromManifest("manifest.csv")
 #' pkgManifest(packageList = pkgs, branch = "dev")
 #' }
+#' @export
 pkgListFromManifest <- function(path = "manifest.csv") {
   if (!file.exists(path)) {
     stop("Manifest file not found: ", path)

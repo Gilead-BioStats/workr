@@ -1,0 +1,13 @@
+slides
+tests
+vignettes
+pkgdown
+man
+docs
+.github
+_pkgdown.yml
+README.md
+LICENSE.md
+NEWS.md
+.Rbuildignore
+inst/demo_gsmpharmaverse

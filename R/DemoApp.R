@@ -60,6 +60,7 @@ DemoApp_init <- function(
 #'
 #' @description
 #' `r lifecycle::badge("stable")`
+#' Builds the Shiny user interface for the demo application.
 #'
 #' @param lWorkflows `list` Named list of workflows.
 #'
@@ -242,6 +243,8 @@ DemoApp_UI <- function(lWorkflows) {
 #'
 #' @description
 #' `r lifecycle::badge("stable")`
+#' Creates the server logic for the demo Shiny app, including workflow
+#' execution and displayed results.
 #'
 #' @param lWorkflows `list` Named list of workflows.
 #' @param lData `list` Initial data list.

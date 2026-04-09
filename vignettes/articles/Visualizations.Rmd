@@ -1,8 +1,8 @@
 ---
-title: "Incorporating TFL libraries like `gtsummary` and `safetyCharts`"
+title: "Incorporating TFL libraries like `gtsummary`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Incorporating TFL libraries like `gtsummary` and `safetyCharts`}
+  %\VignetteIndexEntry{Incorporating TFL libraries like `gtsummary`}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -42,7 +42,7 @@ cat("```yaml\n", paste(x, collapse = "\n"), "\n```\n", sep = "")
 ```
 :::
 
-This workflow combines aspects of `gtsummary` and `safetyCharts` modules to demonstrate how to assemble multiple static outputs or a hybrid approach that may include shiny/web app html-based modules.
+This workflow uses `gtsummary` to demonstrate how to assemble static outputs or a hybrid approach that may include shiny/web app html-based modules.
 
 ```{r ADAM Workflows, eval = FALSE, message = FALSE, warning = FALSE}
 TFL_workflows <- workr::MakeWorkflowList(

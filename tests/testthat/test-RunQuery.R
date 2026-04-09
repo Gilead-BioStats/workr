@@ -1,6 +1,6 @@
 ## Ported from gsm.core@dev test-RunQuery.R + expanded — see #26
 
-test_that("RunQuery returns correct result #26", {
+test_that("RunQuery returns correct result (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("dbplyr")
   skip_if_not_installed("duckdb")

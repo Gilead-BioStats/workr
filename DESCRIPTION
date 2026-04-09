@@ -1,7 +1,7 @@
 Package: workr
 Type: Package
 Title: Workflow Execution Helpers
-Version: 0.99.0
+Version: 1.0.0
 Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
 Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
 Authors@R: c(
@@ -26,19 +26,20 @@ Imports:
     glue,
     lifecycle,
     purrr,
-    rlang
+    rlang,
+    yaml
 Suggests:
+    knitr,
+    rmarkdown,
+    shiny,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Config/Needs/website:
     admiral,
     arrow,
+    cards,
     gt,
     gtsummary,
-    knitr,
-    quarto,
-    rmarkdown,
-    sdtm.oak,
-    shiny,
-    testthat (>= 3.0.0),
-    yaml
-Config/testthat/edition: 3
+    sdtm.oak
 VignetteBuilder:
     knitr

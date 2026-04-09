@@ -61,8 +61,8 @@ test_that("RunStep handles multiple parameters and function invocation correctly
 })
 
 test_that("RunStep will run a function from a namespace #26", {
-  lStep <- list(name = "dplyr::glimpse", output = "res", params = list(head(Theoph)))
-  lData <- list(data1 = 300)
+  lStep <- list(name = "dplyr::glimpse", output = "res", params = list(x = "Theoph_head"))
+  lData <- list(data1 = 300, Theoph_head = head(Theoph))
   lMeta <- list(meta1 = 400)
 
   expect_output({
@@ -75,8 +75,8 @@ test_that("RunStep will run a function from a namespace #26", {
 
 test_that("RunStep will run a function without a namespace #26", {
   # Use a base function that's available without namespace
-  lStep <- list(name = "head", output = "res", params = list(Theoph))
-  lData <- list(data1 = 300)
+  lStep <- list(name = "head", output = "res", params = list(x = "Theoph"))
+  lData <- list(data1 = 300, Theoph = Theoph)
   lMeta <- list(meta1 = 400)
 
   suppressMessages({
@@ -99,8 +99,7 @@ test_that("RunStep will run a function with no parameters #26", {
 ## workr-specific: expr() / exprs() parsing — see #26
 
 test_that("RunStep recognizes rlang::expr() string parameters #26", {
-  # Test that expr strings are parsed without error
-  # (actual evaluation happens when do.call passes the expression to the function)
+  # RunStep parses the string and do.call then evaluates the expression.
   lStep <- list(
     name = "dummy_function",
     output = "res",
@@ -109,9 +108,6 @@ test_that("RunStep recognizes rlang::expr() string parameters #26", {
   lMeta <- list(meta1 = 50)
 
   suppressMessages({
-    # This will evaluate 'data + 100' in dummy_function,
-    # which expects 'data' to exist (it won't, so it will fail)
-    # The test just verifies RunStep handles the string properly
     expect_error(RunStep(lStep, list(), lMeta))
   })
 })
@@ -127,7 +123,7 @@ test_that("RunStep recognizes expr() shorthand parameters #26", {
   suppressMessages({
     result <- RunStep(lStep, list(), list())
   })
-  # expr(1 + 2) evaluates to 3 when passed to dummy_function
+  # The parsed expression is evaluated when the step function is invoked.
   expect_equal(result$x, 3)
   expect_equal(result$y, "42")
 })

@@ -1,4 +1,4 @@
-# Incorporating TFL libraries like \`gtsummary\` and \`safetyCharts\`
+# Incorporating TFL libraries like \`gtsummary\`
 
 ## Prepare list of data of raw-data
 
@@ -45,9 +45,9 @@ Show ADAM preview (first 6 rows)
     ##       params: lParams
     ## ```
 
-This workflow combines aspects of `gtsummary` and `safetyCharts` modules
-to demonstrate how to assemble multiple static outputs or a hybrid
-approach that may include shiny/web app html-based modules.
+This workflow uses `gtsummary` to demonstrate how to assemble static
+outputs or a hybrid approach that may include shiny/web app html-based
+modules.
 
 ``` r
 TFL_workflows <- workr::MakeWorkflowList(

@@ -1,6 +1,7 @@
 # Demo app server
 
-**\[stable\]**
+**\[stable\]** Creates the server logic for the demo Shiny app,
+including workflow execution and displayed results.
 
 ## Usage
 

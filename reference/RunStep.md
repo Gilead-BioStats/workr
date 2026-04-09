@@ -1,5 +1,7 @@
 # Run a single step in a workflow.
 
+**\[stable\]**
+
 Runs a single step of an assessment workflow. This function is called by
 `RunWorkflow` for each step in the workflow. It prepares the parameters
 for the function call and then calls the function specified in

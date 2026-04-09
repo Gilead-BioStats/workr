@@ -11,5 +11,5 @@
   Study](https://gilead-biostats.github.io/workr/articles/Pharmaverse.md):
 - [Incorporating
   sdtm.oak](https://gilead-biostats.github.io/workr/articles/SDTM_example.md):
-- [Incorporating TFL libraries like \`gtsummary\` and
-  \`safetyCharts\`](https://gilead-biostats.github.io/workr/articles/Visualizations.md):
+- [Incorporating TFL libraries like
+  \`gtsummary\`](https://gilead-biostats.github.io/workr/articles/Visualizations.md):

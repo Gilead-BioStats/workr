@@ -1,6 +1,6 @@
 # Demo app UI
 
-**\[stable\]**
+**\[stable\]** Builds the Shiny user interface for the demo application.
 
 ## Usage
 

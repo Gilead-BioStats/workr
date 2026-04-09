@@ -1,9 +1,11 @@
-#' Snapshot Package List
+#' Create a Package Manifest
 #'
-#' Creates a reproducible snapshot of a list of GitHub-hosted R packages,
+#' Creates a reproducible manifest of a list of GitHub-hosted R packages,
 #' generating a manifest.csv, rproject.toml, and pulling workflow files.
+#' This function captures the versions and workflow definitions for a set of packages
+#' at a given point in time, enabling reproducible package environments.
 #'
-#' @param path Character. Path to save the snapshot output. Default: "."
+#' @param path Character. Path to save the manifest output. Default: "."
 #' @param packageList Character vector of GitHub refs in the format
 #'   "org/repo", "org/repo@tag", or "org/repo@sha".
 #' @param date Date or character (YYYY-MM-DD). If no tag/sha is provided in a
@@ -16,7 +18,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' pkgSnapshot(
+#' pkgManifest(
 #'   path = "2025-q4-release",
 #'   packageList = c(
 #'     "Gilead-BioStats/gsm@v1.8.4",
@@ -25,7 +27,8 @@
 #'   branch = "dev"
 #' )
 #' }
-pkgSnapshot <- function(path = ".", packageList = character(), date = NULL, branch = NULL) {
+#' @export
+pkgManifest <- function(path = ".", packageList = character(), date = NULL, branch = NULL) {
   if (length(packageList) == 0) {
     stop("packageList must contain at least one GitHub ref (e.g., 'org/repo@tag')")
   }

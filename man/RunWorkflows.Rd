@@ -37,6 +37,8 @@ A named list of results from \code{RunWorkflow()}, where the names correspond to
 the workflow ID
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 This function takes a list of workflows and a list of data as input. It runs each workflow and returns the
 results as a named list where the names of the list correspond to the workflow ID (\code{meta$ID}).
 

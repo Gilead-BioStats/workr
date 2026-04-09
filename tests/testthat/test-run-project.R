@@ -1,4 +1,4 @@
-test_that("RunProject runs all phases in sorted order", {
+test_that("RunProject runs all phases in sorted order #26", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -17,7 +17,7 @@ test_that("RunProject runs all phases in sorted order", {
   expect_true("phase2_add_twenty" %in% names(result$phase_B))
 })
 
-test_that("RunProject passes data between phases", {
+test_that("RunProject passes data between phases #26", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -41,7 +41,7 @@ test_that("RunProject passes data between phases", {
   expect_true(!is.null(p2$lData))
 })
 
-test_that("RunProject respects strPhases subset and order", {
+test_that("RunProject respects strPhases subset and order #26", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -68,14 +68,14 @@ test_that("RunProject respects strPhases subset and order", {
   expect_named(result2, c("phase_B", "phase_A"))
 })
 
-test_that("RunProject errors on missing strPath", {
+test_that("RunProject errors on missing strPath #26", {
   expect_error(
     RunProject(strPath = "/nonexistent/path/xyz"),
     "strPath"
   )
 })
 
-test_that("RunProject errors on missing requested phases", {
+test_that("RunProject errors on missing requested phases #26", {
   project_path <- test_path("project")
 
   expect_error(
@@ -84,7 +84,7 @@ test_that("RunProject errors on missing requested phases", {
   )
 })
 
-test_that("RunProject errors on empty project directory", {
+test_that("RunProject errors on empty project directory #26", {
   tmp <- tempdir()
   empty_dir <- file.path(tmp, "empty_project_test")
   dir.create(empty_dir, showWarnings = FALSE)
@@ -96,7 +96,7 @@ test_that("RunProject errors on empty project directory", {
   )
 })
 
-test_that("RunProject bReturnResult and bKeepInputData pass through", {
+test_that("RunProject bReturnResult and bKeepInputData pass through #26", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)

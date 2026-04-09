@@ -11,7 +11,7 @@ development:
 
 navbar:
   structure:
-    left: [articles, reference, examples, slides, explorer, news]
+    left: [articles, reference, slides, news]
     right: [search, github]
   components:
     github:
@@ -35,6 +35,36 @@ navbar:
     slides:
       text: Slides
       href: slides/
-    explorer:
-      text: Explorer
-      href: explorer/
+
+reference:
+  - title: "Workflow Execution"
+    desc: "Core functions for running workflows and individual steps."
+    contents:
+      - RunWorkflows
+      - RunWorkflow
+      - RunStep
+      - RunQuery
+  - title: "Project Management"
+    desc: "Utilities for managing workflow projects and loading examples."
+    contents:
+      - RunProject
+      - MakeWorkflowList
+      - loadExample
+  - title: "Demo App"
+    desc: "Interactive Shiny application for exploring workflows."
+    contents:
+      - DemoApp_init
+      - DemoApp_UI
+      - DemoApp_Server
+  - title: "Internal / Helpers"
+    contents:
+      - gh_get_sha
+      - gh_get_version
+      - parse_github_ref
+      - pkgListFromManifest
+      - pkgManifest
+      - pull_workflows
+      - resolve_package
+      - resolve_ref_by_date
+      - resolve_tag_by_date
+      - write_rproject_toml

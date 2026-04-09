@@ -1,10 +1,10 @@
-name: Snapshot Packages
+name: Create Package Manifest
 
 on:
   workflow_call:
     inputs:
       branch:
-        description: 'Branch to commit snapshot output to'
+        description: 'Branch to commit manifest output to'
         required: true
         type: string
       target:
@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to commit snapshot output to'
+        description: 'Branch to commit manifest output to'
         required: true
         default: 'ss-demo'
       target:
@@ -38,7 +38,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  snapshot:
+  manifest:
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +55,7 @@ jobs:
           path: _workr
           sparse-checkout: R
 
-      - name: Read packages.yaml from snapshot branch
+      - name: Read packages.yaml from manifest branch
         run: |
           BRANCH="${{ inputs.branch }}"
 
@@ -64,11 +64,11 @@ jobs:
               echo "Found packages.yaml on branch '$BRANCH'"
               cat /tmp/packages.yaml
             else
-              echo "::error::packages.yaml not found on branch '$BRANCH'. Run init-snapshot first."
+              echo "::error::packages.yaml not found on branch '$BRANCH'. Run init-manifest first."
               exit 1
             fi
           else
-            echo "::error::Branch '$BRANCH' does not exist. Run init-snapshot first."
+            echo "::error::Branch '$BRANCH' does not exist. Run init-manifest first."
             exit 1
           fi
 
@@ -82,7 +82,7 @@ jobs:
           install.packages(c("base64enc", "yaml"))
         shell: Rscript {0}
 
-      - name: Run snapshot
+      - name: Create manifest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -101,12 +101,12 @@ jobs:
 
           message("Packages: ", paste(pkglist, collapse = ", "))
 
-          # Run snapshot
+          # Create manifest
           pkg_branch_input <- "${{ inputs.pkg_branch }}"
           pkg_branch <- if (nchar(trimws(pkg_branch_input)) > 0) trimws(pkg_branch_input) else NULL
 
-          pkgSnapshot(
-            path = "snapshot_output",
+          pkgManifest(
+            path = "manifest_output",
             packageList = pkglist,
             branch = pkg_branch
           )
@@ -121,8 +121,8 @@ jobs:
         run: |
           BRANCH="${{ inputs.branch }}"
 
-          # Save snapshot output to /tmp so it survives branch switches
-          cp -r snapshot_output /tmp/snapshot_output
+          # Save manifest output to /tmp so it survives branch switches
+          cp -r manifest_output /tmp/manifest_output
 
           # Check if the branch already exists on the remote
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
@@ -135,12 +135,12 @@ jobs:
             git rm -rf .
           fi
 
-          # Copy snapshot artifacts into the working tree
-          cp -f /tmp/snapshot_output/manifest.csv . 2>/dev/null || true
-          cp -f /tmp/snapshot_output/rproject.toml . 2>/dev/null || true
-          if [ -d /tmp/snapshot_output/workflows ]; then
+          # Copy manifest artifacts into the working tree
+          cp -f /tmp/manifest_output/manifest.csv . 2>/dev/null || true
+          cp -f /tmp/manifest_output/rproject.toml . 2>/dev/null || true
+          if [ -d /tmp/manifest_output/workflows ]; then
             rm -rf workflows
-            cp -r /tmp/snapshot_output/workflows .
+            cp -r /tmp/manifest_output/workflows .
           fi
 
           # Stage and commit
@@ -149,7 +149,7 @@ jobs:
             echo "No changes to commit"
             echo "HAS_CHANGES=false" >> $GITHUB_ENV
           else
-            git commit -m "chore: update package snapshot $(date +%Y-%m-%d)"
+            git commit -m "chore: update package manifest $(date +%Y-%m-%d)"
             git push origin "$BRANCH"
             echo "HAS_CHANGES=true" >> $GITHUB_ENV
           fi
@@ -168,8 +168,8 @@ jobs:
             gh pr create \
               --head "$BRANCH" \
               --base "$TARGET" \
-              --title "chore: package snapshot update $(date +%Y-%m-%d)" \
-              --body "Automated package snapshot update."
+              --title "chore: package manifest update $(date +%Y-%m-%d)" \
+              --body "Automated package manifest update."
           else
             echo "PR #$EXISTING_PR already exists for $BRANCH -> $TARGET"
           fi

@@ -19,6 +19,8 @@ interface expected by \code{RunWorkflow()}.}
 \code{list} Data to use as workflow input.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 \code{loadExample()} is a convenience \code{LoadData} hook for \code{RunWorkflow()} and
 \code{RunWorkflows()}. If an \code{initData.R} file exists in the same folder as the
 workflow YAML, it sources that script and calls \code{initData()} to get starter

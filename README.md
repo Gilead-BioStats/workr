@@ -117,17 +117,17 @@ Key options:
 Phases are sorted alphabetically by default (use numeric prefixes like `01_`, `02_` to control order).
 
 
-### `workr::Snapshot` combines workflows across packages
+### `workr::Manifest` — Reproducible Package Environments
 
-One nice thing about {workr} workflows is that they can be combined across packages. To support this, {workr} includes tooling for creating reproducible snapshots of workflows from multiple packages.
+One nice thing about {workr} workflows is that they can be combined across packages. To support this, {workr} includes tooling for creating reproducible **manifests** — versioned snapshots of packages and their workflows at a point in time.
 
-`pkgSnapshot()` resolves a list of GitHub packages to specific versions and generates:
+`pkgManifest()` resolves a list of GitHub packages to specific versions and generates:
 
 - `manifest.csv` — pinned package versions with SHAs
 - `rproject.toml` — [rv](https://github.com/A2-ai/rv)-compatible dependency file
 - `workflows/` — merged workflow YAML files pulled from each package's `inst/workflow/`
 
-Snapshots are stored on orphan branches (prefixed `ss-*`) and updated nightly via GitHub Actions.
+Package manifests are stored on orphan branches (prefixed `ss-*` for "snapshot-source") and updated nightly via GitHub Actions. These branches serve as the source of truth for reproducible package environments.
 
 📦 [Demo snapshot (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) — gsm.core, gsm.mapping, gsm.kri, gsm.reporting
 
@@ -139,7 +139,9 @@ YAML workflows can be a little hard to follow, especially when you're running a 
 
 ![](slides/images/example3.png)
 
-`workr::DemoApp_init()` launches a simple Shiny app application that lets you explore and run workflows in real time. 
+`workr::DemoApp_init()` launches a simple Shiny app application that lets you explore and run workflows in real time. A hosted version is available at [jwildfire.shinyapps.io/workr-demoapp](https://jwildfire.shinyapps.io/workr-demoapp/).
+
+> **Note:** The hosted app includes only the basic workflow examples (`01_RunWorkflow` and `02_RunWorkflows`) to stay within shinyapps.io memory limits. Run `workr::DemoApp_init()` locally to explore all examples, including the KRI and data transformation workflows.
 
 
 ### open.gismo
@@ -154,12 +156,11 @@ We provide several GitHub Actions to automate snapshot creation and site deploym
 
 | Workflow | Trigger | Purpose |
 |---|---|---|
-| `snapshot.yaml` | Reusable / manual | Resolve packages and generate snapshot artifacts on an orphan `ss-*` branch |
-| `nightly-snapshot.yaml` | Cron (2am UTC) / manual | Runs `snapshot.yaml` for configured snapshot branches |
-| `site-build.yaml` | Reusable | Build the workflow explorer app from `ss-*` branch data |
-| `site-deploy.yaml` | Push to `ss-*` / cron / manual | Standalone Pages deploy for repos without pkgdown |
-| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples, slides, and explorer |
+| `manifest.yaml` | Reusable / manual | Resolve packages and generate manifest artifacts on an orphan `ss-*` branch |
+| `nightly-manifest.yaml` | Cron (2am UTC) / manual | Runs `manifest.yaml` for configured manifest branches |
+| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples and slides |
 | `pkgdown-cleanup.yaml` | PR close | Remove PR preview deployments from gh-pages |
 | `R-CMD-check.yaml` | Push to main / PR | Standard R CMD check |
 | `R-CMD-check-dev.yaml` | Push to dev / PR | R CMD check against dev dependencies |
+| `qcthat.yaml` | PR / release / issue-close / manual | Generate issue-test coverage + UAT reports and fail on uncovered completed issues |
 | `r-releaser-caller.yaml` | Manual | Release automation via r-releaser |

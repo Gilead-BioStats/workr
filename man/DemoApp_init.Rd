@@ -25,6 +25,8 @@ Defaults to using \code{loadExample()} for \code{LoadData}.}
 A \code{shiny.appobj} (called for its side effect of launching the app).
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+
 Initializes and runs an interactive Shiny application
 that demonstrates core workr functionality. The app shows workflow
 YAML (editable) on the left and the resulting data on the right.

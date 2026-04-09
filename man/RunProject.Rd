@@ -41,6 +41,8 @@ A named list with one element per phase. Each element contains the
 result returned by \code{RunWorkflows()} for that phase.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{RunProject()} runs multiple workflow phase folders in sequence, sharing one
 \code{lData} object across phases. Each subdirectory of \code{strPath} is treated as a
 phase. Phases are executed in sorted order (or in the order specified by

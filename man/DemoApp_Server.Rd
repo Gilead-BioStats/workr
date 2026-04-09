@@ -17,5 +17,7 @@ DemoApp_Server(lWorkflows, lData, lConfig = NULL)
 A Shiny server function.
 }
 \description{
-Demo app server
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
+Creates the server logic for the demo Shiny app, including workflow
+execution and displayed results.
 }

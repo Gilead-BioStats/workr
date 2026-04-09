@@ -10,10 +10,9 @@ params:
 ---
 
 # Table 1 with `gtsummary`
-```{r, echo = FALSE, results='asis'} 
+```{r, echo = FALSE, results='asis', warning = FALSE, message = FALSE} 
 library(dplyr)
 library(gtsummary)
-library(safetyCharts)
 
 table1 <- knitr::knit_child(
   here::here("inst", "demo_gsmpharmaverse", "report_templates", "Table1.Rmd"),
@@ -23,16 +22,4 @@ table1 <- knitr::knit_child(
     quiet = TRUE
   )
 cat(table1, sep = "\n")
-```
-
-# Figure 1 with `safetyCharts`
-```{r, echo = FALSE, results='asis'} 
-figure1 <- knitr::knit_child(
-  here::here("inst", "demo_gsmpharmaverse", "report_templates", "Figure1.Rmd"),
-    envir = list(
-      figure1_params = list(dfADVS = params$dfADVS)
-    ),
-    quiet = TRUE
-  )
-cat(figure1, sep = "\n")
 ```

@@ -1,6 +1,9 @@
 #' Launch the workr demo Shiny app
 #'
-#' @description Initializes and runs an interactive Shiny application
+#' @description
+#' `r lifecycle::badge("stable")`
+#'
+#' Initializes and runs an interactive Shiny application
 #'   that demonstrates core workr functionality. The app shows workflow
 #'   YAML (editable) on the left and the resulting data on the right.
 #'
@@ -54,6 +57,10 @@ DemoApp_init <- function(
 }
 
 #' Demo app UI
+#'
+#' @description
+#' `r lifecycle::badge("stable")`
+#' Builds the Shiny user interface for the demo application.
 #'
 #' @param lWorkflows `list` Named list of workflows.
 #'
@@ -233,6 +240,11 @@ DemoApp_UI <- function(lWorkflows) {
 }
 
 #' Demo app server
+#'
+#' @description
+#' `r lifecycle::badge("stable")`
+#' Creates the server logic for the demo Shiny app, including workflow
+#' execution and displayed results.
 #'
 #' @param lWorkflows `list` Named list of workflows.
 #' @param lData `list` Initial data list.

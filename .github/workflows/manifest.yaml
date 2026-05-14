@@ -79,15 +79,18 @@ jobs:
       - name: Install workr package
         run: |
           install.packages("pak")
-          pak::local_install("_workr", dependencies = TRUE, upgrade = FALSE, ask = FALSE)
+          pak::local_install(
+            "_workr",
+            dependencies = c("Depends", "Imports", "LinkingTo"),
+            upgrade = FALSE,
+            ask = FALSE
+          )
         shell: Rscript {0}
 
       - name: Create manifest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          library(workr)
-
           # Read package list from packages.yaml
           config <- yaml::read_yaml("/tmp/packages.yaml")
           pkglist <- config$packages
@@ -102,7 +105,7 @@ jobs:
           pkg_branch_input <- "${{ inputs.pkg_branch }}"
           pkg_branch <- if (nchar(trimws(pkg_branch_input)) > 0) trimws(pkg_branch_input) else NULL
 
-          pkgManifest(
+          workr::pkgManifest(
             path = "manifest_output",
             packageList = pkglist,
             branch = pkg_branch

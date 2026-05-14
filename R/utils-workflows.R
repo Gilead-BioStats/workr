@@ -32,9 +32,8 @@ pull_workflows <- function(resolved, path) {
 #' List contents of a GitHub directory, returning name/type/path for each entry
 #' @keywords internal
 gh_list_contents <- function(full_repo, dir_path, sha) {
-  json_str <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha)),
-    stdout = TRUE, stderr = TRUE
+  json_str <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha))
   )
 
   if (length(json_str) == 0 || any(grepl("Not Found", json_str))) {
@@ -48,20 +47,17 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
 
   # problematic with escaping, parse the raw JSON with a simple approach
   # We'll re-call gh with separate jq queries for each field
-  names <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-            "--jq", ".[].name"),
-    stdout = TRUE, stderr = TRUE
+  names <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq", ".[].name")
   )
-  types <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-            "--jq", ".[].type"),
-    stdout = TRUE, stderr = TRUE
+  types <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq", ".[].type")
   )
-  paths <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-            "--jq", ".[].path"),
-    stdout = TRUE, stderr = TRUE
+  paths <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq", ".[].path")
   )
 
   if (length(names) == 0) return(NULL)
@@ -93,10 +89,9 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir) {
 #' Pull a single workflow file from GitHub
 #' @keywords internal
 pull_workflow_file <- function(full_repo, sha, api_path, local_path) {
-  file_content <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
-            "--jq", ".content"),
-    stdout = TRUE, stderr = TRUE
+  file_content <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
+      "--jq", ".content")
   )
 
   if (length(file_content) > 0 && !any(grepl("Not Found", file_content))) {

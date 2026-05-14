@@ -55,6 +55,12 @@ resolve_package <- function(org, repo, ref = NULL, date = NULL) {
   )
 }
 
+#' Execute a gh api call and return stdout/stderr lines
+#' @keywords internal
+gh_api <- function(args) {
+  system2("gh", args, stdout = TRUE, stderr = TRUE)
+}
+
 
 #' Resolve a ref by date — find the latest release/tag on or before the given date
 #'
@@ -67,31 +73,27 @@ resolve_ref_by_date <- function(org, repo, date = NULL) {
 
   if (is.null(date)) {
     # Get latest release tag
-    result <- system2(
-      "gh", c("api", paste0("repos/", full_repo, "/releases/latest"), "--jq", ".tag_name"),
-      stdout = TRUE, stderr = TRUE
+    result <- gh_api(
+      c("api", paste0("repos/", full_repo, "/releases/latest"), "--jq", ".tag_name")
     )
     if (length(result) > 0 && !grepl("Not Found", result[1])) {
       return(trimws(result[1]))
     }
     # No releases — fall back to default branch
-    result <- system2(
-      "gh", c("api", paste0("repos/", full_repo), "--jq", ".default_branch"),
-      stdout = TRUE, stderr = TRUE
+    result <- gh_api(
+      c("api", paste0("repos/", full_repo), "--jq", ".default_branch")
     )
     return(trimws(result[1]))
   }
 
   # Get all release tag names and dates separately
-  tags <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/releases"), "--paginate",
-            "--jq", ".[].tag_name"),
-    stdout = TRUE, stderr = TRUE
+  tags <- gh_api(
+    c("api", paste0("repos/", full_repo, "/releases"), "--paginate",
+      "--jq", ".[].tag_name")
   )
-  dates <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/releases"), "--paginate",
-            "--jq", ".[].published_at"),
-    stdout = TRUE, stderr = TRUE
+  dates <- gh_api(
+    c("api", paste0("repos/", full_repo, "/releases"), "--paginate",
+      "--jq", ".[].published_at")
   )
 
   if (length(tags) == 0 || all(grepl("Not Found", tags))) {
@@ -127,10 +129,9 @@ resolve_tag_by_date <- function(org, repo, date) {
   full_repo <- paste0(org, "/", repo)
 
   # Get tags with their commit dates
-  result <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/tags"), "--paginate",
-            "--jq", ".[].name"),
-    stdout = TRUE, stderr = TRUE
+  result <- gh_api(
+    c("api", paste0("repos/", full_repo, "/tags"), "--paginate",
+      "--jq", ".[].name")
   )
 
   if (length(result) == 0) {
@@ -139,16 +140,14 @@ resolve_tag_by_date <- function(org, repo, date) {
 
   # For each tag, get the commit date
   tag_dates <- lapply(result, function(tag) {
-    commit_info <- system2(
-      "gh", c("api", paste0("repos/", full_repo, "/git/ref/tags/", tag),
-              "--jq", ".object.sha"),
-      stdout = TRUE, stderr = TRUE
+    commit_info <- gh_api(
+      c("api", paste0("repos/", full_repo, "/git/ref/tags/", tag),
+        "--jq", ".object.sha")
     )
     sha <- trimws(commit_info[1])
-    commit_date_str <- system2(
-      "gh", c("api", paste0("repos/", full_repo, "/commits/", sha),
-              "--jq", ".commit.committer.date"),
-      stdout = TRUE, stderr = TRUE
+    commit_date_str <- gh_api(
+      c("api", paste0("repos/", full_repo, "/commits/", sha),
+        "--jq", ".commit.committer.date")
     )
     list(tag = tag, date = as.Date(substr(trimws(commit_date_str[1]), 1, 10)))
   })
@@ -172,9 +171,8 @@ resolve_tag_by_date <- function(org, repo, date) {
 #' @return Character. The full commit SHA.
 gh_get_sha <- function(org, repo, ref) {
   full_repo <- paste0(org, "/", repo)
-  result <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/commits/", ref), "--jq", ".sha"),
-    stdout = TRUE, stderr = TRUE
+  result <- gh_api(
+    c("api", paste0("repos/", full_repo, "/commits/", ref), "--jq", ".sha")
   )
   if (length(result) == 0 || grepl("Not Found", result[1])) {
     stop("Could not resolve ref '", ref, "' for ", full_repo)
@@ -190,10 +188,9 @@ gh_get_sha <- function(org, repo, ref) {
 #' @return Character. The package version string.
 gh_get_version <- function(org, repo, sha) {
   full_repo <- paste0(org, "/", repo)
-  result <- system2(
-    "gh", c("api", paste0("repos/", full_repo, "/contents/DESCRIPTION?ref=", sha),
-            "--jq", ".content"),
-    stdout = TRUE, stderr = TRUE
+  result <- gh_api(
+    c("api", paste0("repos/", full_repo, "/contents/DESCRIPTION?ref=", sha),
+      "--jq", ".content")
   )
 
   if (length(result) == 0 || grepl("Not Found", result[1])) {

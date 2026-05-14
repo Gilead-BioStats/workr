@@ -81,7 +81,7 @@ jobs:
           install.packages("pak")
           pak::local_install(
             "_workr",
-            dependencies = c("Depends", "Imports", "LinkingTo"),
+            dependencies = NA,
             upgrade = FALSE,
             ask = FALSE
           )

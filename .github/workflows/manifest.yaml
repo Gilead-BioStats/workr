@@ -47,13 +47,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout workr R sources
+      - name: Checkout workr package source
         uses: actions/checkout@v4
         with:
           repository: Gilead-BioStats/workr
-          ref: dev
+          ref: ${{ github.workflow_sha }}
           path: _workr
-          sparse-checkout: R
 
       - name: Read packages.yaml from manifest branch
         run: |
@@ -77,19 +76,17 @@ jobs:
         with:
           r-version: '4.4'
 
-      - name: Install R dependencies
+      - name: Install workr package
         run: |
-          install.packages(c("base64enc", "yaml"))
+          install.packages("pak")
+          pak::local_install("_workr", dependencies = TRUE, upgrade = FALSE, ask = FALSE)
         shell: Rscript {0}
 
       - name: Create manifest
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Source R files (workr checkout or local)
-          r_dir <- if (dir.exists("_workr/R")) "_workr/R" else "R"
-          r_files <- list.files(r_dir, pattern = "\\.R$", full.names = TRUE)
-          for (f in r_files) source(f)
+          library(workr)
 
           # Read package list from packages.yaml
           config <- yaml::read_yaml("/tmp/packages.yaml")

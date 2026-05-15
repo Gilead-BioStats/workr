@@ -3,6 +3,7 @@
 ## Prepare list of data of raw-data
 
 ``` r
+
 adam <- list(
   ADVS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/ADAM/ADAM_ADVS.parquet", package = "workr"))
 )
@@ -10,14 +11,14 @@ adam <- list(
 
 Show ADAM preview (first 6 rows)
 
-| oak_id | raw_source | patient_number | VSTESTCD | VSTEST                   | VSORRES | VSORRESU    | VSPOS | VSLOC  | VSLAT | VSDTC            | VSTPT   | VSTPTNUM | VISIT  | VISITNUM | STUDYID    | DOMAIN | VSCAT       | USUBJID        | TRT01A | PARAMCD | AVAL   |
-|--------|------------|----------------|----------|--------------------------|---------|-------------|-------|--------|-------|------------------|---------|----------|--------|----------|------------|--------|-------------|----------------|--------|---------|--------|
-| 1      | vitals     | 375            | SYSBP    | Systolic Blood Pressure  | 158.00  | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | SYSBP   | 158.00 |
-| 1      | vitals     | 375            | DIABP    | Diastolic Blood Pressure | 92.00   | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | DIABP   | 92.00  |
-| 1      | vitals     | 375            | PULSE    | Pulse Rate               | 63.00   | beats/min   | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | PULSE   | 63.00  |
-| 1      | vitals     | 375            | RESP     | Respiratory Rate         | 17.00   | breaths/min | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | RESP    | 17.00  |
-| 1      | vitals     | 375            | TEMP     | Temperature              | 40.48   | C           | NA    | SKIN   | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | TEMP    | 40.48  |
-| 1      | vitals     | 375            | OXYSAT   | Oxygen Saturation        | 98.00   | %           | NA    | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 | DRUG X | OXYSAT  | 98.00  |
+| oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC | VSTPT | VSTPTNUM | VISIT | VISITNUM | STUDYID | DOMAIN | VSCAT | USUBJID | TRT01A | PARAMCD | AVAL |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| 1 | vitals | 375 | SYSBP | Systolic Blood Pressure | 158.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | SYSBP | 158.00 |
+| 1 | vitals | 375 | DIABP | Diastolic Blood Pressure | 92.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | DIABP | 92.00 |
+| 1 | vitals | 375 | PULSE | Pulse Rate | 63.00 | beats/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | PULSE | 63.00 |
+| 1 | vitals | 375 | RESP | Respiratory Rate | 17.00 | breaths/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | RESP | 17.00 |
+| 1 | vitals | 375 | TEMP | Temperature | 40.48 | C | NA | SKIN | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | TEMP | 40.48 |
+| 1 | vitals | 375 | OXYSAT | Oxygen Saturation | 98.00 | % | NA | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 | DRUG X | OXYSAT | 98.00 |
 
 ### Show YAML’s of cards transformations
 
@@ -50,6 +51,7 @@ to demonstrate how to assemble multiple static outputs or a hybrid
 approach that may include shiny/web app html-based modules.
 
 ``` r
+
 ARS_workflows <- workr::MakeWorkflowList(
   strNames = "table_mean_arterial_pressure",
   strPath = "demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/",
@@ -59,6 +61,7 @@ ARS <- workr::RunWorkflows(lWorkflows = ARS_workflows, lData = adam )
 ```
 
 ``` r
+
 map2(ARS, names(ARS), function(x,y) arrow::write_parquet(x, paste0("demo_gsmpharmaverse/data/ARS/", y,".parquet")))
 ```
 

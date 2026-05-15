@@ -79,6 +79,7 @@ steps:
 Run it from R:
 
 ``` r
+
 wf <- yaml::read_yaml("hello_cars.yaml")
 lData <- list(df = cars)
 
@@ -139,6 +140,7 @@ for every sub-directory (phase) in a given project directory, sharing
 one `lData` object across phases.
 
 ``` r
+
 # Project directory structure:
 # project/
 #   01_mapping/
@@ -225,16 +227,16 @@ end-to-end platform for running {workr} projects on GitHub.
 We provide several GitHub Actions to automate snapshot creation and site
 deployment.
 
-| Workflow                     | Trigger                             | Purpose                                                                           |
-|------------------------------|-------------------------------------|-----------------------------------------------------------------------------------|
-| `manifest.yaml`              | Reusable / manual                   | Resolve packages and generate manifest artifacts on an orphan `ss-*` branch       |
-| `nightly-manifest.yaml`      | Cron (2am UTC) / manual             | Runs `manifest.yaml` for configured manifest branches                             |
-| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual      | Build pkgdown site with examples and slides                                       |
-| `pkgdown-cleanup.yaml`       | PR close                            | Remove PR preview deployments from gh-pages                                       |
-| `R-CMD-check.yaml`           | Push to main / PR                   | Standard R CMD check                                                              |
-| `R-CMD-check-dev.yaml`       | Push to dev / PR                    | R CMD check against dev dependencies                                              |
-| `qcthat.yaml`                | PR / release / issue-close / manual | Generate issue-test coverage + UAT reports and fail on uncovered completed issues |
-| `r-releaser-caller.yaml`     | Manual                              | Release automation via r-releaser                                                 |
+| Workflow | Trigger | Purpose |
+|----|----|----|
+| `manifest.yaml` | Reusable / manual | Resolve packages and generate manifest artifacts on an orphan `ss-*` branch |
+| `nightly-manifest.yaml` | Cron (2am UTC) / manual | Runs `manifest.yaml` for configured manifest branches |
+| `pkgdown-with-examples.yaml` | Push to main/dev / PR / manual | Build pkgdown site with examples and slides |
+| `pkgdown-cleanup.yaml` | PR close | Remove PR preview deployments from gh-pages |
+| `R-CMD-check.yaml` | Push to main / PR | Standard R CMD check |
+| `R-CMD-check-dev.yaml` | Push to dev / PR | R CMD check against dev dependencies |
+| `qcthat.yaml` | PR / release / issue-close / manual | Generate issue-test coverage + UAT reports and fail on uncovered completed issues |
+| `r-releaser-caller.yaml` | Manual | Release automation via r-releaser |
 
 # Package index
 

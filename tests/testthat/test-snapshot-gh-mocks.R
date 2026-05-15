@@ -1,4 +1,4 @@
-test_that("resolve_package resolves explicit refs via mocked gh api", {
+test_that("resolve_package resolves explicit refs via mocked gh api #43", {
   local_mocked_bindings(
     gh_api = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -22,7 +22,7 @@ test_that("resolve_package resolves explicit refs via mocked gh api", {
   expect_equal(out$version, "1.9.0")
 })
 
-test_that("resolve_package uses date-based fallback when ref is not provided", {
+test_that("resolve_package uses date-based fallback when ref is not provided #43", {
   local_mocked_bindings(
     gh_api = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -56,7 +56,7 @@ test_that("resolve_package uses date-based fallback when ref is not provided", {
   expect_equal(out$version, "1.0.0")
 })
 
-test_that("resolve_package errors on malformed gh commit lookup response", {
+test_that("resolve_package errors on malformed gh commit lookup response #43", {
   local_mocked_bindings(
     gh_api = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -74,7 +74,7 @@ test_that("resolve_package errors on malformed gh commit lookup response", {
   )
 })
 
-test_that("resolve_ref_by_date falls back to default branch when latest release is missing", {
+test_that("resolve_ref_by_date falls back to default branch when latest release is missing #43", {
   local_mocked_bindings(
     gh_api = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -93,7 +93,7 @@ test_that("resolve_ref_by_date falls back to default branch when latest release 
   expect_equal(out, "main")
 })
 
-test_that("gh_list_contents parses directory entries from mocked gh api", {
+test_that("gh_list_contents parses directory entries from mocked gh api #43", {
   local_mocked_bindings(
     gh_api = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -122,7 +122,7 @@ test_that("gh_list_contents parses directory entries from mocked gh api", {
   expect_equal(entries[[2]]$type, "file")
 })
 
-test_that("pkgManifest writes manifest outputs with mocked GitHub resolution", {
+test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43", {
   tmp <- tempfile("workr-pkg-manifest-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -165,7 +165,7 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution", {
   expect_equal(resolve_calls[[2]]$ref, "dev")
 })
 
-test_that("pull_workflows skips packages with no workflow directory", {
+test_that("pull_workflows skips packages with no workflow directory #45", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -188,7 +188,7 @@ test_that("pull_workflows skips packages with no workflow directory", {
   expect_true(dir.exists(file.path(tmp, "workflows")))
 })
 
-test_that("pull_workflows falls back to inst/workflows when singular path is missing", {
+test_that("pull_workflows falls back to inst/workflows when singular path is missing #45", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -223,7 +223,7 @@ test_that("pull_workflows falls back to inst/workflows when singular path is mis
   expect_equal(basename(file_parts[4]), "root.yaml")
 })
 
-test_that("pull_workflows dispatches file and directory entries", {
+test_that("pull_workflows dispatches file and directory entries #43", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -266,7 +266,7 @@ test_that("pull_workflows dispatches file and directory entries", {
   expect_equal(basename(file_parts[4]), "root.yaml")
 })
 
-test_that("pull_workflow_file skips write when content lookup is Not Found", {
+test_that("pull_workflow_file skips write when content lookup is Not Found #43", {
   tmp <- tempfile("workr-pull-workflow-file-")
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
@@ -287,7 +287,7 @@ test_that("pull_workflow_file skips write when content lookup is Not Found", {
   expect_false(file.exists(tmp))
 })
 
-test_that("pull_workflow_file writes decoded file when content is available", {
+test_that("pull_workflow_file writes decoded file when content is available #43", {
   tmp <- tempfile("workr-pull-workflow-file-")
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 

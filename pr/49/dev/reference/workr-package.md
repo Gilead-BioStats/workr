@@ -19,6 +19,8 @@ Useful links:
 
 Authors:
 
+- Jeremy Wildfire <jwildfire@gilead.com>
+
 - Zelos Zhu <zelos.zhu@atorus.com>
 
 Other contributors:

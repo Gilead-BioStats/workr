@@ -10,11 +10,17 @@ pull_workflows <- function(resolved, path) {
 
   for (pkg in resolved) {
     full_repo <- paste0(pkg$org, "/", pkg$repo)
-    # List inst/workflow contents as JSON
-    entries <- gh_list_contents(full_repo, "inst/workflow", pkg$sha)
+    workflow_dirs <- c("inst/workflow", "inst/workflows")
+    entries <- NULL
+    for (workflow_dir in workflow_dirs) {
+      entries <- gh_list_contents(full_repo, workflow_dir, pkg$sha)
+      if (!is.null(entries)) {
+        break
+      }
+    }
 
     if (is.null(entries)) {
-      message("  No inst/workflow found for ", full_repo, " -- skipping")
+      message("  No workflows found in inst/workflow or inst/workflows for ", full_repo, " -- skipping")
       next
     }
 

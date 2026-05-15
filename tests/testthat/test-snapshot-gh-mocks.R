@@ -169,9 +169,11 @@ test_that("pull_workflows skips packages with no workflow directory", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+  checked_dirs <- character()
 
   local_mocked_bindings(
     gh_list_contents = function(full_repo, dir_path, sha) {
+      checked_dirs <<- c(checked_dirs, dir_path)
       NULL
     },
     .package = "workr"
@@ -180,9 +182,45 @@ test_that("pull_workflows skips packages with no workflow directory", {
   resolved <- list(list(org = "Gilead-BioStats", repo = "gsm.core", sha = "abc123"))
   expect_message(
     workr:::pull_workflows(resolved, tmp),
-    "No inst/workflow found"
+    "No workflows found in inst/workflow or inst/workflows"
   )
+  expect_identical(checked_dirs, c("inst/workflow", "inst/workflows"))
   expect_true(dir.exists(file.path(tmp, "workflows")))
+})
+
+test_that("pull_workflows falls back to inst/workflows when singular path is missing", {
+  tmp <- tempfile("workr-pull-workflows-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  gh_calls <- character()
+  file_calls <- character()
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      gh_calls <<- c(gh_calls, dir_path)
+      if (identical(dir_path, "inst/workflow")) {
+        return(NULL)
+      }
+      list(list(type = "file", name = "root.yaml", path = "inst/workflows/root.yaml"))
+    },
+    pull_workflow_file = function(full_repo, sha, api_path, local_path) {
+      file_calls <<- c(file_calls, paste(full_repo, sha, api_path, local_path, sep = "|"))
+      invisible(NULL)
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(list(org = "Gilead-BioStats", repo = "grail", sha = "abc123"))
+  workr:::pull_workflows(resolved, tmp)
+
+  expect_identical(gh_calls, c("inst/workflow", "inst/workflows"))
+  expect_length(file_calls, 1)
+  file_parts <- strsplit(file_calls[[1]], "|", fixed = TRUE)[[1]]
+  expect_equal(file_parts[1], "Gilead-BioStats/grail")
+  expect_equal(file_parts[2], "abc123")
+  expect_equal(file_parts[3], "inst/workflows/root.yaml")
+  expect_equal(basename(file_parts[4]), "root.yaml")
 })
 
 test_that("pull_workflows dispatches file and directory entries", {

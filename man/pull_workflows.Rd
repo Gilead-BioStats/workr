@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils-workflows.R
 \name{pull_workflows}
 \alias{pull_workflows}
-\title{Pull workflow files from inst/workflow for each package}
+\title{Pull workflow files from inst/workflow or inst/workflows for each package}
 \usage{
 pull_workflows(resolved, path)
 }
@@ -12,5 +12,8 @@ pull_workflows(resolved, path)
 \item{path}{Character. Output directory.}
 }
 \description{
-Pull workflow files from inst/workflow for each package
+For each resolved package, checks \code{inst/workflow} first, then falls back to
+\code{inst/workflows}. Only when both are absent is the package skipped with a
+message. Matched files are merged directly into a \verb{workflows/} subdirectory
+under \code{path}.
 }

@@ -1,5 +1,10 @@
 #' Pull workflow files from inst/workflow or inst/workflows for each package
 #'
+#' For each resolved package, checks `inst/workflow` first, then falls back to
+#' `inst/workflows`. Only when both are absent is the package skipped with a
+#' message. Matched files are merged directly into a `workflows/` subdirectory
+#' under `path`.
+#'
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.
 pull_workflows <- function(resolved, path) {

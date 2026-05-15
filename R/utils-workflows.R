@@ -40,13 +40,7 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
     return(NULL)
   }
 
-  # Minimal JSON parsing — extract name, type, path from each object
-  json_text <- paste0(json_str, collapse = "\n")
-
-  # Use R's built-in JSON-ish parsing via the gh CLI --jq, but since that's
-
-  # problematic with escaping, parse the raw JSON with a simple approach
-  # We'll re-call gh with separate jq queries for each field
+  # Re-call gh with separate jq queries for each field.
   names <- gh_api(
     c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
       "--jq", ".[].name")

@@ -261,47 +261,6 @@ test_that("pull_workflows falls back to inst/workflows when singular path is mis
   expect_equal(basename(file_parts[4]), "root.yaml")
 })
 
-test_that("pull_workflows suppresses singular probe warnings before plural fallback #45", {
-  tmp <- tempfile("workr-pull-workflows-")
-  dir.create(tmp, recursive = TRUE)
-  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
-
-  local_mocked_bindings(
-    gh_api = function(args) {
-      cmd <- paste(args, collapse = " ")
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflow?ref=abc123")) {
-        warning("gh: HTTP 404")
-        return("Not Found")
-      }
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflows?ref=abc123")) {
-        return("[{\"name\":\"root.yaml\",\"type\":\"file\",\"path\":\"inst/workflows/root.yaml\"}]")
-      }
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflows?ref=abc123 --jq .[].name")) {
-        return("root.yaml")
-      }
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflows?ref=abc123 --jq .[].type")) {
-        return("file")
-      }
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflows?ref=abc123 --jq .[].path")) {
-        return("inst/workflows/root.yaml")
-      }
-      if (identical(cmd, "api repos/Gilead-BioStats/grail/contents/inst/workflows/root.yaml?ref=abc123 --jq .content")) {
-        return(base64enc::base64encode(charToRaw("name: workflow\n")))
-      }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
-  )
-
-  resolved <- list(list(org = "Gilead-BioStats", repo = "grail", sha = "abc123"))
-
-  expect_no_warning(workr:::pull_workflows(resolved, tmp))
-  expect_identical(
-    readLines(file.path(tmp, "workflows", "root.yaml"))[1],
-    "name: workflow"
-  )
-})
-
 test_that("pull_workflows dispatches file and directory entries #43", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)

@@ -24,7 +24,12 @@ pull_workflows <- function(resolved, path, collision_action = c("warn", "error")
     workflow_dirs <- c("inst/workflow", "inst/workflows")
     entries <- NULL
     for (workflow_dir in workflow_dirs) {
-      entries <- gh_list_contents(full_repo, workflow_dir, pkg$sha)
+      entries <- gh_list_contents(
+        full_repo,
+        workflow_dir,
+        pkg$sha,
+        suppress_probe_warnings = TRUE
+      )
       if (!is.null(entries)) {
         break
       }
@@ -58,10 +63,18 @@ pull_workflows <- function(resolved, path, collision_action = c("warn", "error")
 
 #' List contents of a GitHub directory, returning name/type/path for each entry
 #' @keywords internal
-gh_list_contents <- function(full_repo, dir_path, sha) {
-  json_str <- gh_api(
-    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha))
-  )
+gh_list_contents <- function(full_repo, dir_path, sha, suppress_probe_warnings = FALSE) {
+  probe <- function() {
+    gh_api(
+      c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha))
+    )
+  }
+
+  json_str <- if (isTRUE(suppress_probe_warnings)) {
+    suppressWarnings(probe())
+  } else {
+    probe()
+  }
 
   if (length(json_str) == 0 || any(grepl("Not Found", json_str))) {
     return(NULL)

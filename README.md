@@ -1,5 +1,25 @@
 # workr
 
+<!-- badges: start -->
+
+<div class="pkgdown-release">
+
+[![R-CMD-check](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml)
+[![pkgdown-all](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml)
+
+</div>
+
+<div class="pkgdown-devel">
+
+[![R-CMD-check](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml)
+[![pkgdown-all](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml)
+
+</div>
+
+<!-- badges: end -->
+
 A **very** simple R data pipeline framework. {workr} provides a minimal mental model for describing and executing step-by-step workflows. These simple workflows can be combined into configurable data pipelines that can automate large tasks.
 
 ## What is {workr}?

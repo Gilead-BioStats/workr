@@ -21,6 +21,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Jeremy Wildfire \email{jwildfire@gilead.com}
   \item Zelos Zhu \email{zelos.zhu@atorus.com}
 }
 

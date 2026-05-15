@@ -25,9 +25,9 @@ test_that("site-deploy.yaml workflow does not exist #19", {
   expect_false(file.exists(file.path(repo_root, ".github", "workflows", "site-deploy.yaml")))
 })
 
-test_that("pkgdown-with-examples.yaml has no Node/explorer steps #19", {
+test_that("pkgdown-all.yaml has no Node/explorer steps #19", {
   skip_if_not_repo()
-  wf <- file.path(repo_root, ".github", "workflows", "pkgdown-with-examples.yaml")
+  wf <- file.path(repo_root, ".github", "workflows", "pkgdown-all.yaml")
   lines <- readLines(wf)
   expect_false(any(grepl("setup-node", lines)), info = "setup-node reference found")
   expect_false(any(grepl("npm ci", lines)), info = "npm ci reference found")

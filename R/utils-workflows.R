@@ -142,7 +142,8 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
     destination_type = "file",
     source_repo = source_repo,
     collision_registry = collision_registry,
-    collision_action = collision_action
+    collision_action = collision_action,
+    record = FALSE
   )
   if (!should_proceed) {
     return(invisible(NULL))
@@ -153,15 +154,29 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
       "--jq", ".content")
   )
 
-  if (length(file_content) > 0 && !any(grepl("Not Found", file_content))) {
-    decoded <- rawToChar(base64enc::base64decode(paste0(file_content, collapse = "")))
-    writeLines(decoded, local_path)
-    message("  Pulled ", basename(local_path), " from ", full_repo)
+  if (length(file_content) == 0 || any(grepl("Not Found", file_content))) {
+    return(invisible(NULL))
   }
+
+  should_proceed <- register_workflow_destination(
+    local_path = local_path,
+    destination_type = "file",
+    source_repo = source_repo,
+    collision_registry = collision_registry,
+    collision_action = collision_action
+  )
+  if (!should_proceed) {
+    return(invisible(NULL))
+  }
+
+  decoded <- rawToChar(base64enc::base64decode(paste0(file_content, collapse = "")))
+  writeLines(decoded, local_path)
+  message("  Pulled ", basename(local_path), " from ", full_repo)
 }
 
 register_workflow_destination <- function(local_path, destination_type, source_repo,
-                                          collision_registry, collision_action) {
+                                          collision_registry, collision_action,
+                                          record = TRUE) {
   if (is.null(collision_registry)) {
     return(TRUE)
   }
@@ -213,11 +228,13 @@ register_workflow_destination <- function(local_path, destination_type, source_r
     }
   }
 
-  assign(
-    collision_key,
-    list(source_repo = source_repo, destination_type = destination_type),
-    envir = collision_registry
-  )
+  if (record) {
+    assign(
+      collision_key,
+      list(source_repo = source_repo, destination_type = destination_type),
+      envir = collision_registry
+    )
+  }
   TRUE
 }
 

@@ -353,6 +353,44 @@ test_that("pull_workflow_file writes decoded file when content is available #43"
   expect_identical(readLines(tmp)[1], "name: workflow")
 })
 
+test_that("pull_workflows does not register missing files as collisions #46", {
+  tmp <- tempfile("workr-pull-workflows-missing-content-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      if (!identical(dir_path, "inst/workflow")) {
+        return(NULL)
+      }
+      list(list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml"))
+    },
+    gh_api = function(args) {
+      cmd <- paste(args, collapse = " ")
+      if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/root.yaml\\?ref=sha1", cmd)) {
+        return("Not Found")
+      }
+      if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/root.yaml\\?ref=sha2", cmd)) {
+        return(base64enc::base64encode(charToRaw("name: pkg.two\n")))
+      }
+      stop("Unexpected gh_api args: ", cmd)
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(
+    list(org = "Gilead-BioStats", repo = "pkg.one", sha = "sha1"),
+    list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
+  )
+
+  workr:::pull_workflows(resolved, tmp, collision_action = "error")
+
+  expect_identical(
+    readLines(file.path(tmp, "workflows", "root.yaml"))[1],
+    "name: pkg.two"
+  )
+})
+
 test_that("pull_workflows warns on destination collisions by default #46", {
   tmp <- tempfile("workr-pull-workflows-collision-")
   dir.create(tmp, recursive = TRUE)

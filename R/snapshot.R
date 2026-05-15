@@ -13,6 +13,8 @@
 #'   (uses the latest release or default branch HEAD).
 #' @param branch Character or NULL. If provided, use this branch for any refs
 #'   that don't specify a tag/sha. Overrides date-based resolution.
+#' @param collision_action Character. How to handle workflow destination path
+#'   collisions across packages. One of `"warn"` (default) or `"error"`.
 #'
 #' @return Invisibly returns the manifest data frame.
 #'
@@ -28,7 +30,9 @@
 #' )
 #' }
 #' @export
-pkgManifest <- function(path = ".", packageList = character(), date = NULL, branch = NULL) {
+pkgManifest <- function(path = ".", packageList = character(), date = NULL,
+                        branch = NULL, collision_action = c("warn", "error")) {
+  collision_action <- match.arg(collision_action)
   if (length(packageList) == 0) {
     stop("packageList must contain at least one GitHub ref (e.g., 'org/repo@tag')")
   }
@@ -75,7 +79,7 @@ pkgManifest <- function(path = ".", packageList = character(), date = NULL, bran
   message("Wrote rproject.toml")
 
   # Pull workflows
-  pull_workflows(resolved, path)
+  pull_workflows(resolved, path, collision_action = collision_action)
   message("Pulled workflows")
 
   invisible(manifest)

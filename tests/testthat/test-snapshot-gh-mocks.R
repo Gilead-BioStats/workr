@@ -142,7 +142,7 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43
         ref = ref
       )
     },
-    pull_workflows = function(resolved, path) {
+    pull_workflows = function(resolved, path, collision_action = c("warn", "error")) {
       dir.create(file.path(path, "workflows"), recursive = TRUE, showWarnings = FALSE)
       writeLines("name: mocked-workflow", file.path(path, "workflows", "root.yaml"))
       invisible(NULL)
@@ -163,6 +163,41 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43
   expect_equal(out$package, c("gsm.core", "gsm.mapping"))
   expect_equal(resolve_calls[[1]]$ref, "v1.2.3")
   expect_equal(resolve_calls[[2]]$ref, "dev")
+})
+
+test_that("pkgManifest forwards collision_action to pull_workflows #46", {
+  tmp <- tempfile("workr-pkg-manifest-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  recorded_collision_action <- NULL
+
+  local_mocked_bindings(
+    resolve_package = function(org, repo, ref = NULL, date = NULL) {
+      list(
+        org = org,
+        repo = repo,
+        version = "1.0.0",
+        repository = paste0("https://github.com/", org, "/", repo),
+        url = paste0("https://github.com/", org, "/", repo, "/archive/sha-", repo, ".tar.gz"),
+        sha = paste0("sha-", repo),
+        ref = ref
+      )
+    },
+    pull_workflows = function(resolved, path, collision_action = c("warn", "error")) {
+      recorded_collision_action <<- collision_action[1]
+      invisible(NULL)
+    },
+    .package = "workr"
+  )
+
+  workr::pkgManifest(
+    path = tmp,
+    packageList = c("Gilead-BioStats/gsm.core"),
+    collision_action = "error"
+  )
+
+  expect_equal(recorded_collision_action, "error")
 })
 
 test_that("pull_workflows skips packages with no workflow directory #45", {
@@ -385,4 +420,89 @@ test_that("pull_workflows can error on destination collisions #46", {
     workr:::pull_workflows(resolved, tmp, collision_action = "error"),
     "Collision detected"
   )
+})
+
+test_that("pull_workflows warns on nested destination collisions in directories #46", {
+  tmp <- tempfile("workr-pull-workflows-collision-nested-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      if (identical(dir_path, "inst/workflow")) {
+        return(list(list(type = "dir", name = "shared", path = "inst/workflow/shared")))
+      }
+      if (identical(dir_path, "inst/workflow/shared")) {
+        return(list(list(type = "file", name = "nested.yaml", path = "inst/workflow/shared/nested.yaml")))
+      }
+      NULL
+    },
+    gh_api = function(args) {
+      cmd <- paste(args, collapse = " ")
+      if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/shared/nested.yaml\\?ref=sha1", cmd)) {
+        return(base64enc::base64encode(charToRaw("name: pkg.one.nested\n")))
+      }
+      if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/shared/nested.yaml\\?ref=sha2", cmd)) {
+        return(base64enc::base64encode(charToRaw("name: pkg.two.nested\n")))
+      }
+      stop("Unexpected gh_api args: ", cmd)
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(
+    list(org = "Gilead-BioStats", repo = "pkg.one", sha = "sha1"),
+    list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
+  )
+
+  expect_warning(
+    workr:::pull_workflows(resolved, tmp),
+    "Collision detected.*pkg\\.one.*pkg\\.two"
+  )
+  expect_identical(
+    readLines(file.path(tmp, "workflows", "shared", "nested.yaml"))[1],
+    "name: pkg.two.nested"
+  )
+})
+
+test_that("pull_workflows warns and skips file-vs-directory structural collisions #46", {
+  tmp <- tempfile("workr-pull-workflows-structural-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  requested_api_paths <- character()
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      if (identical(full_repo, "Gilead-BioStats/pkg.one") && identical(dir_path, "inst/workflow")) {
+        return(list(list(type = "file", name = "foo", path = "inst/workflow/foo")))
+      }
+      if (identical(full_repo, "Gilead-BioStats/pkg.two") && identical(dir_path, "inst/workflow")) {
+        return(list(list(type = "dir", name = "foo", path = "inst/workflow/foo")))
+      }
+      if (identical(full_repo, "Gilead-BioStats/pkg.two") && identical(dir_path, "inst/workflow/foo")) {
+        return(list(list(type = "file", name = "bar.yaml", path = "inst/workflow/foo/bar.yaml")))
+      }
+      NULL
+    },
+    gh_api = function(args) {
+      path_arg <- grep("^repos/.*/contents/", args, value = TRUE)
+      requested_api_paths <<- c(requested_api_paths, path_arg)
+      base64enc::base64encode(charToRaw("name: pkg.one.file\n"))
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(
+    list(org = "Gilead-BioStats", repo = "pkg.one", sha = "sha1"),
+    list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
+  )
+
+  expect_warning(
+    workr:::pull_workflows(resolved, tmp),
+    "Structural collision detected"
+  )
+  expect_true(file.exists(file.path(tmp, "workflows", "foo")))
+  expect_false(file.exists(file.path(tmp, "workflows", "foo", "bar.yaml")))
+  expect_equal(length(grep("pkg.two/contents/inst/workflow/foo/bar.yaml", requested_api_paths)), 0)
 })

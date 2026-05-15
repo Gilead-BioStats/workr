@@ -94,6 +94,17 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
                               source_repo = full_repo,
                               collision_registry = NULL,
                               collision_action = "warn") {
+  should_proceed <- register_workflow_destination(
+    local_path = local_dir,
+    destination_type = "dir",
+    source_repo = source_repo,
+    collision_registry = collision_registry,
+    collision_action = collision_action
+  )
+  if (!should_proceed) {
+    return(invisible(NULL))
+  }
+
   if (!dir.exists(local_dir)) {
     dir.create(local_dir, recursive = TRUE)
   }
@@ -126,22 +137,15 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
                                source_repo = full_repo,
                                collision_registry = NULL,
                                collision_action = "warn") {
-  if (!is.null(collision_registry)) {
-    collision_key <- normalizePath(local_path, winslash = "/", mustWork = FALSE)
-    if (exists(collision_key, envir = collision_registry, inherits = FALSE)) {
-      previous_repo <- get(collision_key, envir = collision_registry, inherits = FALSE)
-      if (!identical(previous_repo, source_repo)) {
-        msg <- paste0(
-          "Collision detected for destination path '", local_path, "' between ",
-          previous_repo, " and ", source_repo
-        )
-        if (identical(collision_action, "error")) {
-          stop(msg)
-        }
-        warning(msg, call. = FALSE)
-      }
-    }
-    assign(collision_key, source_repo, envir = collision_registry)
+  should_proceed <- register_workflow_destination(
+    local_path = local_path,
+    destination_type = "file",
+    source_repo = source_repo,
+    collision_registry = collision_registry,
+    collision_action = collision_action
+  )
+  if (!should_proceed) {
+    return(invisible(NULL))
   }
 
   file_content <- gh_api(
@@ -154,4 +158,80 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
     writeLines(decoded, local_path)
     message("  Pulled ", basename(local_path), " from ", full_repo)
   }
+}
+
+register_workflow_destination <- function(local_path, destination_type, source_repo,
+                                          collision_registry, collision_action) {
+  if (is.null(collision_registry)) {
+    return(TRUE)
+  }
+
+  collision_key <- normalizePath(local_path, winslash = "/", mustWork = FALSE)
+  existing_keys <- ls(collision_registry, all.names = TRUE)
+
+  if (collision_key %in% existing_keys) {
+    existing <- get(collision_key, envir = collision_registry, inherits = FALSE)
+    if (!identical(existing$source_repo, source_repo)) {
+      if (identical(existing$destination_type, destination_type)) {
+        if (identical(destination_type, "file")) {
+          handle_workflow_collision(
+            local_path, collision_key, existing$source_repo, source_repo, collision_action
+          )
+        }
+      } else {
+        handle_workflow_collision(
+          local_path, collision_key, existing$source_repo, source_repo, collision_action,
+          structural = TRUE
+        )
+        return(FALSE)
+      }
+    }
+  }
+
+  for (existing_key in existing_keys) {
+    if (identical(existing_key, collision_key)) {
+      next
+    }
+    existing <- get(existing_key, envir = collision_registry, inherits = FALSE)
+    # A file path cannot be a parent of another file or directory destination.
+    if (identical(existing$destination_type, "file") &&
+        startsWith(collision_key, paste0(existing_key, "/"))) {
+      handle_workflow_collision(
+        local_path, existing_key, existing$source_repo, source_repo, collision_action,
+        structural = TRUE
+      )
+      return(FALSE)
+    }
+    # A file destination cannot have existing descendants.
+    if (identical(destination_type, "file") &&
+        startsWith(existing_key, paste0(collision_key, "/"))) {
+      handle_workflow_collision(
+        local_path, existing_key, existing$source_repo, source_repo, collision_action,
+        structural = TRUE
+      )
+      return(FALSE)
+    }
+  }
+
+  assign(
+    collision_key,
+    list(source_repo = source_repo, destination_type = destination_type),
+    envir = collision_registry
+  )
+  TRUE
+}
+
+handle_workflow_collision <- function(local_path, existing_path, previous_repo, current_repo,
+                                      collision_action, structural = FALSE) {
+  prefix <- if (structural) "Structural collision detected" else "Collision detected"
+  msg <- paste0(
+    prefix, " for destination path '", local_path, "'",
+    " (existing path '", existing_path, "') between ",
+    previous_repo, " and ", current_repo
+  )
+
+  if (identical(collision_action, "error")) {
+    stop(msg)
+  }
+  warning(msg, call. = FALSE)
 }

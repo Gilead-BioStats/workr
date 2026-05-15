@@ -42,4 +42,4 @@ Config/Needs/website:
     sdtm.oak
 VignetteBuilder:
     knitr
-Config/roxygen2/version: 8.0.0
+RoxygenNote: 8.0.0

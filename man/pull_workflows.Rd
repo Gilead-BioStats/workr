@@ -4,16 +4,21 @@
 \alias{pull_workflows}
 \title{Pull workflow files from inst/workflow or inst/workflows for each package}
 \usage{
-pull_workflows(resolved, path)
+pull_workflows(resolved, path, collision_action = c("warn", "error"))
 }
 \arguments{
 \item{resolved}{List of resolved package metadata (each with org, repo, sha).}
 
 \item{path}{Character. Output directory.}
+
+\item{collision_action}{Character. How to handle collisions when multiple
+packages map to the same destination path in \verb{workflows/}. One of
+\code{"warn"} (default) or \code{"error"}.}
 }
 \description{
 For each resolved package, checks \code{inst/workflow} first, then falls back to
 \code{inst/workflows}. Only when both are absent is the package skipped with a
 message. Matched files are merged directly into a \verb{workflows/} subdirectory
-under \code{path}.
+under \code{path}. Duplicate output paths across packages are detected and can
+emit warnings or errors.
 }

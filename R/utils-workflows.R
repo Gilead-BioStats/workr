@@ -3,12 +3,18 @@
 #' For each resolved package, checks `inst/workflow` first, then falls back to
 #' `inst/workflows`. Only when both are absent is the package skipped with a
 #' message. Matched files are merged directly into a `workflows/` subdirectory
-#' under `path`.
+#' under `path`. Duplicate output paths across packages are detected and can
+#' emit warnings or errors.
 #'
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.
-pull_workflows <- function(resolved, path) {
+#' @param collision_action Character. How to handle collisions when multiple
+#'   packages map to the same destination path in `workflows/`. One of
+#'   `"warn"` (default) or `"error"`.
+pull_workflows <- function(resolved, path, collision_action = c("warn", "error")) {
+  collision_action <- match.arg(collision_action)
   workflows_dir <- file.path(path, "workflows")
+  collision_registry <- new.env(parent = emptyenv())
   if (!dir.exists(workflows_dir)) {
     dir.create(workflows_dir, recursive = TRUE)
   }
@@ -32,9 +38,19 @@ pull_workflows <- function(resolved, path) {
     # Merge directly into workflows_dir (no per-repo subfolder)
     for (entry in entries) {
       if (entry$type == "dir") {
-        pull_workflow_dir(full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name))
+        pull_workflow_dir(
+          full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
+          source_repo = full_repo,
+          collision_registry = collision_registry,
+          collision_action = collision_action
+        )
       } else {
-        pull_workflow_file(full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name))
+        pull_workflow_file(
+          full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
+          source_repo = full_repo,
+          collision_registry = collision_registry,
+          collision_action = collision_action
+        )
       }
     }
   }
@@ -74,7 +90,10 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
 
 #' Recursively pull a directory of workflow files
 #' @keywords internal
-pull_workflow_dir <- function(full_repo, sha, api_path, local_dir) {
+pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
+                              source_repo = full_repo,
+                              collision_registry = NULL,
+                              collision_action = "warn") {
   if (!dir.exists(local_dir)) {
     dir.create(local_dir, recursive = TRUE)
   }
@@ -84,16 +103,47 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir) {
 
   for (entry in entries) {
     if (entry$type == "dir") {
-      pull_workflow_dir(full_repo, sha, entry$path, file.path(local_dir, entry$name))
+      pull_workflow_dir(
+        full_repo, sha, entry$path, file.path(local_dir, entry$name),
+        source_repo = source_repo,
+        collision_registry = collision_registry,
+        collision_action = collision_action
+      )
     } else {
-      pull_workflow_file(full_repo, sha, entry$path, file.path(local_dir, entry$name))
+      pull_workflow_file(
+        full_repo, sha, entry$path, file.path(local_dir, entry$name),
+        source_repo = source_repo,
+        collision_registry = collision_registry,
+        collision_action = collision_action
+      )
     }
   }
 }
 
 #' Pull a single workflow file from GitHub
 #' @keywords internal
-pull_workflow_file <- function(full_repo, sha, api_path, local_path) {
+pull_workflow_file <- function(full_repo, sha, api_path, local_path,
+                               source_repo = full_repo,
+                               collision_registry = NULL,
+                               collision_action = "warn") {
+  if (!is.null(collision_registry)) {
+    collision_key <- normalizePath(local_path, winslash = "/", mustWork = FALSE)
+    if (exists(collision_key, envir = collision_registry, inherits = FALSE)) {
+      previous_repo <- get(collision_key, envir = collision_registry, inherits = FALSE)
+      if (!identical(previous_repo, source_repo)) {
+        msg <- paste0(
+          "Collision detected for destination path '", local_path, "' between ",
+          previous_repo, " and ", source_repo
+        )
+        if (identical(collision_action, "error")) {
+          stop(msg)
+        }
+        warning(msg, call. = FALSE)
+      }
+    }
+    assign(collision_key, source_repo, envir = collision_registry)
+  }
+
   file_content <- gh_api(
     c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
       "--jq", ".content")

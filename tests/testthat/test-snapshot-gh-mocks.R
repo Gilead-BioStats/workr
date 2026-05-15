@@ -204,7 +204,10 @@ test_that("pull_workflows falls back to inst/workflows when singular path is mis
       }
       list(list(type = "file", name = "root.yaml", path = "inst/workflows/root.yaml"))
     },
-    pull_workflow_file = function(full_repo, sha, api_path, local_path) {
+    pull_workflow_file = function(full_repo, sha, api_path, local_path,
+                                  source_repo = full_repo,
+                                  collision_registry = NULL,
+                                  collision_action = "warn") {
       file_calls <<- c(file_calls, paste(full_repo, sha, api_path, local_path, sep = "|"))
       invisible(NULL)
     },
@@ -238,11 +241,17 @@ test_that("pull_workflows dispatches file and directory entries #43", {
         list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml")
       )
     },
-    pull_workflow_dir = function(full_repo, sha, api_path, local_dir) {
+    pull_workflow_dir = function(full_repo, sha, api_path, local_dir,
+                                 source_repo = full_repo,
+                                 collision_registry = NULL,
+                                 collision_action = "warn") {
       dir_calls <<- c(dir_calls, paste(full_repo, sha, api_path, local_dir, sep = "|"))
       invisible(NULL)
     },
-    pull_workflow_file = function(full_repo, sha, api_path, local_path) {
+    pull_workflow_file = function(full_repo, sha, api_path, local_path,
+                                  source_repo = full_repo,
+                                  collision_registry = NULL,
+                                  collision_action = "warn") {
       file_calls <<- c(file_calls, paste(full_repo, sha, api_path, local_path, sep = "|"))
       invisible(NULL)
     },
@@ -307,4 +316,73 @@ test_that("pull_workflow_file writes decoded file when content is available #43"
 
   expect_true(file.exists(tmp))
   expect_identical(readLines(tmp)[1], "name: workflow")
+})
+
+test_that("pull_workflows warns on destination collisions by default #46", {
+  tmp <- tempfile("workr-pull-workflows-collision-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      if (!identical(dir_path, "inst/workflow")) {
+        return(NULL)
+      }
+      list(list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml"))
+    },
+    gh_api = function(args) {
+      cmd <- paste(args, collapse = " ")
+      if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/root.yaml\\?ref=sha1", cmd)) {
+        return(base64enc::base64encode(charToRaw("name: pkg.one\n")))
+      }
+      if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/root.yaml\\?ref=sha2", cmd)) {
+        return(base64enc::base64encode(charToRaw("name: pkg.two\n")))
+      }
+      stop("Unexpected gh_api args: ", cmd)
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(
+    list(org = "Gilead-BioStats", repo = "pkg.one", sha = "sha1"),
+    list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
+  )
+
+  expect_warning(
+    workr:::pull_workflows(resolved, tmp),
+    "Collision detected.*pkg\\.one.*pkg\\.two"
+  )
+  expect_identical(
+    readLines(file.path(tmp, "workflows", "root.yaml"))[1],
+    "name: pkg.two"
+  )
+})
+
+test_that("pull_workflows can error on destination collisions #46", {
+  tmp <- tempfile("workr-pull-workflows-collision-")
+  dir.create(tmp, recursive = TRUE)
+  on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
+
+  local_mocked_bindings(
+    gh_list_contents = function(full_repo, dir_path, sha) {
+      if (!identical(dir_path, "inst/workflow")) {
+        return(NULL)
+      }
+      list(list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml"))
+    },
+    gh_api = function(args) {
+      base64enc::base64encode(charToRaw("name: workflow\n"))
+    },
+    .package = "workr"
+  )
+
+  resolved <- list(
+    list(org = "Gilead-BioStats", repo = "pkg.one", sha = "sha1"),
+    list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
+  )
+
+  expect_error(
+    workr:::pull_workflows(resolved, tmp, collision_action = "error"),
+    "Collision detected"
+  )
 })

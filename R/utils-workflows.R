@@ -1,4 +1,4 @@
-#' Pull workflow files from inst/workflow for each package
+#' Pull workflow files from inst/workflow or inst/workflows for each package
 #'
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.

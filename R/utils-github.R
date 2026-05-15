@@ -57,6 +57,7 @@ resolve_package <- function(org, repo, ref = NULL, date = NULL) {
 
 #' Execute a gh api call and return stdout/stderr lines
 #' @keywords internal
+#' @noRd
 gh_api <- function(args) {
   system2("gh", args, stdout = TRUE, stderr = TRUE)
 }

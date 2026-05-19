@@ -1,21 +1,21 @@
-Package: workr
 Type: Package
+Package: workr
 Title: Workflow Execution Helpers
 Version: 1.0.0
+Authors@R: c(
+    person("Jeremy", "Wildfire", , "jwildfire@gilead.com", role = c("aut", "cre")),
+    person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),
+    person("Gilead", role = "cph")
+  )
 Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
 Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
-Authors@R: c(
-    person("Jeremy", "Wildfire", email = "jwildfire@gilead.com", role = c("aut", "cre")),
-    person("Zelos", "Zhu", email = "zelos.zhu@atorus.com", role = c("aut")),
-    person("Gilead", role = c("cph")))
-Description: Standalone helpers for running assessment workflows and steps.
-    This package extracts the workflow execution utilities from gsm.core,
-    providing RunWorkflows, RunWorkflow, and RunStep as a lightweight runtime.
+Description: Standalone helpers for running assessment workflows and
+    steps.  This package extracts the workflow execution utilities from
+    gsm.core, providing RunWorkflows, RunWorkflow, and RunStep as a
+    lightweight runtime.
 License: MIT + file LICENSE
 URL: https://gilead-biostats.github.io/workr,
     https://github.com/Gilead-BioStats/workr
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
 Imports:
     base64enc,
     DBI,
@@ -28,18 +28,17 @@ Imports:
     rlang,
     yaml
 Suggests:
+    clindata,
     knitr,
     rmarkdown,
     shiny,
     testthat (>= 3.0.0)
-Config/testthat/edition: 3
-Config/roxygen2/version: 8.0.0
-Config/Needs/website:
-    admiral,
-    arrow,
-    cards,
-    gt,
-    gtsummary,
-    sdtm.oak
 VignetteBuilder:
     knitr
+Remotes:
+    clindata=Gilead-BioStats/clindata
+Config/Needs/website:admiral, arrow, cards, gt, gtsummary, sdtm.oak
+Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)

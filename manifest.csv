@@ -1,5 +1,5 @@
 "org","package","version","repository","url","sha"
-"Gilead-BioStats","gsm.core","1.2.0","https://github.com/Gilead-BioStats/gsm.core","https://github.com/Gilead-BioStats/gsm.core/archive/b3dd7b4c14bac286673c562c692207b46171110e.tar.gz","b3dd7b4c14bac286673c562c692207b46171110e"
-"Gilead-BioStats","gsm.mapping","1.1.3.9000","https://github.com/Gilead-BioStats/gsm.mapping","https://github.com/Gilead-BioStats/gsm.mapping/archive/1fb73666ae9ea315f151adc5c74bddcb039e28e8.tar.gz","1fb73666ae9ea315f151adc5c74bddcb039e28e8"
+"Gilead-BioStats","gsm.core","1.2.1","https://github.com/Gilead-BioStats/gsm.core","https://github.com/Gilead-BioStats/gsm.core/archive/2226aabd81a631124a8715358ae22349dbf0a19d.tar.gz","2226aabd81a631124a8715358ae22349dbf0a19d"
+"Gilead-BioStats","gsm.mapping","1.1.4","https://github.com/Gilead-BioStats/gsm.mapping","https://github.com/Gilead-BioStats/gsm.mapping/archive/9ea4f6050acec525b3165d740dc28bd82d70a309.tar.gz","9ea4f6050acec525b3165d740dc28bd82d70a309"
 "Gilead-BioStats","gsm.kri","1.5.1","https://github.com/Gilead-BioStats/gsm.kri","https://github.com/Gilead-BioStats/gsm.kri/archive/21b8d07daad42fe804e5294500d11be63235b4c5.tar.gz","21b8d07daad42fe804e5294500d11be63235b4c5"
-"Gilead-BioStats","gsm.reporting","1.1.4.9000","https://github.com/Gilead-BioStats/gsm.reporting","https://github.com/Gilead-BioStats/gsm.reporting/archive/c1c5f226a931cbb84c51bff40582da1f0a9491ff.tar.gz","c1c5f226a931cbb84c51bff40582da1f0a9491ff"
+"Gilead-BioStats","gsm.reporting","1.1.5","https://github.com/Gilead-BioStats/gsm.reporting","https://github.com/Gilead-BioStats/gsm.reporting/archive/a08a63edb545497438903a31f8361b1c94ce6b51.tar.gz","a08a63edb545497438903a31f8361b1c94ce6b51"

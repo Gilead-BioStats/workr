@@ -2,23 +2,20 @@
 % Please edit documentation in R/utils-workflows.R
 \name{pull_workflows}
 \alias{pull_workflows}
-\title{Pull workflow files from inst/workflow or inst/workflows for each package}
+\title{Pull workflow files from inst/workflow for each package}
 \usage{
-pull_workflows(resolved, path, collision_action = c("warn", "error"))
+pull_workflows(resolved, path)
 }
 \arguments{
 \item{resolved}{List of resolved package metadata (each with org, repo, sha).}
 
 \item{path}{Character. Output directory.}
-
-\item{collision_action}{Character. How to handle collisions when multiple
-packages map to the same destination path in \verb{workflows/}. One of
-\code{"warn"} (default) or \code{"error"}.}
 }
 \description{
-For each resolved package, checks \code{inst/workflow} first, then falls back to
-\code{inst/workflows}. Only when both are absent is the package skipped with a
-message. Matched files are merged directly into a \verb{workflows/} subdirectory
-under \code{path}. Duplicate output paths across packages are detected and can
-emit warnings or errors.
+For each resolved package, pulls files from \code{inst/workflow}. If that
+directory is missing but \code{inst/workflows} exists, a warning asks maintainers
+to rename to the preferred convention and re-run \code{snapshot()}. Pulled files
+are merged directly into a \verb{workflows/} subdirectory under \code{path}.
+Destination filename collisions across repositories emit a warning and the
+most recently pulled file wins.
 }

@@ -8,8 +8,7 @@ pkgManifest(
   path = ".",
   packageList = character(),
   date = NULL,
-  branch = NULL,
-  collision_action = c("warn", "error")
+  branch = NULL
 )
 }
 \arguments{
@@ -24,9 +23,6 @@ ref, resolve the most recent release on or before this date. Default: NULL
 
 \item{branch}{Character or NULL. If provided, use this branch for any refs
 that don't specify a tag/sha. Overrides date-based resolution.}
-
-\item{collision_action}{Character. How to handle workflow destination path
-collisions across packages. One of \code{"warn"} (default) or \code{"error"}.}
 }
 \value{
 Invisibly returns the manifest data frame.

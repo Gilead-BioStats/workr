@@ -10,8 +10,7 @@ pull_workflow_file(
   api_path,
   local_path,
   source_repo = full_repo,
-  collision_registry = NULL,
-  collision_action = "warn"
+  seen_files = NULL
 )
 }
 \description{

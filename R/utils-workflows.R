@@ -1,55 +1,52 @@
-#' Pull workflow files from inst/workflow or inst/workflows for each package
+#' Pull workflow files from inst/workflow for each package
 #'
-#' For each resolved package, checks `inst/workflow` first, then falls back to
-#' `inst/workflows`. Only when both are absent is the package skipped with a
-#' message. Matched files are merged directly into a `workflows/` subdirectory
-#' under `path`. Duplicate output paths across packages are detected and can
-#' emit warnings or errors.
+#' For each resolved package, pulls files from `inst/workflow`. If that
+#' directory is missing but `inst/workflows` exists, a warning asks maintainers
+#' to rename to the preferred convention and re-run `snapshot()`. Pulled files
+#' are merged directly into a `workflows/` subdirectory under `path`.
+#' Destination filename collisions across repositories emit a warning and the
+#' most recently pulled file wins.
 #'
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.
-#' @param collision_action Character. How to handle collisions when multiple
-#'   packages map to the same destination path in `workflows/`. One of
-#'   `"warn"` (default) or `"error"`.
-pull_workflows <- function(resolved, path, collision_action = c("warn", "error")) {
-  collision_action <- match.arg(collision_action)
+pull_workflows <- function(resolved, path) {
   workflows_dir <- file.path(path, "workflows")
-  collision_registry <- new.env(parent = emptyenv())
+  seen_files <- new.env(parent = emptyenv())
   if (!dir.exists(workflows_dir)) {
     dir.create(workflows_dir, recursive = TRUE)
   }
 
   for (pkg in resolved) {
     full_repo <- paste0(pkg$org, "/", pkg$repo)
-    workflow_dirs <- c("inst/workflow", "inst/workflows")
-    entries <- NULL
-    for (workflow_dir in workflow_dirs) {
-      entries <- gh_list_contents(full_repo, workflow_dir, pkg$sha)
-      if (!is.null(entries)) {
-        break
-      }
-    }
+    entries <- gh_list_contents(full_repo, "inst/workflow", pkg$sha)
 
     if (is.null(entries)) {
-      message("  No workflows found in inst/workflow or inst/workflows for ", full_repo, " -- skipping")
+      plural_entries <- gh_list_contents(full_repo, "inst/workflows", pkg$sha)
+      if (!is.null(plural_entries)) {
+        warning(
+          "Directory 'inst/workflow' not found for ",
+          full_repo,
+          ". Found 'inst/workflows' instead; rename to 'inst/workflow' and re-run snapshot().",
+          call. = FALSE
+        )
+      } else {
+        message("  No inst/workflow found for ", full_repo, " -- skipping")
+      }
       next
     }
 
-    # Merge directly into workflows_dir (no per-repo subfolder)
     for (entry in entries) {
       if (entry$type == "dir") {
         pull_workflow_dir(
           full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
           source_repo = full_repo,
-          collision_registry = collision_registry,
-          collision_action = collision_action
+          seen_files = seen_files
         )
       } else {
         pull_workflow_file(
           full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
           source_repo = full_repo,
-          collision_registry = collision_registry,
-          collision_action = collision_action
+          seen_files = seen_files
         )
       }
     }
@@ -92,16 +89,16 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
 #' @keywords internal
 pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
                               source_repo = full_repo,
-                              collision_registry = NULL,
-                              collision_action = "warn") {
-  should_proceed <- register_workflow_destination(
-    local_path = local_dir,
-    destination_type = "dir",
-    source_repo = source_repo,
-    collision_registry = collision_registry,
-    collision_action = collision_action
-  )
-  if (!should_proceed) {
+                              seen_files = NULL) {
+  if (file.exists(local_dir) && !dir.exists(local_dir)) {
+    warning(
+      "Cannot create workflow directory '",
+      local_dir,
+      "' for ",
+      source_repo,
+      ": a file already exists at this path. Skipping.",
+      call. = FALSE
+    )
     return(invisible(NULL))
   }
 
@@ -110,22 +107,22 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
   }
 
   entries <- gh_list_contents(full_repo, api_path, sha)
-  if (is.null(entries)) return(invisible(NULL))
+  if (is.null(entries)) {
+    return(invisible(NULL))
+  }
 
   for (entry in entries) {
     if (entry$type == "dir") {
       pull_workflow_dir(
         full_repo, sha, entry$path, file.path(local_dir, entry$name),
         source_repo = source_repo,
-        collision_registry = collision_registry,
-        collision_action = collision_action
+        seen_files = seen_files
       )
     } else {
       pull_workflow_file(
         full_repo, sha, entry$path, file.path(local_dir, entry$name),
         source_repo = source_repo,
-        collision_registry = collision_registry,
-        collision_action = collision_action
+        seen_files = seen_files
       )
     }
   }
@@ -135,17 +132,21 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
 #' @keywords internal
 pull_workflow_file <- function(full_repo, sha, api_path, local_path,
                                source_repo = full_repo,
-                               collision_registry = NULL,
-                               collision_action = "warn") {
-  should_proceed <- register_workflow_destination(
-    local_path = local_path,
-    destination_type = "file",
-    source_repo = source_repo,
-    collision_registry = collision_registry,
-    collision_action = collision_action,
-    record = FALSE
-  )
-  if (!should_proceed) {
+                               seen_files = NULL) {
+  parent_dir <- dirname(local_path)
+  if (!dir.exists(parent_dir)) {
+    dir.create(parent_dir, recursive = TRUE)
+  }
+
+  if (dir.exists(local_path)) {
+    warning(
+      "Cannot write workflow file '",
+      local_path,
+      "' for ",
+      source_repo,
+      ": a directory already exists at this path. Skipping.",
+      call. = FALSE
+    )
     return(invisible(NULL))
   }
 
@@ -158,97 +159,49 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
     return(invisible(NULL))
   }
 
-  should_proceed <- register_workflow_destination(
-    local_path = local_path,
-    destination_type = "file",
-    source_repo = source_repo,
-    collision_registry = collision_registry,
-    collision_action = collision_action
-  )
-  if (!should_proceed) {
-    return(invisible(NULL))
-  }
+  warn_workflow_collision(local_path, source_repo, seen_files)
 
   decoded <- rawToChar(base64enc::base64decode(paste0(file_content, collapse = "")))
   writeLines(decoded, local_path)
+  register_workflow_file(local_path, source_repo, seen_files)
   message("  Pulled ", basename(local_path), " from ", full_repo)
 }
 
-register_workflow_destination <- function(local_path, destination_type, source_repo,
-                                          collision_registry, collision_action,
-                                          record = TRUE) {
-  if (is.null(collision_registry)) {
-    return(TRUE)
+warn_workflow_collision <- function(local_path, source_repo, seen_files) {
+  if (is.null(seen_files)) {
+    return(invisible(FALSE))
   }
 
   collision_key <- normalizePath(local_path, winslash = "/", mustWork = FALSE)
-  existing_keys <- ls(collision_registry, all.names = TRUE)
-
-  if (collision_key %in% existing_keys) {
-    existing <- get(collision_key, envir = collision_registry, inherits = FALSE)
-    if (!identical(existing$source_repo, source_repo)) {
-      if (identical(existing$destination_type, destination_type)) {
-        if (identical(destination_type, "file")) {
-          handle_workflow_collision(
-            local_path, collision_key, existing$source_repo, source_repo, collision_action
-          )
-        }
-      } else {
-        handle_workflow_collision(
-          local_path, collision_key, existing$source_repo, source_repo, collision_action,
-          structural = TRUE
-        )
-        return(FALSE)
-      }
-    }
+  existing_keys <- ls(seen_files, all.names = TRUE)
+  if (!(collision_key %in% existing_keys)) {
+    return(invisible(FALSE))
   }
 
-  for (existing_key in existing_keys) {
-    if (identical(existing_key, collision_key)) {
-      next
-    }
-    existing <- get(existing_key, envir = collision_registry, inherits = FALSE)
-    # A file path cannot be a parent of another file or directory destination.
-    if (identical(existing$destination_type, "file") &&
-        startsWith(collision_key, paste0(existing_key, "/"))) {
-      handle_workflow_collision(
-        local_path, existing_key, existing$source_repo, source_repo, collision_action,
-        structural = TRUE
-      )
-      return(FALSE)
-    }
-    # A file destination cannot have existing descendants.
-    if (identical(destination_type, "file") &&
-        startsWith(existing_key, paste0(collision_key, "/"))) {
-      handle_workflow_collision(
-        local_path, existing_key, existing$source_repo, source_repo, collision_action,
-        structural = TRUE
-      )
-      return(FALSE)
-    }
-  }
-
-  if (record) {
-    assign(
-      collision_key,
-      list(source_repo = source_repo, destination_type = destination_type),
-      envir = collision_registry
+  previous_repo <- get(collision_key, envir = seen_files, inherits = FALSE)
+  if (!identical(previous_repo, source_repo)) {
+    warning(
+      "Workflow destination collision for '",
+      local_path,
+      "' between ",
+      previous_repo,
+      " and ",
+      source_repo,
+      ". Keeping latest file.",
+      call. = FALSE
     )
+    return(invisible(TRUE))
   }
-  TRUE
+
+  invisible(FALSE)
 }
 
-handle_workflow_collision <- function(local_path, existing_path, previous_repo, current_repo,
-                                      collision_action, structural = FALSE) {
-  prefix <- if (structural) "Structural collision detected" else "Collision detected"
-  msg <- paste0(
-    prefix, " for destination path '", local_path, "'",
-    " (existing path '", existing_path, "') between ",
-    previous_repo, " and ", current_repo
-  )
-
-  if (identical(collision_action, "error")) {
-    stop(msg)
+register_workflow_file <- function(local_path, source_repo, seen_files) {
+  if (is.null(seen_files)) {
+    return(invisible(NULL))
   }
-  warning(msg, call. = FALSE)
+
+  collision_key <- normalizePath(local_path, winslash = "/", mustWork = FALSE)
+  assign(collision_key, source_repo, envir = seen_files)
+  invisible(NULL)
 }

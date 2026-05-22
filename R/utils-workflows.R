@@ -130,7 +130,9 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
 
 #' Pull a single workflow file from GitHub
 #' @keywords internal
-pull_workflow_file <- function(full_repo, sha, api_path, local_path) {
+pull_workflow_file <- function(full_repo, sha, api_path, local_path,
+                               source_repo = full_repo,
+                               seen_files = NULL) {
   file_content <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
       "--jq", ".content")

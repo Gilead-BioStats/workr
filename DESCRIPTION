@@ -7,8 +7,6 @@ Authors@R: c(
     person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),
     person("Gilead", role = "cph")
   )
-Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
-Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
 Description: Standalone helpers for running assessment workflows and
     steps.  This package extracts the workflow execution utilities from
     gsm.core, providing RunWorkflows, RunWorkflow, and RunStep as a

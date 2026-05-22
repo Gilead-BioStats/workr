@@ -32,7 +32,7 @@ pull_workflows <- function(resolved, path) {
 #' List contents of a GitHub directory, returning name/type/path for each entry
 #' @keywords internal
 gh_list_contents <- function(full_repo, dir_path, sha) {
-  json_str <- gh_api(
+  json_str <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha))
   )
 
@@ -41,15 +41,15 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
   }
 
   # Re-call gh with separate jq queries for each field.
-  names <- gh_api(
+  names <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
       "--jq", ".[].name")
   )
-  types <- gh_api(
+  types <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
       "--jq", ".[].type")
   )
-  paths <- gh_api(
+  paths <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
       "--jq", ".[].path")
   )
@@ -83,7 +83,7 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir) {
 #' Pull a single workflow file from GitHub
 #' @keywords internal
 pull_workflow_file <- function(full_repo, sha, api_path, local_path) {
-  file_content <- gh_api(
+  file_content <- gh_api_client(
     c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
       "--jq", ".content")
   )

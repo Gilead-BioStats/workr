@@ -1,6 +1,6 @@
 test_that("resolve_package resolves explicit refs via mocked gh api", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/commits/v1.2.3", cmd, fixed = TRUE) && grepl(".sha", cmd, fixed = TRUE)) {
         return("abc123")
@@ -9,7 +9,7 @@ test_that("resolve_package resolves explicit refs via mocked gh api", {
         desc <- "Package: gsm.core\nVersion: 1.9.0\n"
         return(base64enc::base64encode(charToRaw(desc)))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     }
   )
 
@@ -23,7 +23,7 @@ test_that("resolve_package resolves explicit refs via mocked gh api", {
 
 test_that("resolve_package uses date-based fallback when ref is not provided", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/releases --paginate --jq .\\[\\]\\.tag_name", cmd)) {
         return(c("v1.0.0", "v1.1.0"))
@@ -38,7 +38,7 @@ test_that("resolve_package uses date-based fallback when ref is not provided", {
         desc <- "Package: gsm.core\nVersion: 1.0.0\n"
         return(base64enc::base64encode(charToRaw(desc)))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     }
   )
 
@@ -56,12 +56,12 @@ test_that("resolve_package uses date-based fallback when ref is not provided", {
 
 test_that("resolve_package errors on malformed gh commit lookup response", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/commits/dev", cmd, fixed = TRUE) && grepl(".sha", cmd, fixed = TRUE)) {
         return("Not Found")
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     }
   )
 
@@ -73,7 +73,7 @@ test_that("resolve_package errors on malformed gh commit lookup response", {
 
 test_that("resolve_ref_by_date falls back to default branch when latest release is missing", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/releases/latest", cmd, fixed = TRUE) && grepl(".tag_name", cmd, fixed = TRUE)) {
         return("Not Found")
@@ -81,7 +81,7 @@ test_that("resolve_ref_by_date falls back to default branch when latest release 
       if (grepl("repos/Gilead-BioStats/gsm.core --jq .default_branch", cmd, fixed = TRUE)) {
         return("main")
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     }
   )
 
@@ -91,7 +91,7 @@ test_that("resolve_ref_by_date falls back to default branch when latest release 
 
 test_that("gh_list_contents parses directory entries from mocked gh api", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (!("--jq" %in% args)) {
         return("[]")
@@ -105,7 +105,7 @@ test_that("gh_list_contents parses directory entries from mocked gh api", {
       if (grepl(".[].path", cmd, fixed = TRUE)) {
         return(c("inst/workflow/0_other", "inst/workflow/foo.yaml"))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     }
   )
 
@@ -225,7 +225,7 @@ test_that("pull_workflow_file skips write when content lookup is Not Found", {
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       "Not Found"
     }
   )
@@ -245,7 +245,7 @@ test_that("pull_workflow_file writes decoded file when content is available", {
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       base64enc::base64encode(charToRaw("name: workflow\n"))
     }
   )

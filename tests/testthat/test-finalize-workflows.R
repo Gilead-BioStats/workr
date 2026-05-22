@@ -1,5 +1,5 @@
 # Tests for issue #34: Finalize inst/workflows and demo Shiny app
-# Verify 03_KRI uses clindata (not gsm.core::lSource), 03_AEKRI removed,
+# Verify 03_KRI uses local mock data (not gsm.core::lSource), 03_AEKRI removed,
 # and README links to the hosted app.
 
 repo_root <- file.path(testthat::test_path(), "..", "..")
@@ -35,12 +35,12 @@ test_that("03_KRI initData.R does not reference PD domain #34", {
   )
 })
 
-test_that("03_KRI initData.R uses clindata package #34", {
+test_that("03_KRI initData.R does not reference clindata package #34", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
-  expect_true(
+  expect_false(
     any(grepl("clindata::", lines)),
-    info = "initData.R does not reference clindata package"
+    info = "initData.R still references clindata package"
   )
 })
 
@@ -54,7 +54,6 @@ test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE #34", {
 
 test_that("03_KRI RunWorkflows completes without error using initData #34", {
   skip_if_not_repo()
-  skip_if_not_installed("clindata")
   skip_if_not_installed("gsm.core")
 
   kri_path <- file.path(repo_root, "inst", "workflows", "03_KRI")

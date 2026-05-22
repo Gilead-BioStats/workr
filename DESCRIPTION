@@ -27,15 +27,12 @@ Imports:
     rlang,
     yaml
 Suggests:
-    clindata,
     knitr,
     rmarkdown,
     shiny,
     testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
-Remotes:
-    clindata=Gilead-BioStats/clindata
 Config/Needs/website:admiral, arrow, cards, gt, gtsummary, sdtm.oak
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3

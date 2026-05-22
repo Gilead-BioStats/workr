@@ -7,8 +7,6 @@ Authors@R: c(
     person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),
     person("Gilead", role = "cph")
   )
-Author: Workr Maintainer [aut, cre], Gilead Biostats [cph]
-Maintainer: Jeremy Wildfire <jwildfire@gilead.com>
 Description: Standalone helpers for running assessment workflows and
     steps.  This package extracts the workflow execution utilities from
     gsm.core, providing RunWorkflows, RunWorkflow, and RunStep as a
@@ -22,21 +20,19 @@ Imports:
     dbplyr,
     dplyr,
     duckdb,
+    gh,
     glue,
     lifecycle,
     purrr,
     rlang,
     yaml
 Suggests:
-    clindata,
     knitr,
     rmarkdown,
     shiny,
     testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
-Remotes:
-    clindata=Gilead-BioStats/clindata
 Config/Needs/website:admiral, arrow, cards, gt, gtsummary, sdtm.oak
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3

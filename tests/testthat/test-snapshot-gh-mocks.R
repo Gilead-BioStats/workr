@@ -1,6 +1,6 @@
 test_that("resolve_package resolves explicit refs via mocked gh api #43", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/commits/v1.2.3", cmd, fixed = TRUE) && grepl(".sha", cmd, fixed = TRUE)) {
         return("abc123")
@@ -9,12 +9,11 @@ test_that("resolve_package resolves explicit refs via mocked gh api #43", {
         desc <- "Package: gsm.core\nVersion: 1.9.0\n"
         return(base64enc::base64encode(charToRaw(desc)))
       }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
+      stop("Unexpected gh_api_client args: ", cmd)
+    }
   )
 
-  out <- workr:::resolve_package("Gilead-BioStats", "gsm.core", ref = "v1.2.3")
+  out <- resolve_package("Gilead-BioStats", "gsm.core", ref = "v1.2.3")
   expect_equal(out$org, "Gilead-BioStats")
   expect_equal(out$repo, "gsm.core")
   expect_equal(out$ref, "v1.2.3")
@@ -24,7 +23,7 @@ test_that("resolve_package resolves explicit refs via mocked gh api #43", {
 
 test_that("resolve_package uses date-based fallback when ref is not provided #43", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/releases --paginate --jq .\\[\\]\\.tag_name", cmd)) {
         return(c("v1.0.0", "v1.1.0"))
@@ -39,12 +38,11 @@ test_that("resolve_package uses date-based fallback when ref is not provided #43
         desc <- "Package: gsm.core\nVersion: 1.0.0\n"
         return(base64enc::base64encode(charToRaw(desc)))
       }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
+      stop("Unexpected gh_api_client args: ", cmd)
+    }
   )
 
-  out <- workr:::resolve_package(
+  out <- resolve_package(
     org = "Gilead-BioStats",
     repo = "gsm.core",
     ref = NULL,
@@ -58,25 +56,24 @@ test_that("resolve_package uses date-based fallback when ref is not provided #43
 
 test_that("resolve_package errors on malformed gh commit lookup response #43", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/commits/dev", cmd, fixed = TRUE) && grepl(".sha", cmd, fixed = TRUE)) {
         return("Not Found")
       }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
+      stop("Unexpected gh_api_client args: ", cmd)
+    }
   )
 
   expect_error(
-    workr:::resolve_package("Gilead-BioStats", "gsm.core", ref = "dev"),
+    resolve_package("Gilead-BioStats", "gsm.core", ref = "dev"),
     "Could not resolve ref"
   )
 })
 
 test_that("resolve_ref_by_date falls back to default branch when latest release is missing #43", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("/releases/latest", cmd, fixed = TRUE) && grepl(".tag_name", cmd, fixed = TRUE)) {
         return("Not Found")
@@ -84,18 +81,17 @@ test_that("resolve_ref_by_date falls back to default branch when latest release 
       if (grepl("repos/Gilead-BioStats/gsm.core --jq .default_branch", cmd, fixed = TRUE)) {
         return("main")
       }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
+      stop("Unexpected gh_api_client args: ", cmd)
+    }
   )
 
-  out <- workr:::resolve_ref_by_date("Gilead-BioStats", "gsm.core", date = NULL)
+  out <- resolve_ref_by_date("Gilead-BioStats", "gsm.core", date = NULL)
   expect_equal(out, "main")
 })
 
 test_that("gh_list_contents parses directory entries from mocked gh api #43", {
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (!("--jq" %in% args)) {
         return("[]")
@@ -109,12 +105,11 @@ test_that("gh_list_contents parses directory entries from mocked gh api #43", {
       if (grepl(".[].path", cmd, fixed = TRUE)) {
         return(c("inst/workflow/0_other", "inst/workflow/foo.yaml"))
       }
-      stop("Unexpected gh_api args: ", cmd)
-    },
-    .package = "workr"
+      stop("Unexpected gh_api_client args: ", cmd)
+    }
   )
 
-  entries <- workr:::gh_list_contents("Gilead-BioStats/gsm.core", "inst/workflow", "abc123")
+  entries <- gh_list_contents("Gilead-BioStats/gsm.core", "inst/workflow", "abc123")
   expect_length(entries, 2)
   expect_equal(entries[[1]]$name, "0_other")
   expect_equal(entries[[1]]$type, "dir")
@@ -146,11 +141,10 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43
       dir.create(file.path(path, "workflows"), recursive = TRUE, showWarnings = FALSE)
       writeLines("name: mocked-workflow", file.path(path, "workflows", "root.yaml"))
       invisible(NULL)
-    },
-    .package = "workr"
+    }
   )
 
-  out <- workr::pkgManifest(
+  out <- pkgManifest(
     path = tmp,
     packageList = c("Gilead-BioStats/gsm.core@v1.2.3", "Gilead-BioStats/gsm.mapping"),
     branch = "dev"
@@ -175,13 +169,12 @@ test_that("pull_workflows skips packages with no workflow directory #45", {
     gh_list_contents = function(full_repo, dir_path, sha) {
       checked_dirs <<- c(checked_dirs, dir_path)
       NULL
-    },
-    .package = "workr"
+    }
   )
 
   resolved <- list(list(org = "Gilead-BioStats", repo = "gsm.core", sha = "abc123"))
   expect_message(
-    workr:::pull_workflows(resolved, tmp),
+    pull_workflows(resolved, tmp),
     "No inst/workflow found"
   )
   expect_identical(checked_dirs, c("inst/workflow", "inst/workflows"))
@@ -249,12 +242,11 @@ test_that("pull_workflows dispatches file and directory entries #43", {
                                   seen_files = NULL) {
       file_calls <<- c(file_calls, paste(full_repo, sha, api_path, local_path, sep = "|"))
       invisible(NULL)
-    },
-    .package = "workr"
+    }
   )
 
   resolved <- list(list(org = "Gilead-BioStats", repo = "gsm.core", sha = "abc123"))
-  workr:::pull_workflows(resolved, tmp)
+  pull_workflows(resolved, tmp)
 
   expect_length(dir_calls, 1)
   expect_length(file_calls, 1)
@@ -275,13 +267,12 @@ test_that("pull_workflow_file skips write when content lookup is Not Found #43",
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       "Not Found"
-    },
-    .package = "workr"
+    }
   )
 
-  workr:::pull_workflow_file(
+  pull_workflow_file(
     full_repo = "Gilead-BioStats/gsm.core",
     sha = "abc123",
     api_path = "inst/workflow/root.yaml",
@@ -296,13 +287,12 @@ test_that("pull_workflow_file writes decoded file when content is available #43"
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
   local_mocked_bindings(
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       base64enc::base64encode(charToRaw("name: workflow\n"))
-    },
-    .package = "workr"
+    }
   )
 
-  workr:::pull_workflow_file(
+  pull_workflow_file(
     full_repo = "Gilead-BioStats/gsm.core",
     sha = "abc123",
     api_path = "inst/workflow/root.yaml",

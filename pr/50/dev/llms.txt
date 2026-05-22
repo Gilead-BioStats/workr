@@ -288,8 +288,7 @@ Interactive Shiny application for exploring workflows.
 - [`pkgManifest()`](https://gilead-biostats.github.io/workr/dev/reference/pkgManifest.md)
   : Create a Package Manifest
 - [`pull_workflows()`](https://gilead-biostats.github.io/workr/dev/reference/pull_workflows.md)
-  : Pull workflow files from inst/workflow or inst/workflows for each
-  package
+  : Pull workflow files from inst/workflow for each package
 - [`resolve_package()`](https://gilead-biostats.github.io/workr/dev/reference/resolve_package.md)
   : Resolve a package to its full metadata using the GitHub API via gh
   CLI

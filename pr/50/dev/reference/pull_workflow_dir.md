@@ -11,7 +11,6 @@ pull_workflow_dir(
   api_path,
   local_dir,
   source_repo = full_repo,
-  collision_registry = NULL,
-  collision_action = "warn"
+  seen_files = NULL
 )
 ```

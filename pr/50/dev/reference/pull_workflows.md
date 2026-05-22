@@ -1,15 +1,16 @@
-# Pull workflow files from inst/workflow or inst/workflows for each package
+# Pull workflow files from inst/workflow for each package
 
-For each resolved package, checks `inst/workflow` first, then falls back
-to `inst/workflows`. Only when both are absent is the package skipped
-with a message. Matched files are merged directly into a `workflows/`
-subdirectory under `path`. Duplicate output paths across packages are
-detected and can emit warnings or errors.
+For each resolved package, pulls files from `inst/workflow`. If that
+directory is missing but `inst/workflows` exists, a warning asks
+maintainers to rename to the preferred convention and re-run
+`snapshot()`. Pulled files are merged directly into a `workflows/`
+subdirectory under `path`. Destination filename collisions across
+repositories emit a warning and the most recently pulled file wins.
 
 ## Usage
 
 ``` r
-pull_workflows(resolved, path, collision_action = c("warn", "error"))
+pull_workflows(resolved, path)
 ```
 
 ## Arguments
@@ -21,9 +22,3 @@ pull_workflows(resolved, path, collision_action = c("warn", "error"))
 - path:
 
   Character. Output directory.
-
-- collision_action:
-
-  Character. How to handle collisions when multiple packages map to the
-  same destination path in `workflows/`. One of `"warn"` (default) or
-  `"error"`.

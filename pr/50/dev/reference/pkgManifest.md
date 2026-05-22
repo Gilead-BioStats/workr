@@ -13,8 +13,7 @@ pkgManifest(
   path = ".",
   packageList = character(),
   date = NULL,
-  branch = NULL,
-  collision_action = c("warn", "error")
+  branch = NULL
 )
 ```
 
@@ -39,11 +38,6 @@ pkgManifest(
 
   Character or NULL. If provided, use this branch for any refs that
   don't specify a tag/sha. Overrides date-based resolution.
-
-- collision_action:
-
-  Character. How to handle workflow destination path collisions across
-  packages. One of `"warn"` (default) or `"error"`.
 
 ## Value
 

@@ -315,7 +315,7 @@ test_that("pull_workflows does not register missing files as collisions #46", {
       }
       list(list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml"))
     },
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/root.yaml\\?ref=sha1", cmd)) {
         return("Not Found")
@@ -323,7 +323,7 @@ test_that("pull_workflows does not register missing files as collisions #46", {
       if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/root.yaml\\?ref=sha2", cmd)) {
         return(base64enc::base64encode(charToRaw("name: pkg.two\n")))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     },
     .package = "workr"
   )
@@ -353,7 +353,7 @@ test_that("pull_workflows warns on destination collisions by default #46", {
       }
       list(list(type = "file", name = "root.yaml", path = "inst/workflow/root.yaml"))
     },
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/root.yaml\\?ref=sha1", cmd)) {
         return(base64enc::base64encode(charToRaw("name: pkg.one\n")))
@@ -361,7 +361,7 @@ test_that("pull_workflows warns on destination collisions by default #46", {
       if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/root.yaml\\?ref=sha2", cmd)) {
         return(base64enc::base64encode(charToRaw("name: pkg.two\n")))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     },
     .package = "workr"
   )
@@ -396,7 +396,7 @@ test_that("pull_workflows warns on nested destination collisions in directories 
       }
       NULL
     },
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
       if (grepl("repos/Gilead-BioStats/pkg.one/contents/inst/workflow/shared/nested.yaml\\?ref=sha1", cmd)) {
         return(base64enc::base64encode(charToRaw("name: pkg.one.nested\n")))
@@ -404,7 +404,7 @@ test_that("pull_workflows warns on nested destination collisions in directories 
       if (grepl("repos/Gilead-BioStats/pkg.two/contents/inst/workflow/shared/nested.yaml\\?ref=sha2", cmd)) {
         return(base64enc::base64encode(charToRaw("name: pkg.two.nested\n")))
       }
-      stop("Unexpected gh_api args: ", cmd)
+      stop("Unexpected gh_api_client args: ", cmd)
     },
     .package = "workr"
   )
@@ -444,7 +444,7 @@ test_that("pull_workflows warns and skips file-vs-directory structural collision
       }
       NULL
     },
-    gh_api = function(args) {
+    gh_api_client = function(args) {
       path_arg <- grep("^repos/.*/contents/", args, value = TRUE)
       requested_api_paths <<- c(requested_api_paths, path_arg)
       base64enc::base64encode(charToRaw("name: pkg.one.file\n"))

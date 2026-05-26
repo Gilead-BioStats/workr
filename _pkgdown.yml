@@ -49,6 +49,7 @@ reference:
     contents:
       - RunProject
       - MakeWorkflowList
+      - GetActiveWorkflows
       - loadExample
   - title: "Demo App"
     desc: "Interactive Shiny application for exploring workflows."

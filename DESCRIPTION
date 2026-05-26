@@ -21,6 +21,7 @@ Imports:
     dbplyr,
     dplyr,
     duckdb,
+    gh,
     glue,
     lifecycle,
     purrr,

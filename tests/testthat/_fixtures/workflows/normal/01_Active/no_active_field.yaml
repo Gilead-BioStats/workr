@@ -1,0 +1,8 @@
+meta:
+  Type: demo
+  ID: no_active_field
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

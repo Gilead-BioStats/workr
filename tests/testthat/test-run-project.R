@@ -69,19 +69,18 @@ test_that("RunProject respects strPhases subset and order #26", {
 })
 
 test_that("RunProject errors on missing strPath #26", {
-  expect_error(
-    RunProject(strPath = "/nonexistent/path/xyz"),
-    "strPath"
-  )
+  RunProject(strPath = "/nonexistent/path/xyz") |>
+    expect_error("strPath")
 })
 
 test_that("RunProject errors on missing requested phases #26", {
   project_path <- test_path("project")
 
-  expect_error(
-    RunProject(strPath = project_path, strPhases = c("phase_A", "nonexistent_phase")),
-    "strPhases"
-  )
+  RunProject(
+    strPath = project_path,
+    strPhases = c("phase_A", "nonexistent_phase")
+  ) |>
+    expect_error("strPhases")
 })
 
 test_that("RunProject errors on empty project directory #26", {
@@ -90,10 +89,8 @@ test_that("RunProject errors on empty project directory #26", {
   dir.create(empty_dir, showWarnings = FALSE)
   on.exit(unlink(empty_dir, recursive = TRUE), add = TRUE)
 
-  expect_error(
-    RunProject(strPath = empty_dir),
-    "No phase folders"
-  )
+  RunProject(strPath = empty_dir) |>
+    expect_error("No phase folders")
 })
 
 test_that("RunProject bReturnResult and bKeepInputData pass through #26", {

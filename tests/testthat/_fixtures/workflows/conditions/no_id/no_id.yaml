@@ -1,0 +1,7 @@
+meta:
+  Type: test
+steps:
+  - name: identity
+    output: res
+    params:
+      x: lData

@@ -1,0 +1,9 @@
+meta:
+  Type: demo
+  ID: inactive_metric
+  MetricActive: false
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

@@ -1,7 +1,11 @@
 ## Ported from gsm.core@dev test-RunStep.R — see #26
 
 test_that("RunStep handles lMeta and lData parameters correctly #26", {
-  lStep <- list(name = "dummy_function", output = "res", params = list(x = "lMeta", y = "lData"))
+  lStep <- list(
+    name = "dummy_function",
+    output = "res",
+    params = list(x = "lMeta", y = "lData")
+  )
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -13,7 +17,11 @@ test_that("RunStep handles lMeta and lData parameters correctly #26", {
 })
 
 test_that("RunStep handles parameters referencing elements within lMeta and lData #26", {
-  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = "data1"))
+  lStep <- list(
+    name = "dummy_function",
+    output = "res",
+    params = list(x = "meta1", y = "data1")
+  )
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -25,7 +33,11 @@ test_that("RunStep handles parameters referencing elements within lMeta and lDat
 })
 
 test_that("RunStep passes direct value parameters correctly #26", {
-  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = "100"))
+  lStep <- list(
+    name = "dummy_function",
+    output = "res",
+    params = list(x = "meta1", y = "100")
+  )
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -37,7 +49,11 @@ test_that("RunStep passes direct value parameters correctly #26", {
 })
 
 test_that("RunStep passes direct value vector parameters correctly #26", {
-  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = c(1, 2, 3)))
+  lStep <- list(
+    name = "dummy_function",
+    output = "res",
+    params = list(x = "meta1", y = c(1, 2, 3))
+  )
   lMeta <- list(meta1 = 200)
 
   suppressMessages({
@@ -48,7 +64,11 @@ test_that("RunStep passes direct value vector parameters correctly #26", {
 })
 
 test_that("RunStep handles multiple parameters and function invocation correctly #26", {
-  lStep <- list(name = "another_dummy_function", output = "res", params = list(a = "meta1", b = "data1", c = "some_value"))
+  lStep <- list(
+    name = "another_dummy_function",
+    output = "res",
+    params = list(a = "meta1", b = "data1", c = "some_value")
+  )
   lData <- list(data1 = 300)
   lMeta <- list(meta1 = 400)
 
@@ -61,7 +81,11 @@ test_that("RunStep handles multiple parameters and function invocation correctly
 })
 
 test_that("RunStep will run a function from a namespace #26", {
-  lStep <- list(name = "dplyr::glimpse", output = "res", params = list(x = "Theoph_head"))
+  lStep <- list(
+    name = "dplyr::glimpse",
+    output = "res",
+    params = list(x = "Theoph_head")
+  )
   lData <- list(data1 = 300, Theoph_head = head(Theoph))
   lMeta <- list(meta1 = 400)
 
@@ -107,9 +131,8 @@ test_that("RunStep recognizes rlang::expr() string parameters #26", {
   )
   lMeta <- list(meta1 = 50)
 
-  suppressMessages({
-    expect_error(RunStep(lStep, list(), lMeta))
-  })
+  suppressMessages(RunStep(lStep, list(), lMeta)) |>
+    expect_error()
 })
 
 test_that("RunStep recognizes expr() shorthand parameters #26", {
@@ -164,7 +187,11 @@ test_that("RunStep recognizes exprs() shorthand parameters #26", {
 })
 
 test_that("RunStep passes lSpec parameter correctly #26", {
-  lStep <- list(name = "dummy_function", output = "res", params = list(x = "lSpec", y = "meta1"))
+  lStep <- list(
+    name = "dummy_function",
+    output = "res",
+    params = list(x = "lSpec", y = "meta1")
+  )
   lMeta <- list(meta1 = 10)
   lSpec <- list(domain1 = list(required_cols = c("a", "b")))
 

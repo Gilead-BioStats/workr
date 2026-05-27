@@ -20,8 +20,8 @@
 #' @examples
 #' # get specific workflow files
 #' workflow <- MakeWorkflowList(
-#'   strNames = "cars",
-#'   strPath = "workflows",
+#'   strName = "cars",
+#'   strPath = "workflow",
 #'   strPackage = "workr"
 #' )
 #'

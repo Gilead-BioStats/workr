@@ -1,8 +1,8 @@
-## Expanded RunWorkflow and RunWorkflows tests — see #26
+## Expanded RunWorkflow and RunWorkflows tests — see (#26)
 
 # --- RunWorkflow ---
 
-test_that("RunWorkflow returns final step result by default #26", {
+test_that("RunWorkflow returns final step result by default (#26)", {
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
 
@@ -24,7 +24,7 @@ test_that("RunWorkflow returns final step result by default #26", {
   expect_equal(result, 4)
 })
 
-test_that("RunWorkflow returns full workflow object when bReturnResult = FALSE #26", {
+test_that("RunWorkflow returns full workflow object when bReturnResult = FALSE (#26)", {
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
 
@@ -51,7 +51,7 @@ test_that("RunWorkflow returns full workflow object when bReturnResult = FALSE #
   expect_equal(result$lResult, 6)
 })
 
-test_that("RunWorkflow bKeepInputData = FALSE removes input data from lData #26", {
+test_that("RunWorkflow bKeepInputData = FALSE removes input data from lData (#26)", {
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
 
@@ -81,7 +81,7 @@ test_that("RunWorkflow bKeepInputData = FALSE removes input data from lData #26"
   expect_false("extra" %in% names(result$lData))
 })
 
-test_that("RunWorkflow bKeepInputData = TRUE preserves input data in lData #26", {
+test_that("RunWorkflow bKeepInputData = TRUE preserves input data in lData (#26)", {
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
 
@@ -111,7 +111,7 @@ test_that("RunWorkflow bKeepInputData = TRUE preserves input data in lData #26",
   expect_true("result" %in% names(result$lData))
 })
 
-test_that("RunWorkflow multi-step preserves intermediate results in lData #26", {
+test_that("RunWorkflow multi-step preserves intermediate results in lData (#26)", {
   assign("add_one", function(x) x + 1, envir = .GlobalEnv)
   assign("add_two", function(x) x + 2, envir = .GlobalEnv)
   on.exit(
@@ -140,7 +140,7 @@ test_that("RunWorkflow multi-step preserves intermediate results in lData #26", 
   expect_equal(result$lResult, 13)
 })
 
-test_that("RunWorkflow invokes lConfig$LoadData #26", {
+test_that("RunWorkflow invokes lConfig$LoadData (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -171,7 +171,7 @@ test_that("RunWorkflow invokes lConfig$LoadData #26", {
   expect_equal(result, 42)
 })
 
-test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE #26", {
+test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -202,7 +202,7 @@ test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE #26", {
   expect_true(save_called)
 })
 
-test_that("RunWorkflow validates spec when present #26", {
+test_that("RunWorkflow validates spec when present (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -227,7 +227,7 @@ test_that("RunWorkflow validates spec when present #26", {
     expect_error("Missing required columns")
 })
 
-test_that("RunWorkflow runs without spec #26", {
+test_that("RunWorkflow runs without spec (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -244,7 +244,7 @@ test_that("RunWorkflow runs without spec #26", {
   expect_equal(result, "hello")
 })
 
-test_that("RunWorkflow runs with YAML files #26", {
+test_that("RunWorkflow runs with YAML files (#26)", {
   skip_if_not_installed("yaml")
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
@@ -289,7 +289,7 @@ test_that("RunWorkflow runs with YAML files #26", {
 
 # --- RunWorkflows ---
 
-test_that("RunWorkflows returns named list #26", {
+test_that("RunWorkflows returns named list (#26)", {
   assign("sum_step", function(lData, y) lData$value + y, envir = .GlobalEnv)
   on.exit(rm("sum_step", envir = .GlobalEnv), add = TRUE)
 
@@ -314,7 +314,7 @@ test_that("RunWorkflows returns named list #26", {
   expect_equal(results[["demo_001"]], 4)
 })
 
-test_that("RunWorkflows passes prior workflow results as data to later workflows #26", {
+test_that("RunWorkflows passes prior workflow results as data to later workflows (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   assign("add_ten", function(res) res + 10, envir = .GlobalEnv)
   on.exit(
@@ -355,7 +355,7 @@ test_that("RunWorkflows passes prior workflow results as data to later workflows
   expect_equal(results[["demo_second"]], 15)
 })
 
-test_that("RunWorkflows custom strResultNames #26", {
+test_that("RunWorkflows custom strResultNames (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -380,7 +380,7 @@ test_that("RunWorkflows custom strResultNames #26", {
   expect_named(results, "kri_ae_1.0")
 })
 
-test_that("RunWorkflows passes lConfig through to RunWorkflow #26", {
+test_that("RunWorkflows passes lConfig through to RunWorkflow (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -415,7 +415,7 @@ test_that("RunWorkflows passes lConfig through to RunWorkflow #26", {
   expect_equal(load_count, 2)
 })
 
-test_that("RunWorkflows handles empty workflow list #26", {
+test_that("RunWorkflows handles empty workflow list (#26)", {
   suppressMessages({
     results <- RunWorkflows(list(), list(val = 1))
   })

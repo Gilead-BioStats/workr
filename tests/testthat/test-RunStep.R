@@ -1,11 +1,7 @@
-## Ported from gsm.core@dev test-RunStep.R — see #26
+## Ported from gsm.core@dev test-RunStep.R — see (#26)
 
-test_that("RunStep handles lMeta and lData parameters correctly #26", {
-  lStep <- list(
-    name = "dummy_function",
-    output = "res",
-    params = list(x = "lMeta", y = "lData")
-  )
+test_that("RunStep handles lMeta and lData parameters correctly (#26)", {
+  lStep <- list(name = "dummy_function", output = "res", params = list(x = "lMeta", y = "lData"))
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -16,12 +12,8 @@ test_that("RunStep handles lMeta and lData parameters correctly #26", {
   expect_equal(result$y, lData)
 })
 
-test_that("RunStep handles parameters referencing elements within lMeta and lData #26", {
-  lStep <- list(
-    name = "dummy_function",
-    output = "res",
-    params = list(x = "meta1", y = "data1")
-  )
+test_that("RunStep handles parameters referencing elements within lMeta and lData (#26)", {
+  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = "data1"))
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -32,12 +24,8 @@ test_that("RunStep handles parameters referencing elements within lMeta and lDat
   expect_equal(result$y, 100)
 })
 
-test_that("RunStep passes direct value parameters correctly #26", {
-  lStep <- list(
-    name = "dummy_function",
-    output = "res",
-    params = list(x = "meta1", y = "100")
-  )
+test_that("RunStep passes direct value parameters correctly (#26)", {
+  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = "100"))
   lData <- list(data1 = 100)
   lMeta <- list(meta1 = 200)
 
@@ -48,12 +36,8 @@ test_that("RunStep passes direct value parameters correctly #26", {
   expect_equal(result$y, "100")
 })
 
-test_that("RunStep passes direct value vector parameters correctly #26", {
-  lStep <- list(
-    name = "dummy_function",
-    output = "res",
-    params = list(x = "meta1", y = c(1, 2, 3))
-  )
+test_that("RunStep passes direct value vector parameters correctly (#26)", {
+  lStep <- list(name = "dummy_function", output = "res", params = list(x = "meta1", y = c(1, 2, 3)))
   lMeta <- list(meta1 = 200)
 
   suppressMessages({
@@ -63,12 +47,8 @@ test_that("RunStep passes direct value vector parameters correctly #26", {
   expect_equal(result$y, c(1, 2, 3))
 })
 
-test_that("RunStep handles multiple parameters and function invocation correctly #26", {
-  lStep <- list(
-    name = "another_dummy_function",
-    output = "res",
-    params = list(a = "meta1", b = "data1", c = "some_value")
-  )
+test_that("RunStep handles multiple parameters and function invocation correctly (#26)", {
+  lStep <- list(name = "another_dummy_function", output = "res", params = list(a = "meta1", b = "data1", c = "some_value"))
   lData <- list(data1 = 300)
   lMeta <- list(meta1 = 400)
 
@@ -80,12 +60,8 @@ test_that("RunStep handles multiple parameters and function invocation correctly
   expect_equal(result$c, "some_value")
 })
 
-test_that("RunStep will run a function from a namespace #26", {
-  lStep <- list(
-    name = "dplyr::glimpse",
-    output = "res",
-    params = list(x = "Theoph_head")
-  )
+test_that("RunStep will run a function from a namespace (#26)", {
+  lStep <- list(name = "dplyr::glimpse", output = "res", params = list(x = "Theoph_head"))
   lData <- list(data1 = 300, Theoph_head = head(Theoph))
   lMeta <- list(meta1 = 400)
 
@@ -97,7 +73,7 @@ test_that("RunStep will run a function from a namespace #26", {
   expect_equal(result, head(Theoph))
 })
 
-test_that("RunStep will run a function without a namespace #26", {
+test_that("RunStep will run a function without a namespace (#26)", {
   # Use a base function that's available without namespace
   lStep <- list(name = "head", output = "res", params = list(x = "Theoph"))
   lData <- list(data1 = 300, Theoph = Theoph)
@@ -110,7 +86,7 @@ test_that("RunStep will run a function without a namespace #26", {
   expect_equal(colnames(result), c("Subject", "Wt", "Dose", "Time", "conc"))
 })
 
-test_that("RunStep will run a function with no parameters #26", {
+test_that("RunStep will run a function with no parameters (#26)", {
   wd_path <- getwd()
 
   lStep <- list(name = "getwd", output = "res")
@@ -120,9 +96,9 @@ test_that("RunStep will run a function with no parameters #26", {
   expect_equal(result, wd_path)
 })
 
-## workr-specific: expr() / exprs() parsing — see #26
+## workr-specific: expr() / exprs() parsing — see (#26)
 
-test_that("RunStep recognizes rlang::expr() string parameters #26", {
+test_that("RunStep recognizes rlang::expr() string parameters (#26)", {
   # RunStep parses the string and do.call then evaluates the expression.
   lStep <- list(
     name = "dummy_function",
@@ -135,7 +111,7 @@ test_that("RunStep recognizes rlang::expr() string parameters #26", {
     expect_error()
 })
 
-test_that("RunStep recognizes expr() shorthand parameters #26", {
+test_that("RunStep recognizes expr() shorthand parameters (#26)", {
   # Test that short form expr() is properly parsed by RunStep
   lStep <- list(
     name = "dummy_function",
@@ -151,7 +127,7 @@ test_that("RunStep recognizes expr() shorthand parameters #26", {
   expect_equal(result$y, "42")
 })
 
-test_that("RunStep recognizes rlang::exprs() parameters #26", {
+test_that("RunStep recognizes rlang::exprs() parameters (#26)", {
   # Test that exprs() syntax is recognized (doesn't crash)
   # exprs() returns a list of expressions
   lStep <- list(
@@ -170,7 +146,7 @@ test_that("RunStep recognizes rlang::exprs() parameters #26", {
   expect_equal(result$y, lData)
 })
 
-test_that("RunStep recognizes exprs() shorthand parameters #26", {
+test_that("RunStep recognizes exprs() shorthand parameters (#26)", {
   # Test that exprs() shorthand is processed
   lStep <- list(
     name = "dummy_function",
@@ -186,12 +162,8 @@ test_that("RunStep recognizes exprs() shorthand parameters #26", {
   expect_equal(result$y, "100")
 })
 
-test_that("RunStep passes lSpec parameter correctly #26", {
-  lStep <- list(
-    name = "dummy_function",
-    output = "res",
-    params = list(x = "lSpec", y = "meta1")
-  )
+test_that("RunStep passes lSpec parameter correctly (#26)", {
+  lStep <- list(name = "dummy_function", output = "res", params = list(x = "lSpec", y = "meta1"))
   lMeta <- list(meta1 = 10)
   lSpec <- list(domain1 = list(required_cols = c("a", "b")))
 

@@ -1,4 +1,4 @@
-## Adapted from gsm.core@dev test-util-MakeWorkflowList.R — see #26
+## Adapted from gsm.core@dev test-util-MakeWorkflowList.R — see (#26)
 
 test_that("MakeWorkflowList output is a named list with expected structure (#26)", {
   wf_list <- MakeWorkflowList(
@@ -127,7 +127,7 @@ test_that("MakeWorkflowList sets default Priority to 0 (#26)", {
 
 test_that("MakeWorkflowList loads from package (#26)", {
   wf_list <- MakeWorkflowList(
-    strPath = "workflows",
+    strPath = "workflow",
     strPackage = "workr"
   )
 

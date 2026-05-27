@@ -27,7 +27,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' results <- RunProject("inst/workflows")
+#' results <- RunProject("inst/workflow")
 #' }
 #'
 #' @export

@@ -12,5 +12,10 @@ pull_workflows(resolved, path)
 \item{path}{Character. Output directory.}
 }
 \description{
-Pull workflow files from inst/workflow for each package
+For each resolved package, pulls files from \code{inst/workflow}. If that
+directory is missing but \code{inst/workflows} exists, a warning asks maintainers
+to rename to the preferred convention and re-run \code{snapshot()}. Pulled files
+are merged directly into a \verb{workflows/} subdirectory under \code{path}.
+Destination filename collisions across repositories emit a warning and the
+most recently pulled file wins.
 }

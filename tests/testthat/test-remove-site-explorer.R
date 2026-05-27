@@ -1,4 +1,4 @@
-# Tests for issue #19: Remove Legacy /site Explorer From workr
+# Tests for issue (#19): Remove Legacy /site Explorer From workr
 # These verify that all explorer/site artifacts have been removed.
 # Skipped during R CMD check (repo root files not in tarball).
 
@@ -10,22 +10,22 @@ skip_if_not_repo <- function() {
   )
 }
 
-test_that("site/ directory does not exist #19", {
+test_that("site/ directory does not exist (#19)", {
   skip_if_not_repo()
   expect_false(dir.exists(file.path(repo_root, "site")))
 })
 
-test_that("site-build.yaml workflow does not exist #19", {
+test_that("site-build.yaml workflow does not exist (#19)", {
   skip_if_not_repo()
   expect_false(file.exists(file.path(repo_root, ".github", "workflows", "site-build.yaml")))
 })
 
-test_that("site-deploy.yaml workflow does not exist #19", {
+test_that("site-deploy.yaml workflow does not exist (#19)", {
   skip_if_not_repo()
   expect_false(file.exists(file.path(repo_root, ".github", "workflows", "site-deploy.yaml")))
 })
 
-test_that("pkgdown-all.yaml has no Node/explorer steps #19", {
+test_that("pkgdown-all.yaml has no Node/explorer steps (#19)", {
   skip_if_not_repo()
   wf <- file.path(repo_root, ".github", "workflows", "pkgdown-all.yaml")
   lines <- readLines(wf)
@@ -34,13 +34,13 @@ test_that("pkgdown-all.yaml has no Node/explorer steps #19", {
   expect_false(any(grepl("explorer-build", lines)), info = "explorer-build reference found")
 })
 
-test_that("_pkgdown.yml has no explorer navbar entry #19", {
+test_that("_pkgdown.yml has no explorer navbar entry (#19)", {
   skip_if_not_repo()
   lines <- readLines(file.path(repo_root, "_pkgdown.yml"))
   expect_false(any(grepl("explorer", lines, ignore.case = TRUE)))
 })
 
-test_that(".gitignore has no site/node_modules/ entry #19", {
+test_that(".gitignore has no site/node_modules/ entry (#19)", {
   skip_if_not_repo()
   lines <- readLines(file.path(repo_root, ".gitignore"))
   expect_false(any(grepl("site/node_modules", lines, fixed = TRUE)))

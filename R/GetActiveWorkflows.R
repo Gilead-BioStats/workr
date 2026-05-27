@@ -76,7 +76,7 @@ GetActiveWorkflows <- function(
     full.names = FALSE,
     recursive = bRecursive
   )
-  names(yaml_files) <- sub("^.*/", "", names(yaml_files))
+  names(yaml_files) <- basename(names(yaml_files))
   yaml_files
 }
 

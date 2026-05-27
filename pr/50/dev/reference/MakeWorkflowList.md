@@ -53,8 +53,7 @@ MakeWorkflowList(
 # get specific workflow files
 workflow <- MakeWorkflowList(
   strName = "cars",
-  strPath = "workflows",
+  strPath = "workflow",
   strPackage = "workr"
 )
-#> Error: [ strPath ] must exist.
 ```

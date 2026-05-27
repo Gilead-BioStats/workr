@@ -56,4 +56,5 @@ workflow <- MakeWorkflowList(
   strPath = "workflows",
   strPackage = "workr"
 )
+#> Error: [ strPath ] must exist.
 ```

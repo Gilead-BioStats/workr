@@ -55,8 +55,13 @@ GetActiveWorkflows(
 
 ``` r
 GetActiveWorkflows(
-  strPath = "workflows",
+  strPath = "workflow",
   strPackage = "workr"
 )
-#> Error: [ strPath ] must exist.
+#>  [1] "hello_cars"                   "mean"                        
+#>  [3] "subset"                       "AE"                          
+#>  [5] "SUBJ"                         "kri0001"                     
+#>  [7] "DM"                           "VS"                          
+#>  [9] "ADVS"                         "WorkProduct1"                
+#> [11] "table_mean_arterial_pressure"
 ```

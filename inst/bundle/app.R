@@ -42,7 +42,7 @@ pkgload::load_all(
 
 # Hosted app loads only lightweight workflows (01, 02) to stay within
 # shinyapps.io memory limits. Run DemoApp_init() locally for all examples.
-wf_root <- file.path(pkg_root, "inst", "workflows")
+wf_root <- file.path(pkg_root, "inst", "workflow")
 lWorkflows <- c(
   workr::MakeWorkflowList(strPath = file.path(wf_root, "01_RunWorkflow")),
   workr::MakeWorkflowList(strPath = file.path(wf_root, "02_RunWorkflows"))

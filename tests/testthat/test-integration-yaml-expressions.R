@@ -1,9 +1,9 @@
 ################################################################################
 # Integration Tests: YAML Loading → MakeWorkflowList → RunStep Pipeline
-# Issue #26: Verify that workflows can be loaded from YAML and executed
+# Issue (#26): Verify that workflows can be loaded from YAML and executed
 ################################################################################
 
-test_that("MakeWorkflowList loads YAML and RunStep executes workflow correctly #26", {
+test_that("MakeWorkflowList loads YAML and RunStep executes workflow correctly (#26)", {
   skip_if_not_installed("yaml")
   skip_if_not_installed("dplyr")
   
@@ -59,7 +59,7 @@ steps:
   expect_equal(result, 1:10)
 })
 
-test_that("Complex workflow: multi-step loaded from YAML and executed end-to-end #26", {
+test_that("Complex workflow: multi-step loaded from YAML and executed end-to-end (#26)", {
   skip_if_not_installed("yaml")
   skip_if_not_installed("dplyr")
   
@@ -111,7 +111,7 @@ steps:
   expect_equal(result, 5.5)
 })
 
-test_that("Workflow from YAML loads and executes with meta reference #26", {
+test_that("Workflow from YAML loads and executes with meta reference (#26)", {
   skip_if_not_installed("yaml")
   
   # Create a temporary directory with a workflow

@@ -4,7 +4,14 @@
 \alias{pull_workflow_dir}
 \title{Recursively pull a directory of workflow files}
 \usage{
-pull_workflow_dir(full_repo, sha, api_path, local_dir)
+pull_workflow_dir(
+  full_repo,
+  sha,
+  api_path,
+  local_dir,
+  source_repo = full_repo,
+  seen_files = NULL
+)
 }
 \description{
 Recursively pull a directory of workflow files

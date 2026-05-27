@@ -65,7 +65,7 @@ test_that("MakeWorkflowList names list elements by meta$ID (#26)", {
 
   # Verify list is named
   expect_true(!is.null(names(wf_list)))
-  
+
   # Verify names match meta$ID values
   ids <- purrr::map_chr(wf_list, ~ .x$meta$ID)
   names_match <- all(names(wf_list) %in% ids) && all(ids %in% names(wf_list))
@@ -107,7 +107,7 @@ test_that("MakeWorkflowList sets default Priority to 0 (#26)", {
 
 test_that("MakeWorkflowList loads from package (#26)", {
   wf_list <- MakeWorkflowList(
-    strPath = "workflows",
+    strPath = "workflow",
     strPackage = "workr"
   )
 

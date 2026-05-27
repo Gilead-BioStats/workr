@@ -21,7 +21,7 @@
 #'
 #' @examples
 #' GetActiveWorkflows(
-#'   strPath = "workflows",
+#'   strPath = "workflow",
 #'   strPackage = "workr"
 #' )
 #'

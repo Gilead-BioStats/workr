@@ -253,21 +253,21 @@ test_that("RunWorkflow runs with YAML files (#26)", {
 
   hw <- yaml::read_yaml(testthat::test_path(
     "_fixtures",
-    "workflows",
+    "workflow",
     "normal",
     "00_Example",
     "helloworld.yaml"
   ))
   ts <- yaml::read_yaml(testthat::test_path(
     "_fixtures",
-    "workflows",
+    "workflow",
     "normal",
     "00_Example",
     "two_steps.yaml"
   ))
   carswf <- yaml::read_yaml(testthat::test_path(
     "_fixtures",
-    "workflows",
+    "workflow",
     "normal",
     "00_Example",
     "cars.yaml"

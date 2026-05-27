@@ -40,7 +40,7 @@ suitable for passing directly to its \code{strNames} argument.
 }
 \examples{
 GetActiveWorkflows(
-  strPath = "workflows",
+  strPath = "workflow",
   strPackage = "workr"
 )
 

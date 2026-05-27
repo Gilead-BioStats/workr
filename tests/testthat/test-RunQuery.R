@@ -1,4 +1,4 @@
-## Ported from gsm.core@dev test-RunQuery.R + expanded — see #26
+## Ported from gsm.core@dev test-RunQuery.R + expanded — see (#26)
 
 test_that("RunQuery returns correct result (#26)", {
   skip_if_not_installed("DBI")
@@ -24,7 +24,7 @@ test_that("RunQuery returns correct result (#26)", {
   expect_equal(result$Salary, c(60000, 70000))
 })
 
-test_that("RunQuery handles empty df #26", {
+test_that("RunQuery handles empty df (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -38,7 +38,7 @@ test_that("RunQuery handles empty df #26", {
   expect_equal(nrow(result), 0)
 })
 
-test_that("RunQuery handles invalid input #26", {
+test_that("RunQuery handles invalid input (#26)", {
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
     Age = c(25, 30, 35),
@@ -49,7 +49,7 @@ test_that("RunQuery handles invalid input #26", {
   expect_error(RunQuery(query, df))
 })
 
-test_that("RunQuery checks if strQuery contains 'FROM df' #26", {
+test_that("RunQuery checks if strQuery contains 'FROM df' (#26)", {
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
     Age = c(25, 30, 35),
@@ -60,7 +60,7 @@ test_that("RunQuery checks if strQuery contains 'FROM df' #26", {
   expect_error(RunQuery(query, df), "FROM df")
 })
 
-test_that("RunQuery applies schema appropriately #26", {
+test_that("RunQuery applies schema appropriately (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -96,7 +96,7 @@ test_that("RunQuery applies schema appropriately #26", {
   expect_equal(class(result$Tenured), "logical")
 })
 
-test_that("RunQuery applies incomplete schema appropriately #26", {
+test_that("RunQuery applies incomplete schema appropriately (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -122,7 +122,7 @@ test_that("RunQuery applies incomplete schema appropriately #26", {
   expect_equal(class(result$emaN), class(df$Name))
 })
 
-test_that("RunQuery parses invalid date/times correctly #26", {
+test_that("RunQuery parses invalid date/times correctly (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -149,7 +149,7 @@ test_that("RunQuery parses invalid date/times correctly #26", {
   expect_true(all(is.na(result$Birthtime)))
 })
 
-test_that("RunQuery requires lColumnMapping when bUseSchema is TRUE #26", {
+test_that("RunQuery requires lColumnMapping when bUseSchema is TRUE (#26)", {
   df <- data.frame(x = 1:3)
   query <- "SELECT * FROM df"
 

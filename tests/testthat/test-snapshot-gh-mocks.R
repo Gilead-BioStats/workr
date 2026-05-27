@@ -1,4 +1,4 @@
-test_that("resolve_package resolves explicit refs via mocked gh api #43", {
+test_that("resolve_package resolves explicit refs via mocked gh api (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -21,7 +21,7 @@ test_that("resolve_package resolves explicit refs via mocked gh api #43", {
   expect_equal(out$version, "1.9.0")
 })
 
-test_that("resolve_package uses date-based fallback when ref is not provided #43", {
+test_that("resolve_package uses date-based fallback when ref is not provided (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -54,7 +54,7 @@ test_that("resolve_package uses date-based fallback when ref is not provided #43
   expect_equal(out$version, "1.0.0")
 })
 
-test_that("resolve_package errors on malformed gh commit lookup response #43", {
+test_that("resolve_package errors on malformed gh commit lookup response (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -71,7 +71,7 @@ test_that("resolve_package errors on malformed gh commit lookup response #43", {
   )
 })
 
-test_that("resolve_ref_by_date falls back to default branch when latest release is missing #43", {
+test_that("resolve_ref_by_date falls back to default branch when latest release is missing (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -89,7 +89,7 @@ test_that("resolve_ref_by_date falls back to default branch when latest release 
   expect_equal(out, "main")
 })
 
-test_that("gh_list_contents parses directory entries from mocked gh api #43", {
+test_that("gh_list_contents parses directory entries from mocked gh api (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
       cmd <- paste(args, collapse = " ")
@@ -117,7 +117,7 @@ test_that("gh_list_contents parses directory entries from mocked gh api #43", {
   expect_equal(entries[[2]]$type, "file")
 })
 
-test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43", {
+test_that("pkgManifest writes manifest outputs with mocked GitHub resolution (#43)", {
   tmp <- tempfile("workr-pkg-manifest-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -159,7 +159,7 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution #43
   expect_equal(resolve_calls[[2]]$ref, "dev")
 })
 
-test_that("pull_workflows skips packages with no workflow directory #45", {
+test_that("pull_workflows skips packages with no workflow directory (#45)", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -181,7 +181,7 @@ test_that("pull_workflows skips packages with no workflow directory #45", {
   expect_true(dir.exists(file.path(tmp, "workflows")))
 })
 
-test_that("pull_workflows warns when only inst/workflows exists #45", {
+test_that("pull_workflows warns when only inst/workflows exists (#45)", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -216,7 +216,7 @@ test_that("pull_workflows warns when only inst/workflows exists #45", {
   expect_length(file_calls, 0)
 })
 
-test_that("pull_workflows dispatches file and directory entries #43", {
+test_that("pull_workflows dispatches file and directory entries (#43)", {
   tmp <- tempfile("workr-pull-workflows-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -262,7 +262,7 @@ test_that("pull_workflows dispatches file and directory entries #43", {
   expect_equal(basename(file_parts[4]), "root.yaml")
 })
 
-test_that("pull_workflow_file skips write when content lookup is Not Found #43", {
+test_that("pull_workflow_file skips write when content lookup is Not Found (#43)", {
   tmp <- tempfile("workr-pull-workflow-file-")
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
@@ -282,7 +282,7 @@ test_that("pull_workflow_file skips write when content lookup is Not Found #43",
   expect_false(file.exists(tmp))
 })
 
-test_that("pull_workflow_file writes decoded file when content is available #43", {
+test_that("pull_workflow_file writes decoded file when content is available (#43)", {
   tmp <- tempfile("workr-pull-workflow-file-")
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
 
@@ -303,7 +303,7 @@ test_that("pull_workflow_file writes decoded file when content is available #43"
   expect_identical(readLines(tmp)[1], "name: workflow")
 })
 
-test_that("pull_workflows does not register missing files as collisions #46", {
+test_that("pull_workflows does not register missing files as collisions (#46)", {
   tmp <- tempfile("workr-pull-workflows-missing-content-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -341,7 +341,7 @@ test_that("pull_workflows does not register missing files as collisions #46", {
   )
 })
 
-test_that("pull_workflows warns on destination collisions by default #46", {
+test_that("pull_workflows warns on destination collisions by default (#46)", {
   tmp <- tempfile("workr-pull-workflows-collision-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -381,7 +381,7 @@ test_that("pull_workflows warns on destination collisions by default #46", {
   )
 })
 
-test_that("pull_workflows warns on nested destination collisions in directories #46", {
+test_that("pull_workflows warns on nested destination collisions in directories (#46)", {
   tmp <- tempfile("workr-pull-workflows-collision-nested-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)
@@ -424,7 +424,7 @@ test_that("pull_workflows warns on nested destination collisions in directories 
   )
 })
 
-test_that("pull_workflows warns and skips file-vs-directory structural collisions #46", {
+test_that("pull_workflows warns and skips file-vs-directory structural collisions (#46)", {
   tmp <- tempfile("workr-pull-workflows-structural-")
   dir.create(tmp, recursive = TRUE)
   on.exit(unlink(tmp, recursive = TRUE), add = TRUE)

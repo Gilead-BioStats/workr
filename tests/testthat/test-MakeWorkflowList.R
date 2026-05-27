@@ -1,6 +1,6 @@
-## Adapted from gsm.core@dev test-util-MakeWorkflowList.R — see #26
+## Adapted from gsm.core@dev test-util-MakeWorkflowList.R — see (#26)
 
-test_that("MakeWorkflowList output is a named list with expected structure #26", {
+test_that("MakeWorkflowList output is a named list with expected structure (#26)", {
   wf_list <- MakeWorkflowList(strPath = test_path("workflows", "00_Example"))
 
   expect_true(is.list(wf_list))
@@ -8,21 +8,21 @@ test_that("MakeWorkflowList output is a named list with expected structure #26",
   expect_true(all(purrr::map_lgl(wf_list, ~ all(c("meta", "steps", "path") %in% names(.)))))
 })
 
-test_that("MakeWorkflowList returns metadata as expected #26", {
+test_that("MakeWorkflowList returns metadata as expected (#26)", {
   wf_list <- MakeWorkflowList(strPath = test_path("workflows", "00_Example"))
 
   expect_true(all(purrr::map_lgl(wf_list, ~ "Type" %in% names(.x$meta))))
   expect_true(all(purrr::map_lgl(wf_list, ~ "ID" %in% names(.x$meta))))
 })
 
-test_that("MakeWorkflowList errors on invalid strPath #26", {
+test_that("MakeWorkflowList errors on invalid strPath (#26)", {
   expect_error(
     MakeWorkflowList(strPath = "nonexistent_path_xyz", strPackage = NULL),
     "strPath"
   )
 })
 
-test_that("MakeWorkflowList errors on invalid strPackage #26", {
+test_that("MakeWorkflowList errors on invalid strPackage (#26)", {
   expect_error(
     MakeWorkflowList(
       strPath = test_path("workflows", "00_Example"),
@@ -32,7 +32,7 @@ test_that("MakeWorkflowList errors on invalid strPackage #26", {
   )
 })
 
-test_that("MakeWorkflowList filters by strNames #26", {
+test_that("MakeWorkflowList filters by strNames (#26)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("workflows", "00_Example"),
     strNames = "cars"
@@ -42,7 +42,7 @@ test_that("MakeWorkflowList filters by strNames #26", {
   expect_equal(length(wf_list), 1)
 })
 
-test_that("MakeWorkflowList bExact filters exactly #26", {
+test_that("MakeWorkflowList bExact filters exactly (#26)", {
   # "car" partial match should find "cars" with bExact = FALSE
   wf_partial <- MakeWorkflowList(
     strPath = test_path("workflows", "00_Example"),
@@ -60,7 +60,7 @@ test_that("MakeWorkflowList bExact filters exactly #26", {
   expect_equal(length(wf_exact), 0)
 })
 
-test_that("MakeWorkflowList names list elements by meta$ID #26", {
+test_that("MakeWorkflowList names list elements by meta$ID (#26)", {
   wf_list <- MakeWorkflowList(strPath = test_path("workflows", "00_Example"))
 
   # Verify list is named
@@ -72,7 +72,7 @@ test_that("MakeWorkflowList names list elements by meta$ID #26", {
   expect_true(names_match)
 })
 
-test_that("MakeWorkflowList sorts by Priority #26", {
+test_that("MakeWorkflowList sorts by Priority (#26)", {
   # Create temp directory with two workflows at different priorities
   td <- tempfile("wf_priority_")
   dir.create(td, recursive = TRUE)
@@ -98,14 +98,14 @@ test_that("MakeWorkflowList sorts by Priority #26", {
   expect_equal(names(wf_list), c("high_priority", "low_priority"))
 })
 
-test_that("MakeWorkflowList sets default Priority to 0 #26", {
+test_that("MakeWorkflowList sets default Priority to 0 (#26)", {
   wf_list <- MakeWorkflowList(strPath = test_path("workflows", "00_Example"))
 
   priorities <- purrr::map_dbl(wf_list, ~ .x$meta$Priority)
   expect_true(all(priorities == 0))
 })
 
-test_that("MakeWorkflowList loads from package #26", {
+test_that("MakeWorkflowList loads from package (#26)", {
   wf_list <- MakeWorkflowList(
     strPath = "workflows",
     strPackage = "workr"
@@ -115,7 +115,7 @@ test_that("MakeWorkflowList loads from package #26", {
   expect_true(length(wf_list) > 0)
 })
 
-test_that("MakeWorkflowList bRecursive finds nested workflows #26", {
+test_that("MakeWorkflowList bRecursive finds nested workflows (#26)", {
   wf_recursive <- MakeWorkflowList(
     strPath = test_path("workflows"),
     bRecursive = TRUE

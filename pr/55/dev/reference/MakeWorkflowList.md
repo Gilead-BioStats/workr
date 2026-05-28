@@ -70,7 +70,7 @@ workflow <- MakeWorkflowList(
 
 # Load a specific workflow by name
 workflow <- MakeWorkflowList(
-  strName = "cars",
+  strNames = "cars",
   strPath = "workflow",
   strPackage = "workr"
 )

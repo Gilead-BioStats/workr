@@ -5,19 +5,19 @@
 \title{Load workflows from a package/directory.}
 \usage{
 MakeWorkflowList(
-  strNames = GetActiveWorkflows(strPath = strPath, strPackage = strPackage, bRecursive =
+  strNames = ListWorkflowNames(strPath = strPath, strPackage = strPackage, bRecursive =
     bRecursive),
   strPath = "workflow",
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
-  bRecursive = TRUE
+  bRecursive = TRUE,
+  bActiveOnly = TRUE
 )
 }
 \arguments{
-\item{strNames}{\verb{array of character} List of workflows to include. Defaults
-to the result of \code{\link[=GetActiveWorkflows]{GetActiveWorkflows()}}, which excludes any workflow with
-\code{meta$MetricActive: false}. Pass \code{NULL} explicitly to include all workflows
-regardless of their \code{MetricActive} setting.}
+\item{strNames}{\verb{array of character} Workflow names to include. Defaults to
+all workflow names found at \code{strPath}/\code{strPackage}. Pass an \code{I()}-wrapped
+vector for exact matching (as returned by \code{\link[=ListWorkflowNames]{ListWorkflowNames()}}).}
 
 \item{strPath}{\code{character} The location of workflow YAML files, relative to
 either the working directory or the \code{strPackage} installation directory.}
@@ -26,10 +26,14 @@ either the working directory or the \code{strPackage} installation directory.}
 are located. If \code{NULL}, the package will use an absolute path.}
 
 \item{bExact}{\code{logical} Should \code{strNames} matches be exact? Defaults to
-\code{TRUE} when \code{strNames} has class \code{"AsIs"} (as it does if it comes from
-\code{\link[=GetActiveWorkflows]{GetActiveWorkflows()}}), \code{FALSE} otherwise.}
+\code{TRUE} when \code{strNames} has class \code{"AsIs"} (as returned by
+\code{\link[=ListWorkflowNames]{ListWorkflowNames()}}), \code{FALSE} otherwise.}
 
 \item{bRecursive}{\code{logical} Find files in nested folders? Default \code{TRUE}.}
+
+\item{bActiveOnly}{\code{logical} Should workflows with \code{meta$MetricActive: false}
+be excluded? Default \code{TRUE}. Set to \code{FALSE} to load all workflows
+regardless of their \code{MetricActive} setting.}
 }
 \value{
 \code{list} A list of workflows with workflow and parameter metadata.
@@ -40,7 +44,13 @@ are located. If \code{NULL}, the package will use an absolute path.}
 Create a list of workflows for use in pipelines.
 }
 \examples{
-# get specific workflow files
+# Load all active workflows from a package
+workflow <- MakeWorkflowList(
+  strPath = "workflow",
+  strPackage = "workr"
+)
+
+# Load a specific workflow by name
 workflow <- MakeWorkflowList(
   strName = "cars",
   strPath = "workflow",

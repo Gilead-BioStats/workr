@@ -4,7 +4,6 @@ test_that("MakeWorkflowList output is a named list with expected structure (#26)
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "00_Example")
   )
-
   expect_true(is.list(wf_list))
   expect_true(length(wf_list) > 0)
   expect_true(all(purrr::map_lgl(
@@ -17,7 +16,6 @@ test_that("MakeWorkflowList returns metadata as expected (#26)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "00_Example")
   )
-
   expect_true(all(purrr::map_lgl(wf_list, ~ "Type" %in% names(.x$meta))))
   expect_true(all(purrr::map_lgl(wf_list, ~ "ID" %in% names(.x$meta))))
 })
@@ -40,7 +38,6 @@ test_that("MakeWorkflowList filters by strNames (#26)", {
     strPath = test_path("_fixtures", "workflow", "normal", "00_Example"),
     strNames = "cars"
   )
-
   expect_true("cars" %in% names(wf_list))
   expect_equal(length(wf_list), 1)
 })
@@ -72,8 +69,6 @@ test_that("MakeWorkflowList names list elements by meta$ID (#26)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "00_Example")
   )
-
-  # Verify list is named
   expect_true(!is.null(names(wf_list)))
 
   # Verify names match meta$ID values
@@ -110,9 +105,7 @@ test_that("MakeWorkflowList sorts by Priority (#26)", {
     ),
     file.path(td, "high_priority.yaml")
   )
-
   wf_list <- MakeWorkflowList(strPath = td)
-
   expect_equal(names(wf_list), c("high_priority", "low_priority"))
 })
 
@@ -120,7 +113,6 @@ test_that("MakeWorkflowList sets default Priority to 0 (#26)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "00_Example")
   )
-
   priorities <- purrr::map_dbl(wf_list, ~ .x$meta$Priority)
   expect_true(all(priorities == 0))
 })
@@ -130,42 +122,38 @@ test_that("MakeWorkflowList loads from package (#26)", {
     strPath = "workflow",
     strPackage = "workr"
   )
-
   expect_true(is.list(wf_list))
   expect_true(length(wf_list) > 0)
 })
 
-test_that("MakeWorkflowList default strNames excludes inactive workflows #53", {
+test_that("MakeWorkflowList bActiveOnly = TRUE (default) excludes inactive workflows (#53)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "01_Active")
   )
-
   expect_true("active_metric" %in% names(wf_list))
   expect_true("no_active_field" %in% names(wf_list))
   expect_false("inactive_metric" %in% names(wf_list))
 })
 
-test_that("MakeWorkflowList with strNames = NULL includes all workflows #53", {
+test_that("MakeWorkflowList bActiveOnly = FALSE includes all workflows (#53)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "01_Active"),
-    strNames = NULL
+    bActiveOnly = FALSE
   )
-
   expect_true("active_metric" %in% names(wf_list))
   expect_true("no_active_field" %in% names(wf_list))
   expect_true("inactive_metric" %in% names(wf_list))
 })
 
-test_that("MakeWorkflowList with explicit strNames includes inactive workflows #53", {
-  all_names <- c("active_metric", "inactive_metric", "no_active_field")
+test_that("MakeWorkflowList strNames = NULL with bActiveOnly = FALSE includes all workflows (#53)", {
   wf_list <- MakeWorkflowList(
     strPath = test_path("_fixtures", "workflow", "normal", "01_Active"),
-    strNames = all_names,
-    bExact = TRUE
+    strNames = NULL,
+    bActiveOnly = FALSE
   )
-
+  expect_true("active_metric" %in% names(wf_list))
+  expect_true("no_active_field" %in% names(wf_list))
   expect_true("inactive_metric" %in% names(wf_list))
-  expect_equal(length(wf_list), 3)
 })
 
 test_that("MakeWorkflowList warns when ID does not match filename (#26)", {
@@ -224,4 +212,31 @@ test_that("MakeWorkflowList bRecursive finds nested workflows (#26)", {
 
   # Recursive should find workflows in 00_Example subdirectory
   expect_true(length(wf_recursive) >= length(wf_flat))
+})
+
+# .filter_yaml_files() ----
+
+test_that(".filter_yaml_files NULL strNames returns all (#53)", {
+  path <- test_path("_fixtures", "workflow", "normal", "01_Active")
+  yaml_files <- .discover_yaml_files(path, bRecursive = TRUE)
+  result <- .filter_yaml_files(yaml_files, strNames = NULL, bExact = FALSE)
+  expect_equal(result, yaml_files)
+})
+
+test_that(".filter_yaml_files exact match works (#53)", {
+  path <- test_path("_fixtures", "workflow", "normal", "01_Active")
+  yaml_files <- .discover_yaml_files(path, bRecursive = TRUE)
+  result <- .filter_yaml_files(
+    yaml_files,
+    strNames = "active_metric",
+    bExact = TRUE
+  )
+  expect_equal(names(result), "active_metric.yaml")
+})
+
+test_that(".filter_yaml_files partial match works (#53)", {
+  path <- test_path("_fixtures", "workflow", "normal", "01_Active")
+  yaml_files <- .discover_yaml_files(path, bRecursive = TRUE)
+  result <- .filter_yaml_files(yaml_files, strNames = "metric", bExact = FALSE)
+  expect_true(all(grepl("metric", names(result))))
 })

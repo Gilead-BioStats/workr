@@ -28,7 +28,7 @@
 #'
 #' # Load a specific workflow by name
 #' workflow <- MakeWorkflowList(
-#'   strName = "cars",
+#'   strNames = "cars",
 #'   strPath = "workflow",
 #'   strPackage = "workr"
 #' )
@@ -198,5 +198,5 @@ MakeWorkflowList <- function(
   if (!length(x)) {
     LogMessage(level = "warn", message = msg)
   }
-  invisible(x)
+  x
 }

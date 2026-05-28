@@ -15,6 +15,8 @@ Description: Standalone helpers for running assessment workflows and
 License: MIT + file LICENSE
 URL: https://gilead-biostats.github.io/workr,
     https://github.com/Gilead-BioStats/workr
+Depends:
+    R (>= 4.1.0)
 Imports:
     base64enc,
     DBI,

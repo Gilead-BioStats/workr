@@ -8,12 +8,13 @@ Create a list of workflows for use in pipelines.
 
 ``` r
 MakeWorkflowList(
-  strNames = GetActiveWorkflows(strPath = strPath, strPackage = strPackage, bRecursive =
+  strNames = ListWorkflowNames(strPath = strPath, strPackage = strPackage, bRecursive =
     bRecursive),
   strPath = "workflow",
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
-  bRecursive = TRUE
+  bRecursive = TRUE,
+  bActiveOnly = TRUE
 )
 ```
 
@@ -21,12 +22,11 @@ MakeWorkflowList(
 
 - strNames:
 
-  `array of character` List of workflows to include. Defaults to the
-  result of
-  [`GetActiveWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/GetActiveWorkflows.md),
-  which excludes any workflow with `meta$MetricActive: false`. Pass
-  `NULL` explicitly to include all workflows regardless of their
-  `MetricActive` setting.
+  `array of character` Workflow names to include. Defaults to all
+  workflow names found at `strPath`/`strPackage`. Pass an
+  [`I()`](https://rdrr.io/r/base/AsIs.html)-wrapped vector for exact
+  matching (as returned by
+  [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)).
 
 - strPath:
 
@@ -41,13 +41,19 @@ MakeWorkflowList(
 - bExact:
 
   `logical` Should `strNames` matches be exact? Defaults to `TRUE` when
-  `strNames` has class `"AsIs"` (as it does if it comes from
-  [`GetActiveWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/GetActiveWorkflows.md)),
+  `strNames` has class `"AsIs"` (as returned by
+  [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)),
   `FALSE` otherwise.
 
 - bRecursive:
 
   `logical` Find files in nested folders? Default `TRUE`.
+
+- bActiveOnly:
+
+  `logical` Should workflows with `meta$MetricActive: false` be
+  excluded? Default `TRUE`. Set to `FALSE` to load all workflows
+  regardless of their `MetricActive` setting.
 
 ## Value
 
@@ -56,7 +62,13 @@ MakeWorkflowList(
 ## Examples
 
 ``` r
-# get specific workflow files
+# Load all active workflows from a package
+workflow <- MakeWorkflowList(
+  strPath = "workflow",
+  strPackage = "workr"
+)
+
+# Load a specific workflow by name
 workflow <- MakeWorkflowList(
   strName = "cars",
   strPath = "workflow",

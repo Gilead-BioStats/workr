@@ -257,15 +257,16 @@ Core functions for running workflows and individual steps.
 
 Utilities for managing workflow projects and loading examples.
 
-- [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
-  **\[experimental\]** : Run a multi-phase workflow project
-- [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
-  **\[stable\]** : Load workflows from a package/directory.
-- [`GetActiveWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/GetActiveWorkflows.md)
-  **\[experimental\]** : Get names of active workflows from a
-  package/directory.
 - [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
   **\[stable\]** : Load example data for workflow execution
+- [`ListWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflows.md)
+  **\[stable\]** : List workflow YAML files in a package/directory.
+- [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)
+  **\[stable\]** : List workflow names in a package/directory.
+- [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+  **\[stable\]** : Load workflows from a package/directory.
+- [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  **\[experimental\]** : Run a multi-phase workflow project
 
 ## Demo App
 

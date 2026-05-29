@@ -51,9 +51,9 @@ MakeWorkflowList(
 
 - bActiveOnly:
 
-  `logical` Should workflows with `meta$MetricActive: false` be
-  excluded? Default `TRUE`. Set to `FALSE` to load all workflows
-  regardless of their `MetricActive` setting.
+  `logical` Should workflows with `meta$Active: false` be excluded?
+  Default `TRUE`. Set to `FALSE` to load all workflows regardless of
+  their `Active` setting.
 
 ## Value
 

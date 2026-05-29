@@ -25,4 +25,6 @@ Authors:
 
 Other contributors:
 
+- Jon Harmon <jon.harmon1@gilead.com> \[contributor\]
+
 - Gilead \[copyright holder\]

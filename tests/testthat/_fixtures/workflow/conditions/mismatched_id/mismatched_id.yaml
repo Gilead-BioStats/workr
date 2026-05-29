@@ -1,0 +1,8 @@
+meta:
+  Type: test
+  ID: wrong_name
+steps:
+  - name: identity
+    output: res
+    params:
+      x: lData

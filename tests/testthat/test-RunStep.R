@@ -107,9 +107,8 @@ test_that("RunStep recognizes rlang::expr() string parameters (#26)", {
   )
   lMeta <- list(meta1 = 50)
 
-  suppressMessages({
-    expect_error(RunStep(lStep, list(), lMeta))
-  })
+  suppressMessages(RunStep(lStep, list(), lMeta)) |>
+    expect_error()
 })
 
 test_that("RunStep recognizes expr() shorthand parameters (#26)", {

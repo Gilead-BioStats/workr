@@ -1,0 +1,5 @@
+steps:
+  - name: identity
+    output: res
+    params:
+      x: lData

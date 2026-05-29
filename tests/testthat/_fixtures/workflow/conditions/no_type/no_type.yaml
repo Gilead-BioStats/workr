@@ -1,0 +1,7 @@
+meta:
+  ID: no_type
+steps:
+  - name: identity
+    output: res
+    params:
+      x: lData

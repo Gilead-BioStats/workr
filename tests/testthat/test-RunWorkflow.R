@@ -9,7 +9,11 @@ test_that("RunWorkflow returns final step result by default (#26)", {
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "001"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+      list(
+        name = "sum_step",
+        output = "result",
+        params = list(lData = "lData", y = "value")
+      )
     )
   )
   lData <- list(value = 2)
@@ -27,7 +31,11 @@ test_that("RunWorkflow returns full workflow object when bReturnResult = FALSE (
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "002"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+      list(
+        name = "sum_step",
+        output = "result",
+        params = list(lData = "lData", y = "value")
+      )
     )
   )
   lData <- list(value = 3)
@@ -50,13 +58,22 @@ test_that("RunWorkflow bKeepInputData = FALSE removes input data from lData (#26
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "003"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+      list(
+        name = "sum_step",
+        output = "result",
+        params = list(lData = "lData", y = "value")
+      )
     )
   )
   lData <- list(value = 5, extra = "should_be_removed")
 
   suppressMessages({
-    result <- RunWorkflow(lWorkflow, lData, bReturnResult = FALSE, bKeepInputData = FALSE)
+    result <- RunWorkflow(
+      lWorkflow,
+      lData,
+      bReturnResult = FALSE,
+      bKeepInputData = FALSE
+    )
   })
 
   expect_equal(names(result$lData), "result")
@@ -71,13 +88,22 @@ test_that("RunWorkflow bKeepInputData = TRUE preserves input data in lData (#26)
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "004"),
     steps = list(
-      list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+      list(
+        name = "sum_step",
+        output = "result",
+        params = list(lData = "lData", y = "value")
+      )
     )
   )
   lData <- list(value = 5, extra = "should_persist")
 
   suppressMessages({
-    result <- RunWorkflow(lWorkflow, lData, bReturnResult = FALSE, bKeepInputData = TRUE)
+    result <- RunWorkflow(
+      lWorkflow,
+      lData,
+      bReturnResult = FALSE,
+      bKeepInputData = TRUE
+    )
   })
 
   expect_true("value" %in% names(result$lData))
@@ -88,10 +114,13 @@ test_that("RunWorkflow bKeepInputData = TRUE preserves input data in lData (#26)
 test_that("RunWorkflow multi-step preserves intermediate results in lData (#26)", {
   assign("add_one", function(x) x + 1, envir = .GlobalEnv)
   assign("add_two", function(x) x + 2, envir = .GlobalEnv)
-  on.exit({
-    rm("add_one", envir = .GlobalEnv)
-    rm("add_two", envir = .GlobalEnv)
-  }, add = TRUE)
+  on.exit(
+    {
+      rm("add_one", envir = .GlobalEnv)
+      rm("add_two", envir = .GlobalEnv)
+    },
+    add = TRUE
+  )
 
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "multi"),
@@ -126,7 +155,11 @@ test_that("RunWorkflow invokes lConfig$LoadData (#26)", {
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "config_test"),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
     )
   )
 
@@ -158,7 +191,12 @@ test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE (#26)", 
   )
 
   suppressMessages({
-    RunWorkflow(lWorkflow, lData = list(val = 99), lConfig = lConfig, bReturnResult = TRUE)
+    RunWorkflow(
+      lWorkflow,
+      lData = list(val = 99),
+      lConfig = lConfig,
+      bReturnResult = TRUE
+    )
   })
 
   expect_true(save_called)
@@ -174,17 +212,19 @@ test_that("RunWorkflow validates spec when present (#26)", {
       my_domain = list(required_cols = c("a", "b"))
     ),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "my_domain"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "my_domain")
+      )
     )
   )
 
   # lData has the domain but missing a required column
   lData <- list(my_domain = data.frame(a = 1))
 
-  expect_error(
-    suppressMessages(RunWorkflow(lWorkflow, lData)),
-    "Missing required columns"
-  )
+  suppressMessages(RunWorkflow(lWorkflow, lData)) |>
+    expect_error("Missing required columns")
 })
 
 test_that("RunWorkflow runs without spec (#26)", {
@@ -211,9 +251,27 @@ test_that("RunWorkflow runs with YAML files (#26)", {
 
   lData <- list(value = 2, cars = cars)
 
-  hw <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "helloworld.yaml"))
-  ts <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "two_steps.yaml"))
-  carswf <- yaml::read_yaml(testthat::test_path("workflows", "00_Example", "cars.yaml"))
+  hw <- yaml::read_yaml(testthat::test_path(
+    "_fixtures",
+    "workflow",
+    "normal",
+    "00_Example",
+    "helloworld.yaml"
+  ))
+  ts <- yaml::read_yaml(testthat::test_path(
+    "_fixtures",
+    "workflow",
+    "normal",
+    "00_Example",
+    "two_steps.yaml"
+  ))
+  carswf <- yaml::read_yaml(testthat::test_path(
+    "_fixtures",
+    "workflow",
+    "normal",
+    "00_Example",
+    "cars.yaml"
+  ))
 
   suppressMessages({
     expect_equal(RunWorkflow(hw, lData), 4)
@@ -239,7 +297,11 @@ test_that("RunWorkflows returns named list (#26)", {
     list(
       meta = list(Type = "demo", ID = "001"),
       steps = list(
-        list(name = "sum_step", output = "result", params = list(lData = "lData", y = "value"))
+        list(
+          name = "sum_step",
+          output = "result",
+          params = list(lData = "lData", y = "value")
+        )
       )
     )
   )
@@ -255,10 +317,13 @@ test_that("RunWorkflows returns named list (#26)", {
 test_that("RunWorkflows passes prior workflow results as data to later workflows (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   assign("add_ten", function(res) res + 10, envir = .GlobalEnv)
-  on.exit({
-    rm("identity_step", envir = .GlobalEnv)
-    rm("add_ten", envir = .GlobalEnv)
-  }, add = TRUE)
+  on.exit(
+    {
+      rm("identity_step", envir = .GlobalEnv)
+      rm("add_ten", envir = .GlobalEnv)
+    },
+    add = TRUE
+  )
 
   lWorkflows <- list(
     list(
@@ -270,7 +335,11 @@ test_that("RunWorkflows passes prior workflow results as data to later workflows
     list(
       meta = list(Type = "demo", ID = "second"),
       steps = list(
-        list(name = "add_ten", output = "final", params = list(res = "demo_first"))
+        list(
+          name = "add_ten",
+          output = "final",
+          params = list(res = "demo_first")
+        )
       )
     )
   )
@@ -301,7 +370,11 @@ test_that("RunWorkflows custom strResultNames (#26)", {
   lData <- list(val = 42)
 
   suppressMessages({
-    results <- RunWorkflows(lWorkflows, lData, strResultNames = c("Type", "ID", "Version"))
+    results <- RunWorkflows(
+      lWorkflows,
+      lData,
+      strResultNames = c("Type", "ID", "Version")
+    )
   })
 
   expect_named(results, "kri_ae_1.0")

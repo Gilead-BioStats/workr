@@ -10,7 +10,7 @@
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.
 pull_workflows <- function(resolved, path) {
-  workflows_dir <- file.path(path, "workflows")
+  workflows_dir <- file.path(path, "workflow")
   seen_files <- new.env(parent = emptyenv())
   if (!dir.exists(workflows_dir)) {
     dir.create(workflows_dir, recursive = TRUE)
@@ -38,13 +38,19 @@ pull_workflows <- function(resolved, path) {
     for (entry in entries) {
       if (entry$type == "dir") {
         pull_workflow_dir(
-          full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
+          full_repo,
+          pkg$sha,
+          entry$path,
+          file.path(workflows_dir, entry$name),
           source_repo = full_repo,
           seen_files = seen_files
         )
       } else {
         pull_workflow_file(
-          full_repo, pkg$sha, entry$path, file.path(workflows_dir, entry$name),
+          full_repo,
+          pkg$sha,
+          entry$path,
+          file.path(workflows_dir, entry$name),
           source_repo = full_repo,
           seen_files = seen_files
         )
@@ -66,30 +72,54 @@ gh_list_contents <- function(full_repo, dir_path, sha) {
 
   # Re-call gh with separate jq queries for each field.
   names <- gh_api_client(
-    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-      "--jq", ".[].name")
+    c(
+      "api",
+      paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq",
+      ".[].name"
+    )
   )
   types <- gh_api_client(
-    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-      "--jq", ".[].type")
+    c(
+      "api",
+      paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq",
+      ".[].type"
+    )
   )
   paths <- gh_api_client(
-    c("api", paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
-      "--jq", ".[].path")
+    c(
+      "api",
+      paste0("repos/", full_repo, "/contents/", dir_path, "?ref=", sha),
+      "--jq",
+      ".[].path"
+    )
   )
 
-  if (length(names) == 0) return(NULL)
+  if (length(names) == 0) {
+    return(NULL)
+  }
 
-  mapply(function(n, t, p) list(name = n, type = t, path = p),
-         trimws(names), trimws(types), trimws(paths),
-         SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  mapply(
+    function(n, t, p) list(name = n, type = t, path = p),
+    trimws(names),
+    trimws(types),
+    trimws(paths),
+    SIMPLIFY = FALSE,
+    USE.NAMES = FALSE
+  )
 }
 
 #' Recursively pull a directory of workflow files
 #' @keywords internal
-pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
-                              source_repo = full_repo,
-                              seen_files = NULL) {
+pull_workflow_dir <- function(
+  full_repo,
+  sha,
+  api_path,
+  local_dir,
+  source_repo = full_repo,
+  seen_files = NULL
+) {
   if (file.exists(local_dir) && !dir.exists(local_dir)) {
     warning(
       "Cannot create workflow directory '",
@@ -114,13 +144,19 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
   for (entry in entries) {
     if (entry$type == "dir") {
       pull_workflow_dir(
-        full_repo, sha, entry$path, file.path(local_dir, entry$name),
+        full_repo,
+        sha,
+        entry$path,
+        file.path(local_dir, entry$name),
         source_repo = source_repo,
         seen_files = seen_files
       )
     } else {
       pull_workflow_file(
-        full_repo, sha, entry$path, file.path(local_dir, entry$name),
+        full_repo,
+        sha,
+        entry$path,
+        file.path(local_dir, entry$name),
         source_repo = source_repo,
         seen_files = seen_files
       )
@@ -130,12 +166,21 @@ pull_workflow_dir <- function(full_repo, sha, api_path, local_dir,
 
 #' Pull a single workflow file from GitHub
 #' @keywords internal
-pull_workflow_file <- function(full_repo, sha, api_path, local_path,
-                               source_repo = full_repo,
-                               seen_files = NULL) {
+pull_workflow_file <- function(
+  full_repo,
+  sha,
+  api_path,
+  local_path,
+  source_repo = full_repo,
+  seen_files = NULL
+) {
   file_content <- gh_api_client(
-    c("api", paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
-      "--jq", ".content")
+    c(
+      "api",
+      paste0("repos/", full_repo, "/contents/", api_path, "?ref=", sha),
+      "--jq",
+      ".content"
+    )
   )
 
   if (length(file_content) == 0 || any(grepl("Not Found", file_content))) {
@@ -144,7 +189,10 @@ pull_workflow_file <- function(full_repo, sha, api_path, local_path,
 
   warn_workflow_collision(local_path, source_repo, seen_files)
 
-  decoded <- rawToChar(base64enc::base64decode(paste0(file_content, collapse = "")))
+  decoded <- rawToChar(base64enc::base64decode(paste0(
+    file_content,
+    collapse = ""
+  )))
   writeLines(decoded, local_path)
   register_workflow_file(local_path, source_repo, seen_files)
   message("  Pulled ", basename(local_path), " from ", full_repo)

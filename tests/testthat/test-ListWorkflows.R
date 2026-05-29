@@ -62,7 +62,7 @@ test_that("ListWorkflowNames returns AsIs character vector without .yaml (#53)",
   expect_false(any(grepl("\\.yaml$", result)))
 })
 
-test_that("ListWorkflowNames includes all workflows regardless of MetricActive (#53)", {
+test_that("ListWorkflowNames includes all workflows regardless of Active (#53)", {
   result <- ListWorkflowNames(
     strPath = test_path("_fixtures", "workflow", "normal", "01_Active")
   )

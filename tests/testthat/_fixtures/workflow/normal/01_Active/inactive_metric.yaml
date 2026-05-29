@@ -1,7 +1,7 @@
 meta:
   Type: demo
   ID: inactive_metric
-  MetricActive: false
+  Active: false
 steps:
   - name: base::identity
     output: res

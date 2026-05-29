@@ -31,9 +31,9 @@ are located. If \code{NULL}, the package will use an absolute path.}
 
 \item{bRecursive}{\code{logical} Find files in nested folders? Default \code{TRUE}.}
 
-\item{bActiveOnly}{\code{logical} Should workflows with \code{meta$MetricActive: false}
+\item{bActiveOnly}{\code{logical} Should workflows with \code{meta$Active: false}
 be excluded? Default \code{TRUE}. Set to \code{FALSE} to load all workflows
-regardless of their \code{MetricActive} setting.}
+regardless of their \code{Active} setting.}
 }
 \value{
 \code{list} A list of workflows with workflow and parameter metadata.

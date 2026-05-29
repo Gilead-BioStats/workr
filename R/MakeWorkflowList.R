@@ -15,9 +15,9 @@
 #'   `TRUE` when `strNames` has class `"AsIs"` (as returned by
 #'   [ListWorkflowNames()]), `FALSE` otherwise.
 #' @param bRecursive `logical` Find files in nested folders? Default `TRUE`.
-#' @param bActiveOnly `logical` Should workflows with `meta$MetricActive: false`
+#' @param bActiveOnly `logical` Should workflows with `meta$Active: false`
 #'   be excluded? Default `TRUE`. Set to `FALSE` to load all workflows
-#'   regardless of their `MetricActive` setting.
+#'   regardless of their `Active` setting.
 #'
 #' @examples
 #' # Load all active workflows from a package
@@ -113,8 +113,8 @@ MakeWorkflowList <- function(
 
 #' Filter a workflow list to those that are not explicitly inactive
 #'
-#' A workflow is considered active when `meta$MetricActive` is absent or `TRUE`.
-#' Only `isFALSE(meta$MetricActive)` causes a workflow to be dropped.
+#' A workflow is considered active when `meta$Active` is absent or `TRUE`.
+#' Only `isFALSE(meta$Active)` causes a workflow to be dropped.
 #'
 #' @keywords internal
 #' @noRd
@@ -123,7 +123,7 @@ MakeWorkflowList <- function(
     return(workflows)
   }
   purrr::keep(workflows, \(wf) {
-    !isFALSE(wf$meta$MetricActive)
+    !isFALSE(wf$meta$Active)
   })
 }
 

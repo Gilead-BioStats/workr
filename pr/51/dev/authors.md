@@ -6,6 +6,8 @@
 
 - **Zelos Zhu**. Author.
 
+- **Jon Harmon**. Contributor.
+
 - **Gilead**. Copyright holder.
 
 ## Citation

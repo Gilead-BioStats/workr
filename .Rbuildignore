@@ -10,3 +10,5 @@
 ^slides$
 ^\.rsconnectignore$
 ^LICENSE\.md$
+^[.]?air[.]toml$
+^\.vscode$

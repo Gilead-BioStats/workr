@@ -1,4 +1,4 @@
-## Ported from gsm.core@dev test-RunQuery.R + expanded — see #26
+## Ported from gsm.core@dev test-RunQuery.R + expanded — see (#26)
 
 test_that("RunQuery returns correct result (#26)", {
   skip_if_not_installed("DBI")
@@ -24,7 +24,7 @@ test_that("RunQuery returns correct result (#26)", {
   expect_equal(result$Salary, c(60000, 70000))
 })
 
-test_that("RunQuery handles empty df #26", {
+test_that("RunQuery handles empty df (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -38,7 +38,7 @@ test_that("RunQuery handles empty df #26", {
   expect_equal(nrow(result), 0)
 })
 
-test_that("RunQuery handles invalid input #26", {
+test_that("RunQuery handles invalid input (#26)", {
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
     Age = c(25, 30, 35),
@@ -46,10 +46,11 @@ test_that("RunQuery handles invalid input #26", {
   )
 
   query <- 123
-  expect_error(RunQuery(query, df))
+  RunQuery(query, df) |>
+    expect_error()
 })
 
-test_that("RunQuery checks if strQuery contains 'FROM df' #26", {
+test_that("RunQuery checks if strQuery contains 'FROM df' (#26)", {
   df <- data.frame(
     Name = c("John", "Jane", "Bob"),
     Age = c(25, 30, 35),
@@ -57,10 +58,11 @@ test_that("RunQuery checks if strQuery contains 'FROM df' #26", {
   )
 
   query <- "SELECT * FROM mydata WHERE Age >= 30"
-  expect_error(RunQuery(query, df), "FROM df")
+  RunQuery(query, df) |>
+    expect_error("FROM df")
 })
 
-test_that("RunQuery applies schema appropriately #26", {
+test_that("RunQuery applies schema appropriately (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -85,7 +87,12 @@ test_that("RunQuery applies schema appropriately #26", {
 
   expect_no_error({
     suppressMessages({
-      result <- RunQuery(query, df, bUseSchema = TRUE, lColumnMapping = lColumnMapping)
+      result <- RunQuery(
+        query,
+        df,
+        bUseSchema = TRUE,
+        lColumnMapping = lColumnMapping
+      )
     })
   })
   expect_equal(class(result$Birthtime), c("POSIXct", "POSIXt"))
@@ -96,7 +103,7 @@ test_that("RunQuery applies schema appropriately #26", {
   expect_equal(class(result$Tenured), "logical")
 })
 
-test_that("RunQuery applies incomplete schema appropriately #26", {
+test_that("RunQuery applies incomplete schema appropriately (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -116,13 +123,18 @@ test_that("RunQuery applies incomplete schema appropriately #26", {
 
   expect_no_error({
     suppressMessages({
-      result <- RunQuery(query, df, bUseSchema = TRUE, lColumnMapping = lColumnMapping)
+      result <- RunQuery(
+        query,
+        df,
+        bUseSchema = TRUE,
+        lColumnMapping = lColumnMapping
+      )
     })
   })
   expect_equal(class(result$emaN), class(df$Name))
 })
 
-test_that("RunQuery parses invalid date/times correctly #26", {
+test_that("RunQuery parses invalid date/times correctly (#26)", {
   skip_if_not_installed("DBI")
   skip_if_not_installed("duckdb")
 
@@ -142,19 +154,22 @@ test_that("RunQuery parses invalid date/times correctly #26", {
 
   suppressWarnings(
     suppressMessages(
-      result <- RunQuery(query, df, bUseSchema = TRUE, lColumnMapping = lColumnMapping)
+      result <- RunQuery(
+        query,
+        df,
+        bUseSchema = TRUE,
+        lColumnMapping = lColumnMapping
+      )
     )
   )
   expect_true(all(is.na(result$Birthday)))
   expect_true(all(is.na(result$Birthtime)))
 })
 
-test_that("RunQuery requires lColumnMapping when bUseSchema is TRUE #26", {
+test_that("RunQuery requires lColumnMapping when bUseSchema is TRUE (#26)", {
   df <- data.frame(x = 1:3)
   query <- "SELECT * FROM df"
 
-  expect_error(
-    RunQuery(query, df, bUseSchema = TRUE, lColumnMapping = NULL),
-    "lColumnMapping"
-  )
+  RunQuery(query, df, bUseSchema = TRUE, lColumnMapping = NULL) |>
+    expect_error("lColumnMapping")
 })

@@ -5,23 +5,35 @@
 \title{Load workflows from a package/directory.}
 \usage{
 MakeWorkflowList(
-  strNames = NULL,
+  strNames = ListWorkflowNames(strPath = strPath, strPackage = strPackage, bRecursive =
+    bRecursive),
   strPath = "workflow",
   strPackage = NULL,
-  bExact = FALSE,
-  bRecursive = TRUE
+  bExact = inherits(strNames, "AsIs"),
+  bRecursive = TRUE,
+  bActiveOnly = TRUE
 )
 }
 \arguments{
-\item{strNames}{\verb{array of character} List of workflows to include. NULL (the default) includes all workflows in the specified locations.}
+\item{strNames}{\verb{array of character} Workflow names to include. Defaults to
+all workflow names found at \code{strPath}/\code{strPackage}. Pass an \code{I()}-wrapped
+vector for exact matching (as returned by \code{\link[=ListWorkflowNames]{ListWorkflowNames()}}).}
 
-\item{strPath}{\code{character} The location of workflow YAML files. If NULL (the default), function will look in \verb{/inst/workflow} folder.}
+\item{strPath}{\code{character} The location of workflow YAML files, relative to
+either the working directory or the \code{strPackage} installation directory.}
 
-\item{strPackage}{\code{character} The package name where the workflow YAML files are located. If NULL, the package will use an absolute path.}
+\item{strPackage}{\code{character} The package name where the workflow YAML files
+are located. If \code{NULL}, the package will use an absolute path.}
 
-\item{bExact}{\code{logical} Should strName matches be exact? If false, partial matches will be included. Default FALSE.}
+\item{bExact}{\code{logical} Should \code{strNames} matches be exact? Defaults to
+\code{TRUE} when \code{strNames} has class \code{"AsIs"} (as returned by
+\code{\link[=ListWorkflowNames]{ListWorkflowNames()}}), \code{FALSE} otherwise.}
 
-\item{bRecursive}{\code{logical} Find files in nested folders? Default TRUE}
+\item{bRecursive}{\code{logical} Find files in nested folders? Default \code{TRUE}.}
+
+\item{bActiveOnly}{\code{logical} Should workflows with \code{meta$Active: false}
+be excluded? Default \code{TRUE}. Set to \code{FALSE} to load all workflows
+regardless of their \code{Active} setting.}
 }
 \value{
 \code{list} A list of workflows with workflow and parameter metadata.
@@ -29,15 +41,20 @@ MakeWorkflowList(
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}
 
-\code{MakeWorkflowList()} is a utility function that creates a list of workflows for use in KRI pipelines.
+Create a list of workflows for use in pipelines.
 }
 \examples{
-\dontshow{if (rlang::is_installed(c("dplyr","purrr"))) withAutoprint(\{ # examplesIf}
-# get specific workflow files
+# Load all active workflows from a package
 workflow <- MakeWorkflowList(
-  strName = "cars",
-  strPath = "workflows",
+  strPath = "workflow",
   strPackage = "workr"
 )
-\dontshow{\}) # examplesIf}
+
+# Load a specific workflow by name
+workflow <- MakeWorkflowList(
+  strNames = "cars",
+  strPath = "workflow",
+  strPackage = "workr"
+)
+
 }

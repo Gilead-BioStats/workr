@@ -27,6 +27,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Jon Harmon \email{jon.harmon1@gilead.com} [contributor]
   \item Gilead [copyright holder]
 }
 

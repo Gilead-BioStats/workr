@@ -1,4 +1,4 @@
-# Tests for issue #34: Finalize inst/workflows and demo Shiny app
+# Tests for issue (#34): Finalize inst/workflow and demo Shiny app
 # Verify 03_KRI uses local mock data (not gsm.core::lSource), 03_AEKRI removed,
 # and README links to the hosted app.
 
@@ -10,14 +10,14 @@ skip_if_not_repo <- function() {
   )
 }
 
-kri_init <- file.path(repo_root, "inst", "workflows", "03_KRI", "initData.R")
+kri_init <- file.path(repo_root, "inst", "workflow", "03_KRI", "initData.R")
 
-test_that("03_AEKRI directory does not exist #34", {
+test_that("03_AEKRI directory does not exist (#34)", {
   skip_if_not_repo()
-  expect_false(dir.exists(file.path(repo_root, "inst", "workflows", "03_AEKRI")))
+  expect_false(dir.exists(file.path(repo_root, "inst", "workflow", "03_AEKRI")))
 })
 
-test_that("03_KRI initData.R does not reference gsm.core::lSource #34", {
+test_that("03_KRI initData.R does not reference gsm.core::lSource (#34)", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
   expect_false(
@@ -26,7 +26,7 @@ test_that("03_KRI initData.R does not reference gsm.core::lSource #34", {
   )
 })
 
-test_that("03_KRI initData.R does not reference PD domain #34", {
+test_that("03_KRI initData.R does not reference PD domain (#34)", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
   expect_false(
@@ -35,7 +35,7 @@ test_that("03_KRI initData.R does not reference PD domain #34", {
   )
 })
 
-test_that("03_KRI initData.R does not reference clindata package #34", {
+test_that("03_KRI initData.R does not reference clindata package (#34)", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
   expect_false(
@@ -44,7 +44,7 @@ test_that("03_KRI initData.R does not reference clindata package #34", {
   )
 })
 
-test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE #34", {
+test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE (#34)", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
   combined <- paste(lines, collapse = "\n")
@@ -52,11 +52,11 @@ test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE #34", {
   expect_true(grepl("Raw_AE", combined), info = "Missing Raw_AE in return list")
 })
 
-test_that("03_KRI RunWorkflows completes without error using initData #34", {
+test_that("03_KRI RunWorkflows completes without error using initData (#34)", {
   skip_if_not_repo()
   skip_if_not_installed("gsm.core")
 
-  kri_path <- file.path(repo_root, "inst", "workflows", "03_KRI")
+  kri_path <- file.path(repo_root, "inst", "workflow", "03_KRI")
   lWorkflows <- suppressMessages(MakeWorkflowList(strPath = kri_path))
   lConfig <- list(LoadData = loadExample)
 
@@ -65,7 +65,7 @@ test_that("03_KRI RunWorkflows completes without error using initData #34", {
   )
 })
 
-test_that("README contains link to hosted shinyapps.io demo #34", {
+test_that("README contains link to hosted shinyapps.io demo (#34)", {
   skip_if_not_repo()
   lines <- readLines(file.path(repo_root, "README.md"))
   expect_true(

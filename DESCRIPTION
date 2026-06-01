@@ -5,6 +5,7 @@ Version: 1.0.0
 Authors@R: c(
     person("Jeremy", "Wildfire", , "jwildfire@gilead.com", role = c("aut", "cre")),
     person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),
+    person("Jon", "Harmon", , "jon.harmon1@gilead.com", role = "ctb"),
     person("Gilead", role = "cph")
   )
 Description: Standalone helpers for running assessment workflows and
@@ -14,6 +15,8 @@ Description: Standalone helpers for running assessment workflows and
 License: MIT + file LICENSE
 URL: https://gilead-biostats.github.io/workr,
     https://github.com/Gilead-BioStats/workr
+Depends:
+    R (>= 4.1.0)
 Imports:
     base64enc,
     DBI,
@@ -33,7 +36,7 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder:
     knitr
-Config/Needs/website:admiral, arrow, cards, gt, gtsummary, sdtm.oak
+Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak
 Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Encoding: UTF-8

@@ -1,4 +1,4 @@
-test_that("RunProject runs all phases in sorted order #26", {
+test_that("RunProject runs all phases in sorted order (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -17,7 +17,7 @@ test_that("RunProject runs all phases in sorted order #26", {
   expect_true("phase2_add_twenty" %in% names(result$phase_B))
 })
 
-test_that("RunProject passes data between phases #26", {
+test_that("RunProject passes data between phases (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -41,7 +41,7 @@ test_that("RunProject passes data between phases #26", {
   expect_true(!is.null(p2$lData))
 })
 
-test_that("RunProject respects strPhases subset and order #26", {
+test_that("RunProject respects strPhases subset and order (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
@@ -68,35 +68,34 @@ test_that("RunProject respects strPhases subset and order #26", {
   expect_named(result2, c("phase_B", "phase_A"))
 })
 
-test_that("RunProject errors on missing strPath #26", {
+test_that("RunProject errors on missing strPath (#26)", {
   expect_error(
     RunProject(strPath = "/nonexistent/path/xyz"),
     "strPath"
   )
 })
 
-test_that("RunProject errors on missing requested phases #26", {
+test_that("RunProject errors on missing requested phases (#26)", {
   project_path <- test_path("project")
 
-  expect_error(
-    RunProject(strPath = project_path, strPhases = c("phase_A", "nonexistent_phase")),
-    "strPhases"
-  )
+  RunProject(
+    strPath = project_path,
+    strPhases = c("phase_A", "nonexistent_phase")
+  ) |>
+    expect_error("strPhases")
 })
 
-test_that("RunProject errors on empty project directory #26", {
+test_that("RunProject errors on empty project directory (#26)", {
   tmp <- tempdir()
   empty_dir <- file.path(tmp, "empty_project_test")
   dir.create(empty_dir, showWarnings = FALSE)
   on.exit(unlink(empty_dir, recursive = TRUE), add = TRUE)
 
-  expect_error(
-    RunProject(strPath = empty_dir),
-    "No phase folders"
-  )
+  RunProject(strPath = empty_dir) |>
+    expect_error("No phase folders")
 })
 
-test_that("RunProject bReturnResult and bKeepInputData pass through #26", {
+test_that("RunProject bReturnResult and bKeepInputData pass through (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)

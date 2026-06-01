@@ -47,9 +47,11 @@ reference:
   - title: "Project Management"
     desc: "Utilities for managing workflow projects and loading examples."
     contents:
-      - RunProject
-      - MakeWorkflowList
       - loadExample
+      - ListWorkflows
+      - ListWorkflowNames
+      - MakeWorkflowList
+      - RunProject
   - title: "Demo App"
     desc: "Interactive Shiny application for exploring workflows."
     contents:

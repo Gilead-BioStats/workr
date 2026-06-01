@@ -27,10 +27,10 @@
 #' \dontrun{
 #' # Load a simple workflow from YAML
 #' wf <- yaml::read_yaml(
-#'   system.file("workflows", "cars.yaml", package = "workr")
+#'   system.file("workflow", "cars.yaml", package = "workr")
 #' )
 #' lData <- list(cars = cars)
-#' 
+#'
 #' # Run the workflow
 #' result <- RunWorkflow(wf, lData)
 #' summary(result)
@@ -47,15 +47,27 @@ RunWorkflow <- function(
 ) {
   # Create a unique identifier for the workflow
   uid <- paste0(lWorkflow$meta$Type, "_", lWorkflow$meta$ID)
-  LogMessage(level = "info", message = "Initializing `{uid}` Workflow", cli_detail = "h1")
+  LogMessage(
+    level = "info",
+    message = "Initializing `{uid}` Workflow",
+    cli_detail = "h1"
+  )
 
   # check that the workflow has steps
   if (length(lWorkflow$steps) == 0) {
-    LogMessage(level = "info", message = "Workflow `{uid}` has no `steps` property.", cli_detail = "alert")
+    LogMessage(
+      level = "info",
+      message = "Workflow `{uid}` has no `steps` property.",
+      cli_detail = "alert"
+    )
   }
 
   if (!"meta" %in% names(lWorkflow)) {
-    LogMessage(level = "info", message = "Workflow `{uid}` has no `meta` property.", cli_detail = "alert")
+    LogMessage(
+      level = "info",
+      message = "Workflow `{uid}` has no `meta` property.",
+      cli_detail = "alert"
+    )
   }
 
   # Load data with configuration object.
@@ -63,9 +75,16 @@ RunWorkflow <- function(
     if (
       exists("LoadData", lConfig) &&
         is.function(lConfig$LoadData) &&
-        all(c("lWorkflow", "lConfig", "lData") %in% names(formals(lConfig$LoadData)))
+        all(
+          c("lWorkflow", "lConfig", "lData") %in%
+            names(formals(lConfig$LoadData))
+        )
     ) {
-      LogMessage(level = "info", message = "Loading data with `lConfig$LoadData`.", cli_detail = "h3")
+      LogMessage(
+        level = "info",
+        message = "Loading data with `lConfig$LoadData`.",
+        cli_detail = "h3"
+      )
 
       lData <- lConfig$LoadData(
         lWorkflow = lWorkflow,
@@ -84,12 +103,20 @@ RunWorkflow <- function(
 
   # If the workflow has a spec, check that the data and spec are compatible
   if ("spec" %in% names(lWorkflow)) {
-    LogMessage(level = "info", message = "Checking data against spec", cli_detail = "h3")
+    LogMessage(
+      level = "info",
+      message = "Checking data against spec",
+      cli_detail = "h3"
+    )
     # TODO: verify domain names in [ lData ] exist in [ lWorkflow$spec ]
     CheckSpec(lData, lWorkflow$spec)
   } else {
     lWorkflow$spec <- NULL
-    LogMessage(level = "info", message = "No spec found in workflow. Proceeding without checking data.", cli_detail = "h3")
+    LogMessage(
+      level = "info",
+      message = "No spec found in workflow. Proceeding without checking data.",
+      cli_detail = "h3"
+    )
   }
 
   # Run through each step in lWorkflow$workflow
@@ -97,7 +124,15 @@ RunWorkflow <- function(
   for (step in lWorkflow$steps) {
     LogMessage(
       level = "info",
-      message = paste0("Workflow Step ", stepCount, " of ", length(lWorkflow$steps), ": `", step$name, "`"),
+      message = paste0(
+        "Workflow Step ",
+        stepCount,
+        " of ",
+        length(lWorkflow$steps),
+        ": `",
+        step$name,
+        "`"
+      ),
       cli_detail = "h2"
     )
     result <- RunStep(
@@ -108,7 +143,10 @@ RunWorkflow <- function(
     )
 
     if (step$output %in% names(lData)) {
-      LogMessage(level = "warn", message = "Overwriting existing data in `lData`.")
+      LogMessage(
+        level = "warn",
+        message = "Overwriting existing data in `lData`."
+      )
     }
 
     lWorkflow$lData[[step$output]] <- result
@@ -171,7 +209,11 @@ RunWorkflow <- function(
       }
     }
 
-    LogMessage(level = "info", message = "Completed `{uid}` Workflow", cli_detail = "h1")
+    LogMessage(
+      level = "info",
+      message = "Completed `{uid}` Workflow",
+      cli_detail = "h1"
+    )
 
     return(lWorkflow$lResult)
   } else {
@@ -195,7 +237,11 @@ RunWorkflow <- function(
       message = "Returning full workflow object.",
       cli_detail = "h2"
     )
-    LogMessage(level = "info", message = "Completed `{uid}` Workflow", cli_detail = "h1")
+    LogMessage(
+      level = "info",
+      message = "Completed `{uid}` Workflow",
+      cli_detail = "h1"
+    )
     return(lWorkflow)
   }
 }

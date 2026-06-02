@@ -18,10 +18,15 @@ RunWorkflows(
 
 \item{lData}{\code{list} A named list of domain-level data frames.}
 
-\item{lConfig}{\code{list} A configuration object with two methods:
+\item{lConfig}{\code{list} Optional configuration object passed through to
+\code{RunWorkflow()}. Supported hook fields:
 \itemize{
-\item \code{LoadData}: A function that loads data specified in \code{lWorkflow$spec}.
-\item \code{SaveData}: A function that saves data returned by the last step in \code{lWorkflow$steps}.
+\item \code{LoadData}: Optional function or registered provider name used before
+spec validation. Functions must accept \code{lWorkflow}, \code{lConfig}, and
+\code{lData} as named formals.
+\item \code{SaveData}: Optional function or registered provider name used before
+returning results when \code{bReturnResult = TRUE}. Functions must accept
+\code{lWorkflow} and \code{lConfig} as named formals.
 }}
 
 \item{bKeepInputData}{\code{boolean} should the input data be included in \code{lData} after the workflow is run? Only

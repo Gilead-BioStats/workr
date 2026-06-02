@@ -9,9 +9,13 @@
 #' @param lWorkflow `list` A named list of metadata defining how the workflow
 #'   should be run.
 #' @param lData `list` A named list of domain-level data frames.
-#' @param lConfig `list` A configuration object with two methods:
-#' - `LoadData`: A function that loads data specified in `lWorkflow$spec`.
-#' - `SaveData`: A function that saves data returned by the last step in `lWorkflow$steps`.
+#' @param lConfig `list` Optional configuration object. Supported hook fields:
+#' - `LoadData`: Optional function or registered provider name used before
+#'   spec validation. Functions must accept `lWorkflow`, `lConfig`, and
+#'   `lData` as named formals.
+#' - `SaveData`: Optional function or registered provider name used before
+#'   returning results when `bReturnResult = TRUE`. Functions must accept
+#'   `lWorkflow` and `lConfig` as named formals.
 #' @param bKeepInputData `boolean` should the input data be included in `lData`
 #'   after the workflow is run? Only relevant when bReturnResult is FALSE.
 #'   Default is `TRUE`.
@@ -70,33 +74,19 @@ RunWorkflow <- function(
     )
   }
 
-  # Load data with configuration object.
-  if (!is.null(lConfig)) {
-    if (
-      exists("LoadData", lConfig) &&
-        is.function(lConfig$LoadData) &&
-        all(
-          c("lWorkflow", "lConfig", "lData") %in%
-            names(formals(lConfig$LoadData))
-        )
-    ) {
-      LogMessage(
-        level = "info",
-        message = "Loading data with `lConfig$LoadData`.",
-        cli_detail = "h3"
-      )
+  fnLoadData <- resolve_config_hook(lConfig, "LoadData")
+  if (!is.null(fnLoadData)) {
+    LogMessage(
+      level = "info",
+      message = "Loading data with configured `LoadData` hook.",
+      cli_detail = "h3"
+    )
 
-      lData <- lConfig$LoadData(
-        lWorkflow = lWorkflow,
-        lConfig = lConfig,
-        lData = lData
-      )
-    } else {
-      LogMessage(
-        level = "error",
-        message = "`lConfig` must include a function named `LoadData` with three named parameters: `lWorkflow`, `lConfig`, and `lData`."
-      )
-    }
+    lData <- fnLoadData(
+      lWorkflow = lWorkflow,
+      lConfig = lConfig,
+      lData = lData
+    )
   }
 
   lWorkflow$lData <- lData
@@ -184,29 +174,18 @@ RunWorkflow <- function(
         cli_detail = "h2"
       )
     }
-    # Save data with configuration object.
-    if (!is.null(lConfig)) {
-      if (
-        exists("SaveData", lConfig) &&
-          is.function(lConfig$SaveData) &&
-          all(c("lWorkflow", "lConfig") %in% names(formals(lConfig$SaveData)))
-      ) {
-        LogMessage(
-          level = "info",
-          message = "Saving data with `lConfig$SaveData`.",
-          cli_detail = "h3"
-        )
+    fnSaveData <- resolve_config_hook(lConfig, "SaveData")
+    if (!is.null(fnSaveData)) {
+      LogMessage(
+        level = "info",
+        message = "Saving data with configured `SaveData` hook.",
+        cli_detail = "h3"
+      )
 
-        lConfig$SaveData(
-          lWorkflow = lWorkflow,
-          lConfig = lConfig
-        )
-      } else {
-        LogMessage(
-          level = "error",
-          message = "`lConfig` must include a function named `SaveData` with two named parameters: `lWorkflow` and `lConfig`."
-        )
-      }
+      fnSaveData(
+        lWorkflow = lWorkflow,
+        lConfig = lConfig
+      )
     }
 
     LogMessage(

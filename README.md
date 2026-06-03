@@ -96,6 +96,31 @@ Each step in a workflow:
 
 That's it! By chaining steps (and even whole workflows) together, you can build complex pipelines from simple, reusable components.
 
+## Configured Data Loading
+
+`RunWorkflow()` and `RunWorkflows()` support configurable `LoadData` hooks. You can supply either a function or the name of a registered provider through `lConfig$LoadData`.
+
+{workr} includes a built-in `"gsm.datasim"` provider for generating workflow inputs from the optional [{gsm.datasim}](https://github.com/Gilead-BioStats/gsm.datasim) package.
+
+```r
+wf <- yaml::read_yaml("hello_cars.yaml")
+
+lData <- workr::RunWorkflow(
+  lWorkflow = wf,
+  lConfig = list(
+    LoadData = "gsm.datasim",
+    gsm.datasim = list(
+      participants = 250,
+      sites = 25,
+      snapshot_count = 3
+    )
+  ),
+  bReturnResult = FALSE
+)$lData
+```
+
+The provider reads its options from `lConfig$gsm.datasim`. Common fields include `participants`, `sites`, `snapshot_count`, `months_duration`, `snapshot`, and `profile`. Generated `Raw_*` objects are also exposed as `df*` aliases for compatibility with existing workflows.
+
 ## Combining Workflows
 
 {workr} workflows are designed to be chained together. The output of one workflow becomes the input for the next. {workr} provides several tools to support this functionality. 

@@ -12,7 +12,8 @@
 #' @param lConfig `list` Optional configuration object. Supported hook fields:
 #' - `LoadData`: Optional function or registered provider name used before
 #'   spec validation. Functions must accept `lWorkflow`, `lConfig`, and
-#'   `lData` as named formals.
+#'   `lData` as named formals. {workr} includes a built-in `"gsm.datasim"`
+#'   provider that reads adapter settings from `lConfig$gsm.datasim`.
 #' - `SaveData`: Optional function or registered provider name used before
 #'   returning results when `bReturnResult = TRUE`. Functions must accept
 #'   `lWorkflow` and `lConfig` as named formals.

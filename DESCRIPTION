@@ -30,6 +30,7 @@ Imports:
     rlang,
     yaml
 Suggests:
+    gsm.datasim,
     knitr,
     rmarkdown,
     shiny,

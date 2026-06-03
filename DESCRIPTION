@@ -35,6 +35,8 @@ Suggests:
     rmarkdown,
     shiny,
     testthat (>= 3.0.0)
+Remotes:
+    Gilead-BioStats/gsm.datasim
 VignetteBuilder:
     knitr
 Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak

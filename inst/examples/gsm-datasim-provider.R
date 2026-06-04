@@ -4,7 +4,7 @@ find_package_root <- function(path = getwd()) {
   repeat {
     if (
       file.exists(file.path(current, "DESCRIPTION")) &&
-      dir.exists(file.path(current, "R"))
+        dir.exists(file.path(current, "R"))
     ) {
       return(current)
     }
@@ -51,7 +51,11 @@ example_workflow <- function(id) {
   list(
     meta = list(Type = "example", ID = id),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
     )
   )
 }

@@ -24,6 +24,13 @@ write_test_artifact_bundle <- function(bundle_dir, entries) {
   )
 }
 
+clear_github_artifact_env <- function() {
+  withr::local_envvar(c(
+    GITHUB_RUN_ID = "",
+    GITHUB_REPOSITORY = ""
+  ), .local_envir = parent.frame())
+}
+
 test_that("github_artifact save provider writes manifest and payload pair (#60)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
@@ -102,6 +109,8 @@ test_that("github_artifact load provider restores data for an explicit run-id (#
 })
 
 test_that("github_artifact load provider resolves latest_success policy (#61)", {
+  clear_github_artifact_env()
+
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -139,6 +148,8 @@ test_that("github_artifact load provider resolves latest_success policy (#61)", 
 })
 
 test_that("github_artifact load provider errors with run-id and policy on missing artifact (#61)", {
+  clear_github_artifact_env()
+
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "artifact_load_missing"),
     steps = list()

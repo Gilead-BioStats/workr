@@ -140,7 +140,7 @@ include `participants`, `sites`, `snapshot_count`, `months_duration`,
 For a runnable live example that calls the optional dependency directly
 through
 [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
-see `inst/examples/gsm-datasim-provider-live.R`.
+see `inst/examples/gsm-datasim-provider.R`.
 
 ## Combining Workflows
 

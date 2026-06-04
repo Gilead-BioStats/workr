@@ -392,6 +392,22 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
       next
     }
 
+    rel_path_parts <- strsplit(rel_path, "[\\/]+", perl = TRUE)[[1]]
+    if (
+      grepl("^([A-Za-z]:)?[\\/]", rel_path) ||
+        any(rel_path_parts == "..")
+    ) {
+      github_artifact_signal_missing(
+        reason = glue::glue(
+          "payload file `{rel_path}` for key `{key}` is outside the artifact bundle."
+        ),
+        on_missing = cfg$on_missing,
+        run_id = run_id,
+        policy = policy
+      )
+      next
+    }
+
     payload_path <- file.path(manifest_dir, rel_path)
     payload_path_norm <- normalizePath(
       payload_path,

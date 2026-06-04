@@ -137,6 +137,11 @@ include `participants`, `sites`, `snapshot_count`, `months_duration`,
 `snapshot`, and `profile`. Generated `Raw_*` objects are also exposed as
 `df*` aliases for compatibility with existing workflows.
 
+For a runnable live example that calls the optional dependency directly
+through
+[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
+see `inst/examples/gsm-datasim-provider-live.R`.
+
 ## Combining Workflows
 
 {workr} workflows are designed to be chained together. The output of one

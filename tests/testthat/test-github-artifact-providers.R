@@ -8,7 +8,11 @@ make_test_dir <- function(prefix) {
 }
 
 write_test_artifact_bundle <- function(bundle_dir, entries) {
-  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    file.path(bundle_dir, "payload"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
 
   manifest_entries <- lapply(seq_along(entries), function(index) {
     key <- names(entries)[[index]]
@@ -25,10 +29,13 @@ write_test_artifact_bundle <- function(bundle_dir, entries) {
 }
 
 clear_github_artifact_env <- function() {
-  withr::local_envvar(c(
-    GITHUB_RUN_ID = "",
-    GITHUB_REPOSITORY = ""
-  ), .local_envir = parent.frame())
+  withr::local_envvar(
+    c(
+      GITHUB_RUN_ID = "",
+      GITHUB_REPOSITORY = ""
+    ),
+    .local_envir = parent.frame()
+  )
 }
 
 test_that("github_artifact save provider writes manifest and payload pair (#60)", {
@@ -72,8 +79,13 @@ test_that("github_artifact save provider writes manifest and payload pair (#60)"
   expect_equal(manifest$artifact_name, "workr-artifact_save")
   expect_equal(manifest$run_id, "12345")
   expect_equal(manifest$retention_days, 30)
-  expect_setequal(vapply(manifest$entries, `[[`, character(1), "key"), c("results", "qc"))
-  expect_false(any(vapply(manifest$entries, `[[`, character(1), "key") == "secret"))
+  expect_setequal(
+    vapply(manifest$entries, `[[`, character(1), "key"),
+    c("results", "qc")
+  )
+  expect_false(any(
+    vapply(manifest$entries, `[[`, character(1), "key") == "secret"
+  ))
   expect_true(file.exists(file.path(bundle_dir, manifest$entries[[1]]$file)))
   expect_equal(uploader_args$retention_days, 30)
 })
@@ -86,7 +98,11 @@ test_that("github_artifact save provider clears stale bundle contents (#60)", {
   on.exit(unlink(output_dir, recursive = TRUE, force = TRUE), add = TRUE)
 
   bundle_dir <- file.path(output_dir, "workr-artifact_save_stale")
-  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    file.path(bundle_dir, "payload"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
   stale_path <- file.path(bundle_dir, "payload", "stale.rds")
   saveRDS("stale", stale_path)
 
@@ -94,7 +110,11 @@ test_that("github_artifact save provider clears stale bundle contents (#60)", {
     lWorkflow = list(
       meta = list(Type = "demo", ID = "artifact_save_stale"),
       steps = list(
-        list(name = "identity_step", output = "results", params = list(x = "val"))
+        list(
+          name = "identity_step",
+          output = "results",
+          params = list(x = "val")
+        )
       )
     ),
     lData = list(val = 7),
@@ -119,7 +139,11 @@ test_that("github_artifact load provider restores data for an explicit run-id (#
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "artifact_load_explicit"),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
     )
   )
 
@@ -152,7 +176,11 @@ test_that("github_artifact load provider resolves latest_success policy (#61)", 
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "artifact_load_policy"),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
     )
   )
 
@@ -193,7 +221,9 @@ test_that("github_artifact load provider errors with run-id and policy on missin
           repo = "Gilead-BioStats/workr",
           policy = "latest_success",
           run_resolver = function(...) "13579",
-          artifact_fetcher = function(...) stop("artifact not found", call. = FALSE)
+          artifact_fetcher = function(...) {
+            stop("artifact not found", call. = FALSE)
+          }
         )
       ),
       lData = list()
@@ -205,7 +235,11 @@ test_that("github_artifact load provider errors with run-id and policy on missin
 test_that("github_artifact load provider warns and returns partial lData when payloads are missing (#61)", {
   bundle_dir <- make_test_dir("load-warn")
   on.exit(unlink(bundle_dir, recursive = TRUE, force = TRUE), add = TRUE)
-  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    file.path(bundle_dir, "payload"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
 
   present_path <- sprintf("payload/%03d-%s.rds", 1, "loaded_val")
   saveRDS(42, file.path(bundle_dir, present_path))
@@ -214,7 +248,10 @@ test_that("github_artifact load provider warns and returns partial lData when pa
       provider = "github_artifact",
       entries = list(
         list(key = "loaded_val", file = present_path),
-        list(key = "missing_val", file = sprintf("payload/%03d-%s.rds", 2, "missing_val"))
+        list(
+          key = "missing_val",
+          file = sprintf("payload/%03d-%s.rds", 2, "missing_val")
+        )
       )
     ),
     file.path(bundle_dir, "manifest.yaml")
@@ -241,12 +278,66 @@ test_that("github_artifact load provider warns and returns partial lData when pa
   expect_false("missing_val" %in% names(restored))
 })
 
+test_that("github_artifact load provider rejects payload paths outside bundle (#61)", {
+  bundle_dir <- make_test_dir("load-path-traversal")
+  on.exit(unlink(bundle_dir, recursive = TRUE, force = TRUE), add = TRUE)
+
+  yaml::write_yaml(
+    list(
+      provider = "github_artifact",
+      entries = list(
+        list(key = "escaped", file = "../escaped.rds")
+      )
+    ),
+    file.path(bundle_dir, "manifest.yaml")
+  )
+
+  expect_error(
+    suppressMessages(workr:::github_artifact_load_provider(
+      lWorkflow = list(meta = list(ID = "artifact_path_traversal")),
+      lConfig = list(
+        github_artifact = list(
+          run_id = "33445",
+          artifact_fetcher = function(...) bundle_dir
+        )
+      ),
+      lData = list()
+    )),
+    regexp = "outside the artifact bundle"
+  )
+})
+
+test_that("github_artifact load provider restores NULL payload values (#61)", {
+  bundle_dir <- make_test_dir("load-null")
+  on.exit(unlink(bundle_dir, recursive = TRUE, force = TRUE), add = TRUE)
+  write_test_artifact_bundle(bundle_dir, list(null_val = NULL))
+
+  restored <- suppressMessages(workr:::github_artifact_load_provider(
+    lWorkflow = list(meta = list(ID = "artifact_null")),
+    lConfig = list(
+      github_artifact = list(
+        run_id = "44556",
+        artifact_fetcher = function(...) bundle_dir
+      )
+    ),
+    lData = list(existing = 1)
+  ))
+
+  expect_equal(restored$existing, 1)
+  expect_true("null_val" %in% names(restored))
+  expect_null(restored$null_val)
+})
+
 test_that("gh_actions_download_artifact_bundle clears stale extracted contents (#61)", {
   download_dir <- make_test_dir("download-stale")
   on.exit(unlink(download_dir, recursive = TRUE, force = TRUE), add = TRUE)
 
   bundle_dir <- file.path(download_dir, "workr-artifact")
-  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    file.path(bundle_dir, "payload"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
   stale_path <- file.path(bundle_dir, "payload", "stale.rds")
   saveRDS("stale", stale_path)
 

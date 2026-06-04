@@ -17,10 +17,14 @@ normalize_github_artifact_scalar <- function(x) {
 
 github_artifact_config <- function(lConfig, lWorkflow = NULL) {
   cfg <- lConfig$github_artifact %||% list()
-  stop_if(!is.list(cfg), "`lConfig$github_artifact` must be a list when provided.")
+  stop_if(
+    !is.list(cfg),
+    "`lConfig$github_artifact` must be a list when provided."
+  )
 
   cfg$path <- normalize_github_artifact_scalar(cfg$path) %||% tempdir()
-  cfg$download_dir <- normalize_github_artifact_scalar(cfg$download_dir) %||% tempdir()
+  cfg$download_dir <- normalize_github_artifact_scalar(cfg$download_dir) %||%
+    tempdir()
   cfg$artifact_name <- normalize_github_artifact_scalar(cfg$artifact_name) %||%
     if (!is.null(lWorkflow)) {
       workflow_id <- lWorkflow$meta$ID %||% lWorkflow$uid %||% "workflow"
@@ -29,11 +33,15 @@ github_artifact_config <- function(lConfig, lWorkflow = NULL) {
       NULL
     }
   cfg$repo <- normalize_github_artifact_scalar(cfg$repo) %||%
-    normalize_github_artifact_scalar(Sys.getenv("GITHUB_REPOSITORY", unset = ""))
+    normalize_github_artifact_scalar(Sys.getenv(
+      "GITHUB_REPOSITORY",
+      unset = ""
+    ))
   cfg$run_id <- normalize_github_artifact_scalar(cfg$run_id) %||%
     normalize_github_artifact_scalar(Sys.getenv("GITHUB_RUN_ID", unset = ""))
   cfg$policy <- normalize_github_artifact_scalar(cfg$policy)
-  cfg$on_missing <- normalize_github_artifact_scalar(cfg$on_missing) %||% "fatal"
+  cfg$on_missing <- normalize_github_artifact_scalar(cfg$on_missing) %||%
+    "fatal"
 
   cfg
 }
@@ -43,7 +51,10 @@ github_artifact_match_rules <- function(keys, rules) {
     return(rep(TRUE, length(keys)))
   }
 
-  stop_if(!is.character(rules), "Artifact include/exclude rules must be character vectors.")
+  stop_if(
+    !is.character(rules),
+    "Artifact include/exclude rules must be character vectors."
+  )
 
   vapply(
     keys,
@@ -75,10 +86,16 @@ github_artifact_select_keys <- function(keys, include = NULL, exclude = NULL) {
 
 github_artifact_repo_parts <- function(repo) {
   repo <- normalize_github_artifact_scalar(repo)
-  stop_if(is.null(repo), "`lConfig$github_artifact$repo` must be set for GitHub artifact resolution.")
+  stop_if(
+    is.null(repo),
+    "`lConfig$github_artifact$repo` must be set for GitHub artifact resolution."
+  )
 
   parts <- strsplit(repo, "/", fixed = TRUE)[[1]]
-  stop_if(length(parts) != 2 || !all(nzchar(parts)), "`lConfig$github_artifact$repo` must use the form `owner/repo`.")
+  stop_if(
+    length(parts) != 2 || !all(nzchar(parts)),
+    "`lConfig$github_artifact$repo` must use the form `owner/repo`."
+  )
 
   list(owner = parts[[1]], repo = parts[[2]])
 }
@@ -88,7 +105,10 @@ github_artifact_signal_missing <- function(reason, on_missing, run_id, policy) {
     "Artifact restore failed for run-id {run_id %||% '<unresolved>'} (policy: {policy}): {reason}"
   )
 
-  stop_if(!on_missing %in% c("fatal", "warn"), "`on_missing` must be either `fatal` or `warn`.")
+  stop_if(
+    !on_missing %in% c("fatal", "warn"),
+    "`on_missing` must be either `fatal` or `warn`."
+  )
 
   if (identical(on_missing, "warn")) {
     LogMessage(level = "warn", message = "{msg}")
@@ -126,11 +146,18 @@ gh_actions_find_artifact <- function(repo, run_id, artifact_name) {
   NULL
 }
 
-gh_actions_download_artifact_bundle <- function(repo, run_id, artifact_name, download_dir) {
+gh_actions_download_artifact_bundle <- function(
+  repo,
+  run_id,
+  artifact_name,
+  download_dir
+) {
   artifact <- gh_actions_find_artifact(repo, run_id, artifact_name)
   if (is.null(artifact)) {
     stop(
-      glue::glue("Artifact `{artifact_name %||% '<first>'}` not found for run-id {run_id}."),
+      glue::glue(
+        "Artifact `{artifact_name %||% '<first>'}` not found for run-id {run_id}."
+      ),
       call. = FALSE
     )
   }
@@ -171,7 +198,10 @@ github_artifact_resolve_run_id <- function(cfg, lWorkflow, lConfig) {
   }
 
   if (!identical(policy, "latest_success")) {
-    stop(glue::glue("Unsupported GitHub artifact policy `{policy}`."), call. = FALSE)
+    stop(
+      glue::glue("Unsupported GitHub artifact policy `{policy}`."),
+      call. = FALSE
+    )
   }
 
   parts <- github_artifact_repo_parts(cfg$repo)
@@ -245,7 +275,11 @@ github_artifact_save_provider <- function(lWorkflow, lConfig) {
 
 github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
   cfg <- github_artifact_config(lConfig = lConfig, lWorkflow = lWorkflow)
-  policy <- if (!is.null(cfg$run_id)) "explicit" else cfg$policy %||% "latest_success"
+  policy <- if (!is.null(cfg$run_id)) {
+    "explicit"
+  } else {
+    cfg$policy %||% "latest_success"
+  }
 
   run_id <- tryCatch(
     github_artifact_resolve_run_id(cfg, lWorkflow, lConfig),
@@ -301,7 +335,11 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
     recursive = TRUE,
     full.names = TRUE
   )
-  manifest_path <- if (length(manifest_paths) == 0) NULL else manifest_paths[[1]]
+  manifest_path <- if (length(manifest_paths) == 0) {
+    NULL
+  } else {
+    manifest_paths[[1]]
+  }
   if (is.null(manifest_path)) {
     github_artifact_signal_missing(
       reason = "manifest.yaml is missing from the downloaded artifact bundle.",
@@ -316,7 +354,10 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
     yaml::read_yaml(manifest_path),
     error = function(e) {
       github_artifact_signal_missing(
-        reason = paste0("manifest.yaml could not be parsed: ", conditionMessage(e)),
+        reason = paste0(
+          "manifest.yaml could not be parsed: ",
+          conditionMessage(e)
+        ),
         on_missing = cfg$on_missing,
         run_id = run_id,
         policy = policy
@@ -330,6 +371,11 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
 
   entries <- manifest$entries %||% list()
   manifest_dir <- dirname(manifest_path)
+  manifest_dir_norm <- normalizePath(
+    manifest_dir,
+    winslash = "/",
+    mustWork = TRUE
+  )
   restored <- lData
 
   for (entry in entries) {
@@ -347,9 +393,16 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
     }
 
     payload_path <- file.path(manifest_dir, rel_path)
-    if (!file.exists(payload_path)) {
+    payload_path_norm <- normalizePath(
+      payload_path,
+      winslash = "/",
+      mustWork = FALSE
+    )
+    if (!startsWith(payload_path_norm, paste0(manifest_dir_norm, "/"))) {
       github_artifact_signal_missing(
-        reason = glue::glue("payload file `{rel_path}` is missing for key `{key}`."),
+        reason = glue::glue(
+          "payload file `{rel_path}` for key `{key}` is outside the artifact bundle."
+        ),
         on_missing = cfg$on_missing,
         run_id = run_id,
         policy = policy
@@ -357,11 +410,27 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
       next
     }
 
+    if (!file.exists(payload_path)) {
+      github_artifact_signal_missing(
+        reason = glue::glue(
+          "payload file `{rel_path}` is missing for key `{key}`."
+        ),
+        on_missing = cfg$on_missing,
+        run_id = run_id,
+        policy = policy
+      )
+      next
+    }
+
+    read_succeeded <- TRUE
     value <- tryCatch(
       readRDS(payload_path),
       error = function(e) {
+        read_succeeded <<- FALSE
         github_artifact_signal_missing(
-          reason = glue::glue("payload file `{rel_path}` is corrupt for key `{key}`: {conditionMessage(e)}"),
+          reason = glue::glue(
+            "payload file `{rel_path}` is corrupt for key `{key}`: {conditionMessage(e)}"
+          ),
           on_missing = cfg$on_missing,
           run_id = run_id,
           policy = policy
@@ -370,8 +439,8 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
       }
     )
 
-    if (!is.null(value)) {
-      restored[[key]] <- value
+    if (read_succeeded) {
+      restored[key] <- list(value)
     }
   }
 

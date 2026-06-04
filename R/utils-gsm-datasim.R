@@ -26,15 +26,17 @@ gsm_datasim_provider_config <- function(lConfig) {
 }
 
 gsm_datasim_validate_choice <- function(value, field, choices) {
+  field_path <- paste0("lConfig$gsm.datasim$", field)
+
   stop_if(
     is.null(value) || !is.character(value) || length(value) != 1 || !nzchar(value),
-    glue::glue("`lConfig$gsm.datasim${field}` must be a non-empty single string.")
+    glue::glue("`{field_path}` must be a non-empty single string.")
   )
 
   stop_if(
     !value %in% choices,
     glue::glue(
-      "Unsupported `lConfig$gsm.datasim${field}` value \"{value}\". Supported values: {paste(choices, collapse = ', ')}"
+      "Unsupported `{field_path}` value \"{value}\". Supported values: {paste(choices, collapse = ', ')}"
     )
   )
 

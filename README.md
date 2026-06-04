@@ -121,7 +121,7 @@ lData <- workr::RunWorkflow(
 
 The provider reads its options from `lConfig$gsm.datasim`. Common fields include `participants`, `sites`, `snapshot_count`, `months_duration`, `snapshot`, and `profile`. Generated `Raw_*` objects are also exposed as `df*` aliases for compatibility with existing workflows.
 
-For a runnable live example that calls the optional dependency directly through `RunWorkflow()`, see `inst/examples/gsm-datasim-provider-live.R`.
+For a runnable live example that calls the optional dependency directly through `RunWorkflow()`, see `inst/examples/gsm-datasim-provider.R`.
 
 ## Combining Workflows
 

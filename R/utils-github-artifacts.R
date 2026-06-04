@@ -15,11 +15,6 @@ normalize_github_artifact_scalar <- function(x) {
   value
 }
 
-github_artifact_default_name <- function(lWorkflow) {
-  workflow_id <- lWorkflow$meta$ID %||% lWorkflow$uid %||% "workflow"
-  paste0("workr-", workflow_id)
-}
-
 github_artifact_config <- function(lConfig, lWorkflow = NULL) {
   cfg <- lConfig$github_artifact %||% list()
   stop_if(!is.list(cfg), "`lConfig$github_artifact` must be a list when provided.")
@@ -27,7 +22,12 @@ github_artifact_config <- function(lConfig, lWorkflow = NULL) {
   cfg$path <- normalize_github_artifact_scalar(cfg$path) %||% tempdir()
   cfg$download_dir <- normalize_github_artifact_scalar(cfg$download_dir) %||% tempdir()
   cfg$artifact_name <- normalize_github_artifact_scalar(cfg$artifact_name) %||%
-    if (!is.null(lWorkflow)) github_artifact_default_name(lWorkflow) else NULL
+    if (!is.null(lWorkflow)) {
+      workflow_id <- lWorkflow$meta$ID %||% lWorkflow$uid %||% "workflow"
+      paste0("workr-", workflow_id)
+    } else {
+      NULL
+    }
   cfg$repo <- normalize_github_artifact_scalar(cfg$repo) %||%
     normalize_github_artifact_scalar(Sys.getenv("GITHUB_REPOSITORY", unset = ""))
   cfg$run_id <- normalize_github_artifact_scalar(cfg$run_id) %||%
@@ -73,15 +73,6 @@ github_artifact_select_keys <- function(keys, include = NULL, exclude = NULL) {
   keys[selected]
 }
 
-github_artifact_bundle_dir <- function(base_path, artifact_name) {
-  file.path(base_path, artifact_name)
-}
-
-github_artifact_entry_file <- function(index, key) {
-  safe_key <- gsub("[^A-Za-z0-9._-]", "_", key)
-  sprintf("payload/%03d-%s.rds", index, safe_key)
-}
-
 github_artifact_repo_parts <- function(repo) {
   repo <- normalize_github_artifact_scalar(repo)
   stop_if(is.null(repo), "`lConfig$github_artifact$repo` must be set for GitHub artifact resolution.")
@@ -90,14 +81,6 @@ github_artifact_repo_parts <- function(repo) {
   stop_if(length(parts) != 2 || !all(nzchar(parts)), "`lConfig$github_artifact$repo` must use the form `owner/repo`.")
 
   list(owner = parts[[1]], repo = parts[[2]])
-}
-
-github_artifact_policy_label <- function(cfg) {
-  if (!is.null(cfg$run_id)) {
-    return("explicit")
-  }
-
-  cfg$policy %||% "latest_success"
 }
 
 github_artifact_signal_missing <- function(reason, on_missing, run_id, policy) {
@@ -113,24 +96,6 @@ github_artifact_signal_missing <- function(reason, on_missing, run_id, policy) {
   }
 
   stop(msg, call. = FALSE)
-}
-
-gh_actions_latest_success_run_id <- function(repo) {
-  parts <- github_artifact_repo_parts(repo)
-  response <- gh::gh(
-    "GET /repos/{owner}/{repo}/actions/runs",
-    owner = parts$owner,
-    repo = parts$repo,
-    status = "success",
-    per_page = 1
-  )
-
-  runs <- response$workflow_runs %||% list()
-  if (length(runs) == 0) {
-    stop("No successful workflow runs found.", call. = FALSE)
-  }
-
-  as.character(runs[[1]]$id)
 }
 
 gh_actions_find_artifact <- function(repo, run_id, artifact_name) {
@@ -170,7 +135,7 @@ gh_actions_download_artifact_bundle <- function(repo, run_id, artifact_name, dow
     )
   }
 
-  bundle_dir <- github_artifact_bundle_dir(download_dir, artifact$name)
+  bundle_dir <- file.path(download_dir, artifact$name)
   dir.create(bundle_dir, recursive = TRUE, showWarnings = FALSE)
 
   zip_path <- file.path(bundle_dir, "artifact.zip")
@@ -208,42 +173,21 @@ github_artifact_resolve_run_id <- function(cfg, lWorkflow, lConfig) {
     stop(glue::glue("Unsupported GitHub artifact policy `{policy}`."), call. = FALSE)
   }
 
-  gh_actions_latest_success_run_id(cfg$repo)
-}
-
-github_artifact_fetch_bundle <- function(cfg, run_id, lWorkflow, lConfig) {
-  if (is.function(cfg$artifact_fetcher)) {
-    return(cfg$artifact_fetcher(
-      repo = cfg$repo,
-      run_id = run_id,
-      artifact_name = cfg$artifact_name,
-      download_dir = cfg$download_dir,
-      lWorkflow = lWorkflow,
-      lConfig = lConfig
-    ))
-  }
-
-  gh_actions_download_artifact_bundle(
-    repo = cfg$repo,
-    run_id = run_id,
-    artifact_name = cfg$artifact_name,
-    download_dir = cfg$download_dir
-  )
-}
-
-github_artifact_find_manifest <- function(bundle_dir) {
-  manifest_paths <- list.files(
-    bundle_dir,
-    pattern = "^manifest\\.ya?ml$",
-    recursive = TRUE,
-    full.names = TRUE
+  parts <- github_artifact_repo_parts(cfg$repo)
+  response <- gh::gh(
+    "GET /repos/{owner}/{repo}/actions/runs",
+    owner = parts$owner,
+    repo = parts$repo,
+    status = "success",
+    per_page = 1
   )
 
-  if (length(manifest_paths) == 0) {
-    return(NULL)
+  runs <- response$workflow_runs %||% list()
+  if (length(runs) == 0) {
+    stop("No successful workflow runs found.", call. = FALSE)
   }
 
-  manifest_paths[[1]]
+  as.character(runs[[1]]$id)
 }
 
 github_artifact_save_provider <- function(lWorkflow, lConfig) {
@@ -255,13 +199,14 @@ github_artifact_save_provider <- function(lWorkflow, lConfig) {
     exclude = cfg$exclude
   )
 
-  bundle_dir <- github_artifact_bundle_dir(cfg$path, cfg$artifact_name)
+  bundle_dir <- file.path(cfg$path, cfg$artifact_name)
   payload_dir <- file.path(bundle_dir, "payload")
   dir.create(payload_dir, recursive = TRUE, showWarnings = FALSE)
 
   entries <- lapply(seq_along(selected_keys), function(index) {
     key <- selected_keys[[index]]
-    rel_path <- github_artifact_entry_file(index, key)
+    safe_key <- gsub("[^A-Za-z0-9._-]", "_", key)
+    rel_path <- sprintf("payload/%03d-%s.rds", index, safe_key)
     saveRDS(lWorkflow$lData[[key]], file.path(bundle_dir, rel_path))
     list(key = key, file = rel_path)
   })
@@ -298,7 +243,7 @@ github_artifact_save_provider <- function(lWorkflow, lConfig) {
 
 github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
   cfg <- github_artifact_config(lConfig = lConfig, lWorkflow = lWorkflow)
-  policy <- github_artifact_policy_label(cfg)
+  policy <- if (!is.null(cfg$run_id)) "explicit" else cfg$policy %||% "latest_success"
 
   run_id <- tryCatch(
     github_artifact_resolve_run_id(cfg, lWorkflow, lConfig),
@@ -317,7 +262,23 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
   }
 
   bundle_dir <- tryCatch(
-    github_artifact_fetch_bundle(cfg, run_id, lWorkflow, lConfig),
+    if (is.function(cfg$artifact_fetcher)) {
+      cfg$artifact_fetcher(
+        repo = cfg$repo,
+        run_id = run_id,
+        artifact_name = cfg$artifact_name,
+        download_dir = cfg$download_dir,
+        lWorkflow = lWorkflow,
+        lConfig = lConfig
+      )
+    } else {
+      gh_actions_download_artifact_bundle(
+        repo = cfg$repo,
+        run_id = run_id,
+        artifact_name = cfg$artifact_name,
+        download_dir = cfg$download_dir
+      )
+    },
     error = function(e) {
       github_artifact_signal_missing(
         reason = conditionMessage(e),
@@ -332,7 +293,13 @@ github_artifact_load_provider <- function(lWorkflow, lConfig, lData) {
     return(lData)
   }
 
-  manifest_path <- github_artifact_find_manifest(bundle_dir)
+  manifest_paths <- list.files(
+    bundle_dir,
+    pattern = "^manifest\\.ya?ml$",
+    recursive = TRUE,
+    full.names = TRUE
+  )
+  manifest_path <- if (length(manifest_paths) == 0) NULL else manifest_paths[[1]]
   if (is.null(manifest_path)) {
     github_artifact_signal_missing(
       reason = "manifest.yaml is missing from the downloaded artifact bundle.",

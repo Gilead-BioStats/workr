@@ -12,7 +12,8 @@ write_test_artifact_bundle <- function(bundle_dir, entries) {
 
   manifest_entries <- lapply(seq_along(entries), function(index) {
     key <- names(entries)[[index]]
-    rel_path <- workr:::github_artifact_entry_file(index, key)
+    safe_key <- gsub("[^A-Za-z0-9._-]", "_", key)
+    rel_path <- sprintf("payload/%03d-%s.rds", index, safe_key)
     saveRDS(entries[[index]], file.path(bundle_dir, rel_path))
     list(key = key, file = rel_path)
   })
@@ -165,14 +166,14 @@ test_that("github_artifact load provider warns and returns partial lData when pa
   on.exit(unlink(bundle_dir, recursive = TRUE, force = TRUE), add = TRUE)
   dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
 
-  present_path <- workr:::github_artifact_entry_file(1, "loaded_val")
+  present_path <- sprintf("payload/%03d-%s.rds", 1, "loaded_val")
   saveRDS(42, file.path(bundle_dir, present_path))
   yaml::write_yaml(
     list(
       provider = "github_artifact",
       entries = list(
         list(key = "loaded_val", file = present_path),
-        list(key = "missing_val", file = workr:::github_artifact_entry_file(2, "missing_val"))
+        list(key = "missing_val", file = sprintf("payload/%03d-%s.rds", 2, "missing_val"))
       )
     ),
     file.path(bundle_dir, "manifest.yaml")

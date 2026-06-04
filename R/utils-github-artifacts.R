@@ -136,6 +136,7 @@ gh_actions_download_artifact_bundle <- function(repo, run_id, artifact_name, dow
   }
 
   bundle_dir <- file.path(download_dir, artifact$name)
+  unlink(bundle_dir, recursive = TRUE, force = TRUE)
   dir.create(bundle_dir, recursive = TRUE, showWarnings = FALSE)
 
   zip_path <- file.path(bundle_dir, "artifact.zip")
@@ -200,6 +201,7 @@ github_artifact_save_provider <- function(lWorkflow, lConfig) {
   )
 
   bundle_dir <- file.path(cfg$path, cfg$artifact_name)
+  unlink(bundle_dir, recursive = TRUE, force = TRUE)
   payload_dir <- file.path(bundle_dir, "payload")
   dir.create(payload_dir, recursive = TRUE, showWarnings = FALSE)
 

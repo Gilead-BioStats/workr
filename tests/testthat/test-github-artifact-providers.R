@@ -78,6 +78,36 @@ test_that("github_artifact save provider writes manifest and payload pair (#60)"
   expect_equal(uploader_args$retention_days, 30)
 })
 
+test_that("github_artifact save provider clears stale bundle contents (#60)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  output_dir <- make_test_dir("save-provider-stale")
+  on.exit(unlink(output_dir, recursive = TRUE, force = TRUE), add = TRUE)
+
+  bundle_dir <- file.path(output_dir, "workr-artifact_save_stale")
+  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  stale_path <- file.path(bundle_dir, "payload", "stale.rds")
+  saveRDS("stale", stale_path)
+
+  suppressMessages(RunWorkflow(
+    lWorkflow = list(
+      meta = list(Type = "demo", ID = "artifact_save_stale"),
+      steps = list(
+        list(name = "identity_step", output = "results", params = list(x = "val"))
+      )
+    ),
+    lData = list(val = 7),
+    lConfig = list(
+      SaveData = "github_artifact",
+      github_artifact = list(path = output_dir)
+    )
+  ))
+
+  expect_false(file.exists(stale_path))
+  expect_true(file.exists(file.path(bundle_dir, "manifest.yaml")))
+})
+
 test_that("github_artifact load provider restores data for an explicit run-id (#61)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
@@ -209,4 +239,51 @@ test_that("github_artifact load provider warns and returns partial lData when pa
   expect_equal(restored$existing, 1)
   expect_equal(restored$loaded_val, 42)
   expect_false("missing_val" %in% names(restored))
+})
+
+test_that("gh_actions_download_artifact_bundle clears stale extracted contents (#61)", {
+  download_dir <- make_test_dir("download-stale")
+  on.exit(unlink(download_dir, recursive = TRUE, force = TRUE), add = TRUE)
+
+  bundle_dir <- file.path(download_dir, "workr-artifact")
+  dir.create(file.path(bundle_dir, "payload"), recursive = TRUE, showWarnings = FALSE)
+  stale_path <- file.path(bundle_dir, "payload", "stale.rds")
+  saveRDS("stale", stale_path)
+
+  local_mocked_bindings(
+    gh = function(endpoint, ..., .destfile = NULL) {
+      if (grepl("/actions/runs/.*/artifacts", endpoint)) {
+        return(list(artifacts = list(list(name = "workr-artifact", id = 123))))
+      }
+
+      if (grepl("/actions/artifacts/.*/zip", endpoint)) {
+        writeBin(charToRaw("zip"), .destfile)
+        return(invisible(NULL))
+      }
+
+      stop("Unexpected endpoint: ", endpoint)
+    },
+    .package = "gh"
+  )
+  local_mocked_bindings(
+    unzip = function(zipfile, exdir, ...) {
+      yaml::write_yaml(
+        list(provider = "github_artifact", entries = list()),
+        file.path(exdir, "manifest.yaml")
+      )
+      invisible(character(0))
+    },
+    .package = "utils"
+  )
+
+  restored_dir <- workr:::gh_actions_download_artifact_bundle(
+    repo = "Gilead-BioStats/workr",
+    run_id = "24680",
+    artifact_name = "workr-artifact",
+    download_dir = download_dir
+  )
+
+  expect_equal(restored_dir, bundle_dir)
+  expect_false(file.exists(stale_path))
+  expect_true(file.exists(file.path(bundle_dir, "manifest.yaml")))
 })

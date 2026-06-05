@@ -1,3 +1,38 @@
+test_that("gh_api_client passes .limit only for paginated requests", {
+  calls <- list()
+
+  local_mocked_bindings(
+    gh = function(...) {
+      calls[[length(calls) + 1]] <<- list(...)
+      list()
+    },
+    .package = "gh"
+  )
+
+  expect_equal(
+    workr:::gh_api_client(
+      c("api", "repos/Gilead-BioStats/gsm.core/releases", "--paginate")
+    ),
+    "OK"
+  )
+  expect_identical(
+    calls[[1]][[1]],
+    "GET /repos/Gilead-BioStats/gsm.core/releases"
+  )
+  expect_true(".limit" %in% names(calls[[1]]))
+  expect_identical(calls[[1]]$.limit, Inf)
+
+  expect_equal(
+    workr:::gh_api_client(c("api", "repos/Gilead-BioStats/gsm.core/releases")),
+    "OK"
+  )
+  expect_identical(
+    calls[[2]][[1]],
+    "GET /repos/Gilead-BioStats/gsm.core/releases"
+  )
+  expect_false(".limit" %in% names(calls[[2]]))
+})
+
 test_that("resolve_package resolves explicit refs via mocked gh api (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {

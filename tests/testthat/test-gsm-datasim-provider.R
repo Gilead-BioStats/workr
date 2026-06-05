@@ -12,8 +12,18 @@ make_gsm_datasim_workflow <- function(id = "gsm_provider") {
 }
 
 test_that("gsm.datasim provider adapts standard single-snapshot data and aliases (#59)", {
+  had_identity_step <- exists("identity_step", envir = .GlobalEnv, inherits = FALSE)
+  old_identity_step <- if (had_identity_step) {
+    get("identity_step", envir = .GlobalEnv, inherits = FALSE)
+  }
   assign("identity_step", function(x) x, envir = .GlobalEnv)
-  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+  on.exit({
+    if (had_identity_step) {
+      assign("identity_step", old_identity_step, envir = .GlobalEnv)
+    } else {
+      rm("identity_step", envir = .GlobalEnv)
+    }
+  }, add = TRUE)
 
   standard_args <- NULL
   generate_args <- NULL
@@ -177,6 +187,41 @@ test_that("gsm.datasim provider validates profile and study_type early (#59)", {
       lData = list()
     ),
     regexp = "Unsupported `lConfig\\$gsm\\.datasim\\$study_type` value"
+  )
+
+  expect_error(
+    workr:::gsm_datasim_load_provider(
+      lWorkflow = make_gsm_datasim_workflow(),
+      lConfig = list(
+        LoadData = "gsm.datasim",
+        gsm.datasim = list(profile = NA_character_)
+      ),
+      lData = list()
+    ),
+    regexp = "`lConfig\\$gsm\\.datasim\\$profile` must be a non-empty single string"
+  )
+})
+
+test_that("gsm.datasim provider handles edge-case scalar config values (#59)", {
+  expect_null(workr:::normalize_gsm_datasim_scalar(NA_character_))
+  expect_null(workr:::normalize_gsm_datasim_scalar(""))
+
+  expect_false(workr:::gsm_datasim_is_longitudinal(list(snapshot_count = "abc")))
+  expect_false(workr:::gsm_datasim_is_longitudinal(list(months_duration = NA_integer_)))
+  expect_true(workr:::gsm_datasim_is_longitudinal(list(snapshot_count = "2")))
+
+  snapshots <- list(
+    one = list(Raw_SUBJ = data.frame(subjid = "S001", stringsAsFactors = FALSE)),
+    two = list(Raw_SUBJ = data.frame(subjid = "S002", stringsAsFactors = FALSE))
+  )
+
+  expect_equal(
+    workr:::gsm_datasim_snapshot_data(snapshots, snapshot = 2)$Raw_SUBJ$subjid,
+    "S002"
+  )
+  expect_error(
+    workr:::gsm_datasim_snapshot_data(snapshots, snapshot = 1.9),
+    regexp = "must be a whole number between 1 and 2"
   )
 })
 

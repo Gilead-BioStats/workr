@@ -8,7 +8,7 @@ normalize_gsm_datasim_scalar <- function(x) {
   }
 
   value <- x[[1]]
-  if (is.character(value) && !nzchar(value)) {
+  if (is.na(value) || (is.character(value) && !nzchar(value))) {
     return(NULL)
   }
 
@@ -39,12 +39,14 @@ gsm_datasim_config_value <- function(cfg, name, default = NULL) {
 
 gsm_datasim_validate_choice <- function(value, field, choices) {
   field_path <- paste0("lConfig$gsm.datasim$", field)
+  is_invalid <- is.null(value) ||
+    !is.character(value) ||
+    length(value) != 1 ||
+    is.na(value) ||
+    !nzchar(value)
 
   stop_if(
-    is.null(value) ||
-      !is.character(value) ||
-      length(value) != 1 ||
-      !nzchar(value),
+    is_invalid,
     glue::glue("`{field_path}` must be a non-empty single string.")
   )
 
@@ -56,6 +58,15 @@ gsm_datasim_validate_choice <- function(value, field, choices) {
   )
 
   value
+}
+
+gsm_datasim_is_count_greater_than_one <- function(value) {
+  if (is.null(value) || length(value) != 1) {
+    return(FALSE)
+  }
+
+  count <- suppressWarnings(as.integer(value))
+  !is.na(count) && count > 1
 }
 
 gsm_datasim_api <- function() {
@@ -99,8 +110,8 @@ gsm_datasim_is_longitudinal <- function(cfg) {
   months_duration <- gsm_datasim_config_value(cfg, "months_duration")
 
   isTRUE(gsm_datasim_config_value(cfg, "longitudinal")) ||
-    (!is.null(snapshot_count) && as.integer(snapshot_count) > 1) ||
-    (!is.null(months_duration) && as.integer(months_duration) > 1)
+    gsm_datasim_is_count_greater_than_one(snapshot_count) ||
+    gsm_datasim_is_count_greater_than_one(months_duration)
 }
 
 gsm_datasim_snapshot_data <- function(raw_data, snapshot = "latest") {
@@ -126,9 +137,13 @@ gsm_datasim_snapshot_data <- function(raw_data, snapshot = "latest") {
   if (is.numeric(snapshot) && length(snapshot) == 1) {
     index <- as.integer(snapshot)
     stop_if(
-      is.na(index) || index < 1 || index > length(raw_data),
+      is.na(snapshot) ||
+        !is.finite(snapshot) ||
+        snapshot != index ||
+        index < 1 ||
+        index > length(raw_data),
       glue::glue(
-        "`lConfig$gsm.datasim$snapshot` must be between 1 and {length(raw_data)}."
+        "`lConfig$gsm.datasim$snapshot` must be a whole number between 1 and {length(raw_data)}."
       )
     )
     return(raw_data[[index]])

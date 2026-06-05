@@ -56,7 +56,8 @@ test_that("gsm.datasim provider adapts standard single-snapshot data and aliases
           study_type = "standard",
           participants = 25,
           sites = 4,
-          snapshot_count = 1
+          snapshot_count = 1,
+          subject_visits = FALSE
         )
       )
     )
@@ -66,6 +67,9 @@ test_that("gsm.datasim provider adapts standard single-snapshot data and aliases
   expect_equal(standard_args$study_id, "single_snapshot")
   expect_equal(standard_args$participant_count, 25)
   expect_equal(standard_args$site_count, 4)
+  expect_identical(standard_args$study, TRUE)
+  expect_identical(standard_args$subjects, TRUE)
+  expect_identical(standard_args$subject_visits, FALSE)
   expect_equal(generate_args$config$temporal$snapshot_count, 1)
 
   loaded <- workr:::gsm_datasim_load_provider(

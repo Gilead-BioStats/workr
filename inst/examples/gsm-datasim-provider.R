@@ -45,16 +45,27 @@ if (!requireNamespace("gsm.datasim", quietly = TRUE)) {
   )
 }
 
-identity_step <- function(x) x
-
 example_workflow <- function(id) {
   list(
     meta = list(Type = "example", ID = id),
     steps = list(
       list(
-        name = "identity_step",
-        output = "res",
-        params = list(x = "loaded_val")
+        name = "workr::RunQuery",
+        output = "enrolled_subjects_by_site",
+        params = list(
+          df = "Raw_SUBJ",
+          strQuery = paste(
+            "SELECT",
+            "  invid AS site_id,",
+            "  COUNT(*) AS enrolled_subjects,",
+            "  AVG(timeonstudy) AS mean_time_on_study",
+            "FROM df",
+            "WHERE enrollyn = 'Y'",
+            "GROUP BY invid",
+            "ORDER BY enrolled_subjects DESC",
+            sep = "\n"
+          )
+        )
       )
     )
   )
@@ -92,9 +103,9 @@ run_example <- function(title, workflow_id, gsm_config, lData = list()) {
     print(identical(loaded$Raw_SUBJ, loaded$dfSUBJ))
   }
 
-  if ("loaded_val" %in% names(loaded)) {
-    cat("\nloaded_val:\n")
-    print(loaded$loaded_val)
+  if ("enrolled_subjects_by_site" %in% names(loaded)) {
+    cat("\nEnrolled subjects by site:\n")
+    print(utils::head(loaded$enrolled_subjects_by_site))
   }
 
   invisible(result)

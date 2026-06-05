@@ -2,7 +2,11 @@ make_gsm_datasim_workflow <- function(id = "gsm_provider") {
   list(
     meta = list(Type = "demo", ID = id),
     steps = list(
-      list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
     )
   )
 }
@@ -31,7 +35,9 @@ test_that("gsm.datasim provider adapts standard single-snapshot data and aliases
             )
           )
         },
-        quick_longitudinal_study = function(...) stop("unexpected longitudinal call"),
+        quick_longitudinal_study = function(...) {
+          stop("unexpected longitudinal call")
+        },
         set_temporal_config = function(config, ...) {
           config$temporal <- list(...)
           config
@@ -91,14 +97,26 @@ test_that("gsm.datasim provider uses latest longitudinal snapshot by default (#5
   local_mocked_bindings(
     gsm_datasim_api = function() {
       list(
-        create_standard_study_config = function(...) stop("unexpected standard config call"),
-        generate_study_data = function(...) stop("unexpected generate_study_data call"),
+        create_standard_study_config = function(...) {
+          stop("unexpected standard config call")
+        },
+        generate_study_data = function(...) {
+          stop("unexpected generate_study_data call")
+        },
         quick_longitudinal_study = function(...) {
           quick_args <<- list(...)
           list(
             raw_data = list(
-              "2024-01-31" = list(Raw_SUBJ = data.frame(subjid = "S001", stringsAsFactors = FALSE)),
-              "2024-02-29" = list(Raw_SUBJ = data.frame(subjid = "S002", stringsAsFactors = FALSE), loaded_val = 42)
+              "2024-01-31" = list(
+                Raw_SUBJ = data.frame(subjid = "S001", stringsAsFactors = FALSE)
+              ),
+              "2024-02-29" = list(
+                Raw_SUBJ = data.frame(
+                  subjid = "S002",
+                  stringsAsFactors = FALSE
+                ),
+                loaded_val = 42
+              )
             )
           )
         },

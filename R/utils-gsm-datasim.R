@@ -16,7 +16,11 @@ normalize_gsm_datasim_scalar <- function(x) {
 }
 
 gsm_datasim_provider_config <- function(lConfig) {
-  cfg <- if ("gsm.datasim" %in% names(lConfig)) lConfig[["gsm.datasim"]] else list()
+  cfg <- if ("gsm.datasim" %in% names(lConfig)) {
+    lConfig[["gsm.datasim"]]
+  } else {
+    list()
+  }
   stop_if(
     !is.list(cfg),
     "`lConfig$gsm.datasim` must be a list when provided."
@@ -37,7 +41,10 @@ gsm_datasim_validate_choice <- function(value, field, choices) {
   field_path <- paste0("lConfig$gsm.datasim$", field)
 
   stop_if(
-    is.null(value) || !is.character(value) || length(value) != 1 || !nzchar(value),
+    is.null(value) ||
+      !is.character(value) ||
+      length(value) != 1 ||
+      !nzchar(value),
     glue::glue("`{field_path}` must be a non-empty single string.")
   )
 
@@ -63,12 +70,27 @@ gsm_datasim_api <- function() {
   ns <- loadNamespace("gsm.datasim")
 
   list(
-    create_standard_study_config = get("create_standard_study_config", envir = ns),
+    create_standard_study_config = get(
+      "create_standard_study_config",
+      envir = ns
+    ),
     generate_study_data = get("generate_study_data", envir = ns),
     quick_longitudinal_study = get("quick_longitudinal_study", envir = ns),
-    set_temporal_config = get0("set_temporal_config", envir = ns, inherits = FALSE),
-    create_study_config = get0("create_study_config", envir = ns, inherits = FALSE),
-    add_dataset_config = get0("add_dataset_config", envir = ns, inherits = FALSE)
+    set_temporal_config = get0(
+      "set_temporal_config",
+      envir = ns,
+      inherits = FALSE
+    ),
+    create_study_config = get0(
+      "create_study_config",
+      envir = ns,
+      inherits = FALSE
+    ),
+    add_dataset_config = get0(
+      "add_dataset_config",
+      envir = ns,
+      inherits = FALSE
+    )
   )
 }
 
@@ -90,8 +112,10 @@ gsm_datasim_snapshot_data <- function(raw_data, snapshot = "latest") {
     return(raw_data)
   }
 
-  if (any(vapply(raw_data, is.data.frame, logical(1))) ||
-      any(vapply(raw_data, function(x) !is.list(x), logical(1)))) {
+  if (
+    any(vapply(raw_data, is.data.frame, logical(1))) ||
+      any(vapply(raw_data, function(x) !is.list(x), logical(1)))
+  ) {
     return(raw_data)
   }
 
@@ -103,7 +127,9 @@ gsm_datasim_snapshot_data <- function(raw_data, snapshot = "latest") {
     index <- as.integer(snapshot)
     stop_if(
       is.na(index) || index < 1 || index > length(raw_data),
-      glue::glue("`lConfig$gsm.datasim$snapshot` must be between 1 and {length(raw_data)}.")
+      glue::glue(
+        "`lConfig$gsm.datasim$snapshot` must be between 1 and {length(raw_data)}."
+      )
     )
     return(raw_data[[index]])
   }
@@ -136,8 +162,16 @@ gsm_datasim_add_legacy_aliases <- function(lData) {
 
 gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
   config <- api$create_standard_study_config(
-    study_id = normalize_gsm_datasim_scalar(gsm_datasim_config_value(cfg, "study_id")) %||% default_study_id,
-    participant_count = as.integer(gsm_datasim_config_value(cfg, "participants", 100)),
+    study_id = normalize_gsm_datasim_scalar(gsm_datasim_config_value(
+      cfg,
+      "study_id"
+    )) %||%
+      default_study_id,
+    participant_count = as.integer(gsm_datasim_config_value(
+      cfg,
+      "participants",
+      100
+    )),
     site_count = as.integer(gsm_datasim_config_value(cfg, "sites", 10)),
     analytics_package = gsm_datasim_config_value(cfg, "analytics_package"),
     analytics_workflows = gsm_datasim_config_value(cfg, "analytics_workflows"),
@@ -145,7 +179,11 @@ gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
     subjects = gsm_datasim_config_value(cfg, "subjects", TRUE),
     sites_data = gsm_datasim_config_value(cfg, "sites_data", TRUE),
     adverse_events = gsm_datasim_config_value(cfg, "adverse_events", TRUE),
-    protocol_deviations = gsm_datasim_config_value(cfg, "protocol_deviations", TRUE),
+    protocol_deviations = gsm_datasim_config_value(
+      cfg,
+      "protocol_deviations",
+      TRUE
+    ),
     lab_data = gsm_datasim_config_value(cfg, "lab_data", TRUE),
     subject_visits = gsm_datasim_config_value(cfg, "subject_visits", TRUE),
     visit_schedule = gsm_datasim_config_value(cfg, "visit_schedule", TRUE),
@@ -154,9 +192,17 @@ gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
     data_entry = gsm_datasim_config_value(cfg, "data_entry", TRUE),
     queries = gsm_datasim_config_value(cfg, "queries", TRUE),
     pharmacokinetics = gsm_datasim_config_value(cfg, "pharmacokinetics", TRUE),
-    study_drug_completion = gsm_datasim_config_value(cfg, "study_drug_completion", TRUE),
+    study_drug_completion = gsm_datasim_config_value(
+      cfg,
+      "study_drug_completion",
+      TRUE
+    ),
     study_completion = gsm_datasim_config_value(cfg, "study_completion", TRUE),
-    inclusion_exclusion = gsm_datasim_config_value(cfg, "inclusion_exclusion", TRUE),
+    inclusion_exclusion = gsm_datasim_config_value(
+      cfg,
+      "inclusion_exclusion",
+      TRUE
+    ),
     exclusions = gsm_datasim_config_value(cfg, "exclusions", TRUE),
     country = gsm_datasim_config_value(cfg, "country", TRUE),
     death = gsm_datasim_config_value(cfg, "death", TRUE),
@@ -169,7 +215,11 @@ gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
     config <- api$set_temporal_config(
       config = config,
       start_date = gsm_datasim_config_value(cfg, "start_date"),
-      snapshot_count = as.integer(gsm_datasim_config_value(cfg, "snapshot_count", 1)),
+      snapshot_count = as.integer(gsm_datasim_config_value(
+        cfg,
+        "snapshot_count",
+        1
+      )),
       snapshot_width = gsm_datasim_config_value(cfg, "snapshot_width", "months")
     )
   }
@@ -222,8 +272,16 @@ gsm_datasim_simulated_data <- function(lWorkflow, lConfig) {
 
   if (gsm_datasim_is_longitudinal(cfg)) {
     study <- api$quick_longitudinal_study(
-      study_name = normalize_gsm_datasim_scalar(gsm_datasim_config_value(cfg, "study_name")) %||% default_study_name,
-      participants = as.integer(gsm_datasim_config_value(cfg, "participants", 1000)),
+      study_name = normalize_gsm_datasim_scalar(gsm_datasim_config_value(
+        cfg,
+        "study_name"
+      )) %||%
+        default_study_name,
+      participants = as.integer(gsm_datasim_config_value(
+        cfg,
+        "participants",
+        1000
+      )),
       sites = as.integer(gsm_datasim_config_value(cfg, "sites", 150)),
       months_duration = as.integer(
         gsm_datasim_config_value(
@@ -233,7 +291,10 @@ gsm_datasim_simulated_data <- function(lWorkflow, lConfig) {
         )
       ),
       study_type = study_type,
-      include_pipeline = isTRUE(gsm_datasim_config_value(cfg, "include_pipeline")),
+      include_pipeline = isTRUE(gsm_datasim_config_value(
+        cfg,
+        "include_pipeline"
+      )),
       outlier_intensity = gsm_datasim_config_value(cfg, "outlier_intensity", 1),
       verbose = isTRUE(gsm_datasim_config_value(cfg, "verbose"))
     )
@@ -248,7 +309,11 @@ gsm_datasim_simulated_data <- function(lWorkflow, lConfig) {
     return(gsm_datasim_snapshot_data(
       raw_data = api$generate_study_data(
         config = gsm_datasim_config_value(cfg, "config"),
-        workflow_path = gsm_datasim_config_value(cfg, "workflow_path", "workflow/1_mappings"),
+        workflow_path = gsm_datasim_config_value(
+          cfg,
+          "workflow_path",
+          "workflow/1_mappings"
+        ),
         mappings = gsm_datasim_config_value(cfg, "mappings"),
         package = gsm_datasim_config_value(cfg, "package", "gsm.mapping"),
         verbose = isTRUE(gsm_datasim_config_value(cfg, "verbose"))
@@ -268,7 +333,11 @@ gsm_datasim_simulated_data <- function(lWorkflow, lConfig) {
   gsm_datasim_snapshot_data(
     raw_data = api$generate_study_data(
       config = gsm_datasim_standard_config(api, cfg, default_study_id),
-      workflow_path = gsm_datasim_config_value(cfg, "workflow_path", "workflow/1_mappings"),
+      workflow_path = gsm_datasim_config_value(
+        cfg,
+        "workflow_path",
+        "workflow/1_mappings"
+      ),
       mappings = gsm_datasim_config_value(cfg, "mappings"),
       package = gsm_datasim_config_value(cfg, "package", "gsm.mapping"),
       verbose = isTRUE(gsm_datasim_config_value(cfg, "verbose"))

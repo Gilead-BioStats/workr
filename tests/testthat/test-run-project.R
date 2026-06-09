@@ -185,3 +185,208 @@ test_that("RunProject bReturnResult and bKeepInputData pass through (#26)", {
   expect_true(is.list(result_false$phase_A[["phase1_add_ten"]]))
   expect_true("lData" %in% names(result_false$phase_A[["phase1_add_ten"]]))
 })
+
+write_project_workflow <- function(project_path, phase, id, step_name, output, params = list()) {
+  phase_path <- file.path(project_path, phase)
+  dir.create(phase_path, recursive = TRUE, showWarnings = FALSE)
+
+  workflow <- list(
+    meta = list(Type = "phase", ID = id),
+    steps = list(
+      list(name = step_name, output = output, params = params)
+    )
+  )
+
+  yaml::write_yaml(workflow, file.path(phase_path, paste0(id, ".yaml")))
+}
+
+test_that("RunProject validates per-phase _config.yaml schema (#64)", {
+  project_path <- file.path(tempdir(), "project_config_schema_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_phase",
+    id = "capture",
+    step_name = "identity",
+    output = "captured",
+    params = list(x = "value")
+  )
+
+  writeLines(
+    c(
+      "input:",
+      "  unexpected: true"
+    ),
+    file.path(project_path, "1_phase", "_config.yaml")
+  )
+
+  expect_error(
+    RunProject(project_path, lData = list(value = 1)),
+    "Phase '1_phase'.*unknown input key.*unexpected"
+  )
+})
+
+test_that("RunProject assembles phase input from config rules (#65)", {
+  emit_value <- function(value) value
+  capture_data <- function(lData) lData
+  assign("emit_value", emit_value, envir = globalenv())
+  assign("capture_data", capture_data, envir = globalenv())
+  on.exit(
+    {
+      rm("emit_value", envir = globalenv())
+      rm("capture_data", envir = globalenv())
+    },
+    add = TRUE
+  )
+
+  project_path <- file.path(tempdir(), "project_config_input_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_source",
+    id = "p1",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase1")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "2_source",
+    id = "p2",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase2")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "3_capture",
+    id = "capture",
+    step_name = "capture_data",
+    output = "captured",
+    params = list(lData = "lData")
+  )
+
+  writeLines(
+    c(
+      "input:",
+      "  from_phases: [1_source]",
+      "  from_results:",
+      "    aliased_p2: 2_source",
+      "  include_workflows:",
+      "    from_phase: 2_source",
+      "  extra:",
+      "    phase_p1: extra_wins",
+      "    literal_date: Sys.Date()"
+    ),
+    file.path(project_path, "3_capture", "_config.yaml")
+  )
+
+  result <- RunProject(project_path, lData = list(seed = "initial"))
+  captured <- result$`3_capture`$phase_capture
+
+  expect_equal(captured$seed, "initial")
+  expect_equal(captured$phase_p1, "extra_wins")
+  expect_false("phase_p2" %in% names(captured))
+  expect_equal(captured$aliased_p2$phase_p2, "phase2")
+  expect_equal(names(captured$lWorkflows), "p2")
+  expect_equal(captured$literal_date, "Sys.Date()")
+})
+
+test_that("RunProject wraps and transforms phase output (#66)", {
+  emit_value <- function(value) value
+  capture_data <- function(lData) lData
+  append_suffix <- function(result) {
+    result$phase_p1 <- paste0(result$phase_p1, "_transformed")
+    result
+  }
+  assign("emit_value", emit_value, envir = globalenv())
+  assign("capture_data", capture_data, envir = globalenv())
+  on.exit(
+    {
+      rm("emit_value", envir = globalenv())
+      rm("capture_data", envir = globalenv())
+    },
+    add = TRUE
+  )
+
+  project_path <- file.path(tempdir(), "project_config_output_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_source",
+    id = "p1",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase1")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "2_capture",
+    id = "capture",
+    step_name = "capture_data",
+    output = "captured",
+    params = list(lData = "lData")
+  )
+
+  writeLines(
+    c(
+      "output:",
+      "  wrap_as: wrapped",
+      "  transform: append_suffix"
+    ),
+    file.path(project_path, "1_source", "_config.yaml")
+  )
+  writeLines(
+    c(
+      "input:",
+      "  from_phases: [1_source]"
+    ),
+    file.path(project_path, "2_capture", "_config.yaml")
+  )
+
+  result <- RunProject(project_path)
+  captured <- result$`2_capture`$phase_capture
+
+  expect_named(result$`1_source`, "wrapped")
+  expect_equal(captured$wrapped$phase_p1, "phase1_transformed")
+  expect_false("phase_p1" %in% names(captured))
+})
+
+test_that("RunProject transform failures identify the transform reference (#66)", {
+  emit_value <- function(value) value
+  bad_transform <- function(result) stop("boom")
+  assign("emit_value", emit_value, envir = globalenv())
+  on.exit(rm("emit_value", envir = globalenv()), add = TRUE)
+
+  project_path <- file.path(tempdir(), "project_config_transform_failure_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_source",
+    id = "p1",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase1")
+  )
+
+  writeLines(
+    c(
+      "output:",
+      "  transform: bad_transform"
+    ),
+    file.path(project_path, "1_source", "_config.yaml")
+  )
+
+  expect_error(
+    RunProject(project_path),
+    "output.transform 'bad_transform' failed: boom"
+  )
+})

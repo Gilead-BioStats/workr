@@ -317,6 +317,8 @@ Interactive Shiny application for exploring workflows.
   admiral](https://gilead-biostats.github.io/workr/dev/articles/ADAM_example.md):
 - [Incorporating
   cards](https://gilead-biostats.github.io/workr/dev/articles/ARS_example.md):
+- [Load and Save
+  Hooks](https://gilead-biostats.github.io/workr/dev/articles/load-save-hooks.md):
 - [Overview](https://gilead-biostats.github.io/workr/dev/articles/Overview.md):
 - [Pharamaverse Case
   Study](https://gilead-biostats.github.io/workr/dev/articles/Pharmaverse.md):

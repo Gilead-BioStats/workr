@@ -171,6 +171,36 @@ test_that("RunWorkflow invokes lConfig$LoadData (#26)", {
   expect_equal(result, 42)
 })
 
+test_that("RunWorkflow invokes environment-backed lConfig$LoadData (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  load_called <- FALSE
+  lConfig <- new.env(parent = emptyenv())
+  lConfig$LoadData <- function(lWorkflow, lConfig, lData) {
+    load_called <<- TRUE
+    c(lData, list(loaded_val = 42))
+  }
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "config_env_test"),
+    steps = list(
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
+    )
+  )
+
+  suppressMessages({
+    result <- RunWorkflow(lWorkflow, lData = list(), lConfig = lConfig)
+  })
+
+  expect_true(load_called)
+  expect_equal(result, 42)
+})
+
 test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)

@@ -149,11 +149,24 @@ lookup_registered_provider <- function(strField, strName) {
 }
 
 resolve_config_hook <- function(lConfig, strField) {
-  if (is.null(lConfig) || !is.list(lConfig) || !strField %in% names(lConfig)) {
+  if (is.null(lConfig) || !(is.list(lConfig) || is.environment(lConfig))) {
     return(NULL)
   }
 
-  hook_value <- lConfig[[strField]]
+  if (is.environment(lConfig)) {
+    if (!exists(strField, envir = lConfig, inherits = FALSE)) {
+      return(NULL)
+    }
+
+    hook_value <- get(strField, envir = lConfig, inherits = FALSE)
+  } else {
+    if (!strField %in% names(lConfig)) {
+      return(NULL)
+    }
+
+    hook_value <- lConfig[[strField]]
+  }
+
   if (is.null(hook_value)) {
     return(NULL)
   }

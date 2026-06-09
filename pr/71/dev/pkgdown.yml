@@ -4,11 +4,12 @@ pkgdown_sha: ~
 articles:
   articles/ADAM_example: ADAM_example.html
   articles/ARS_example: ARS_example.html
+  load-save-hooks: load-save-hooks.html
   Overview: Overview.html
   articles/Pharmaverse: Pharmaverse.html
   articles/SDTM_example: SDTM_example.html
   articles/Visualizations: Visualizations.html
-last_built: 2026-06-05T18:08Z
+last_built: 2026-06-09T16:36Z
 urls:
   reference: https://gilead-biostats.github.io/workr/reference
   article: https://gilead-biostats.github.io/workr/articles

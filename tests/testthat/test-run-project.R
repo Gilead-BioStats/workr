@@ -125,7 +125,7 @@ test_that("RunProject runs strPhases in caller order, not sorted (#63)", {
 
 test_that("RunProject errors when strPath is not a directory (#63)", {
   expect_error(
-    RunProject(strPath = test_path("project_ordered", "1_y", "wf.yaml")),
+    RunProject(strPath = test_path("project_ordered", "1_y", "y_step.yaml")),
     "not a directory"
   )
 })
@@ -142,12 +142,15 @@ test_that("RunProject warns on empty phase folder and proceeds (#63)", {
   on.exit(unlink(proj, recursive = TRUE), add = TRUE)
 
   file.copy(
-    test_path("project_ordered", "1_y", "wf.yaml"),
-    file.path(proj, "1_populated", "wf.yaml")
+    test_path("project_ordered", "1_y", "y_step.yaml"),
+    file.path(proj, "1_populated", "y_step.yaml")
   )
 
-  result <- expect_message(
-    RunProject(strPath = proj, lData = list(value = 5)),
+  # Assign inside expect_message(): it returns the matched condition, not the
+  # value of the expression, so capture RunProject()'s result via assignment.
+  result <- NULL
+  expect_message(
+    result <- RunProject(strPath = proj, lData = list(value = 5)),
     "no workflows"
   )
 

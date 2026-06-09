@@ -49,6 +49,19 @@ phase. Phases are executed in sorted order (or in the order specified by
 \code{strPhases}). Within each phase, workflows are loaded via
 \code{MakeWorkflowList()} and run via \code{RunWorkflows()}.
 }
+\details{
+Phase-discovery and ordering contract:
+\itemize{
+\item \code{strPath} must exist and be a directory; otherwise execution stops.
+\item By default phases are the immediate subdirectories of \code{strPath}, executed
+in alphabetical order.
+\item When \code{strPhases} is supplied, phases run in the exact order given (caller
+order is preserved, not re-sorted).
+\item A \code{strPhases} entry that does not exist on disk is a fatal error.
+\item A phase folder that contains no workflow YAMLs emits a warning and is
+skipped; execution proceeds with the remaining phases.
+}
+}
 \examples{
 \dontrun{
 results <- RunProject("inst/workflow")

@@ -9,6 +9,18 @@
 #' `strPhases`). Within each phase, workflows are loaded via
 #' `MakeWorkflowList()` and run via `RunWorkflows()`.
 #'
+#' @details
+#' Phase-discovery and ordering contract:
+#'
+#' * `strPath` must exist and be a directory; otherwise execution stops.
+#' * By default phases are the immediate subdirectories of `strPath`, executed
+#'   in alphabetical order.
+#' * When `strPhases` is supplied, phases run in the exact order given (caller
+#'   order is preserved, not re-sorted).
+#' * A `strPhases` entry that does not exist on disk is a fatal error.
+#' * A phase folder that contains no workflow YAMLs emits a warning and is
+#'   skipped; execution proceeds with the remaining phases.
+#'
 #' @param strPath `character` Path to the project directory. Must contain one or
 #'   more subdirectories, each holding workflow YAML files.
 #' @param lData `list` Initial named list of data objects. Default `NULL`.
@@ -43,7 +55,8 @@ RunProject <- function(
   strResultNames = c("Type", "ID")
 ) {
   stop_if(!is.character(strPath) || length(strPath) != 1, "[ strPath ] must be a single character string.")
-  stop_if(!dir.exists(strPath), "[ strPath ] directory does not exist: {strPath}")
+  stop_if(!file.exists(strPath), "[ strPath ] path does not exist: {strPath}")
+  stop_if(!dir.exists(strPath), "[ strPath ] path is not a directory: {strPath}")
 
   # Discover phase folders
   all_dirs <- list.dirs(strPath, full.names = FALSE, recursive = FALSE)

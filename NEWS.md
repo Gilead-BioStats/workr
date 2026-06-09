@@ -1,3 +1,13 @@
+# workr (development version)
+
+* Stabilized the `RunProject()` baseline contract (#63): `strPath` is now
+  validated to exist *and* be a directory (distinct error messages), the
+  phase-discovery and ordering semantics (alphabetical by default, caller order
+  preserved when `strPhases` is supplied) are documented, and empty phase
+  folders emit a warning and are skipped rather than erroring. Added unit-test
+  coverage for default ordering, `strPhases` ordering, non-directory `strPath`,
+  and the empty-phase warning path.
+
 # workr 1.0.0
 
 ## Initial Release

@@ -1,7 +1,7 @@
 #' Run a multi-phase workflow project
 #'
 #' @description
-#' `r lifecycle::badge("experimental")`
+#' `r lifecycle::badge("stable")`
 #'
 #' `RunProject()` runs multiple workflow phase folders in sequence, sharing one
 #' `lData` object across phases. Each subdirectory of `strPath` is treated as a

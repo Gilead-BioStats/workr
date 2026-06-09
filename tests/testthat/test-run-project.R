@@ -390,3 +390,204 @@ test_that("RunProject transform failures identify the transform reference (#66)"
     "output.transform 'bad_transform' failed: boom"
   )
 })
+
+test_that("RunProject without phase configs preserves flat carry-forward behavior (#67)", {
+  emit_value <- function(value) value
+  capture_data <- function(lData) lData
+  assign("emit_value", emit_value, envir = globalenv())
+  assign("capture_data", capture_data, envir = globalenv())
+  on.exit(
+    {
+      rm("emit_value", envir = globalenv())
+      rm("capture_data", envir = globalenv())
+    },
+    add = TRUE
+  )
+
+  project_path <- file.path(tempdir(), "project_no_config_regression_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_source",
+    id = "p1",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase1")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "2_source",
+    id = "p2",
+    step_name = "emit_value",
+    output = "out",
+    params = list(value = "phase2")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "3_capture",
+    id = "capture",
+    step_name = "capture_data",
+    output = "captured",
+    params = list(lData = "lData")
+  )
+
+  result <- RunProject(project_path, lData = list(seed = "initial"))
+  captured <- result$`3_capture`$phase_capture
+
+  expect_equal(captured$seed, "initial")
+  expect_equal(captured$phase_p1, "phase1")
+  expect_equal(captured$phase_p2, "phase2")
+  expect_false("lWorkflows" %in% names(captured))
+  expect_false("lAnalyzed" %in% names(captured))
+})
+
+test_that("RunProject supports a four-phase configured project scenario (#67)", {
+  make_mapped <- function(lData) {
+    list(
+      mapped_subjects = lData$raw_subjects,
+      source_names = names(lData)
+    )
+  }
+  make_metrics <- function(lData) {
+    list(
+      has_mapping = "phase_mapped" %in% names(lData),
+      workflow_names = names(lData$lWorkflows),
+      GroupID = factor("G1")
+    )
+  }
+  make_reporting <- function(lData) {
+    list(
+      has_mapping = "phase_mapped" %in% names(lData),
+      has_flat_metrics = "phase_metrics" %in% names(lData),
+      has_analyzed = "lAnalyzed" %in% names(lData),
+      analyzed_group_type = typeof(lData$lAnalyzed$phase_metrics$GroupID),
+      workflow_names = names(lData$lWorkflows),
+      snapshot_date = lData$dSnapshotDate
+    )
+  }
+  make_modules <- function(lData) {
+    list(
+      has_reports = "lReports" %in% names(lData),
+      has_mapping = "phase_mapped" %in% names(lData),
+      has_flat_metrics = "phase_metrics" %in% names(lData),
+      has_analyzed = "lAnalyzed" %in% names(lData),
+      report_names = names(lData$lReports)
+    )
+  }
+  coerce_group_id <- function(phase_result) {
+    phase_result$phase_metrics$GroupID <- as.character(phase_result$phase_metrics$GroupID)
+    phase_result
+  }
+  assign("make_mapped", make_mapped, envir = globalenv())
+  assign("make_metrics", make_metrics, envir = globalenv())
+  assign("make_reporting", make_reporting, envir = globalenv())
+  assign("make_modules", make_modules, envir = globalenv())
+  on.exit(
+    {
+      rm("make_mapped", envir = globalenv())
+      rm("make_metrics", envir = globalenv())
+      rm("make_reporting", envir = globalenv())
+      rm("make_modules", envir = globalenv())
+    },
+    add = TRUE
+  )
+
+  project_path <- file.path(tempdir(), "project_four_phase_config_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_mappings",
+    id = "mapped",
+    step_name = "make_mapped",
+    output = "mapped",
+    params = list(lData = "lData")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "2_metrics",
+    id = "metrics",
+    step_name = "make_metrics",
+    output = "metrics",
+    params = list(lData = "lData")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "3_reporting",
+    id = "reporting",
+    step_name = "make_reporting",
+    output = "reporting",
+    params = list(lData = "lData")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "4_modules",
+    id = "modules",
+    step_name = "make_modules",
+    output = "modules",
+    params = list(lData = "lData")
+  )
+
+  writeLines(
+    c(
+      "input:",
+      "  from_phases: [1_mappings]",
+      "  include_workflows: true",
+      "output:",
+      "  transform: coerce_group_id"
+    ),
+    file.path(project_path, "2_metrics", "_config.yaml")
+  )
+  writeLines(
+    c(
+      "input:",
+      "  from_phases: [1_mappings]",
+      "  from_results:",
+      "    lAnalyzed: 2_metrics",
+      "  include_workflows:",
+      "    from_phase: 2_metrics",
+      "  extra:",
+      "    dSnapshotDate: \"2026-06-09\"",
+      "output:",
+      "  wrap_as: lReports"
+    ),
+    file.path(project_path, "3_reporting", "_config.yaml")
+  )
+  writeLines(
+    c(
+      "input:",
+      "  from_phases: [3_reporting]"
+    ),
+    file.path(project_path, "4_modules", "_config.yaml")
+  )
+
+  result <- RunProject(
+    project_path,
+    lData = list(raw_subjects = data.frame(SubjectID = c("01", "02")))
+  )
+
+  metrics <- result$`2_metrics`$phase_metrics
+  reporting <- result$`3_reporting`$lReports$phase_reporting
+  modules <- result$`4_modules`$phase_modules
+
+  expect_true(metrics$has_mapping)
+  expect_equal(metrics$workflow_names, "metrics")
+  expect_type(metrics$GroupID, "character")
+
+  expect_true(reporting$has_mapping)
+  expect_false(reporting$has_flat_metrics)
+  expect_true(reporting$has_analyzed)
+  expect_equal(reporting$analyzed_group_type, "character")
+  expect_equal(reporting$workflow_names, "metrics")
+  expect_equal(reporting$snapshot_date, "2026-06-09")
+
+  expect_named(result$`3_reporting`, "lReports")
+  expect_true(modules$has_reports)
+  expect_false(modules$has_mapping)
+  expect_false(modules$has_flat_metrics)
+  expect_false(modules$has_analyzed)
+  expect_equal(modules$report_names, "phase_reporting")
+})

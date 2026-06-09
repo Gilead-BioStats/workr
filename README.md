@@ -109,7 +109,7 @@ While `workr::RunWorkflow` runs all the `steps` in a single workflow, `workr::Ru
 
 ### `workr::RunProject` calls multiple sets of workflows
 
-Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject()` calls `workr::RunWorkflows()` for every sub-directory (phase) in a given project directory, sharing one `lData` object across phases.
+Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject()` calls `workr::RunWorkflows()` for every sub-directory (phase) in a given project directory. By default, phase outputs carry forward as a flat named list, preserving the original project behavior for folders without configuration files.
 
 ```r
 # Project directory structure:
@@ -135,6 +135,27 @@ Key options:
 - `bRecursive` — passed through to `MakeWorkflowList()`
 
 Phases are sorted alphabetically by default (use numeric prefixes like `01_`, `02_` to control order).
+
+For reproducible package snapshots, the project directory is also the handoff between manifest generation and runtime execution: `pkgManifest()` or the reusable manifest workflow creates `manifest.csv`, `rproject.toml`, and a `workflows/` directory; `RunProject()` then treats that `workflows/` directory as the runnable project.
+
+Phase folders can include an optional `_config.yaml` file to make that runtime handoff explicit. The `input` block controls which prior phase outputs are visible, whether workflow definitions are injected as `lData$lWorkflows`, and which static values are merged last. The `output` block can wrap a phase result under a named key or apply a phase-boundary transform.
+
+```yaml
+# workflows/3_reporting/_config.yaml
+input:
+  from_phases: [1_mappings]
+  from_results:
+    lAnalyzed: 2_metrics
+  include_workflows:
+    from_phase: 2_metrics
+  extra:
+    dSnapshotDate: "2026-06-09"
+output:
+  wrap_as: lReports
+  transform: null
+```
+
+This lets a manifest-produced `workflows/` bundle remain declarative while still supporting realistic phase handoff patterns such as mapped data flowing into metrics, analyzed metrics flowing into reporting, and reporting outputs flowing into modules.
 
 
 ### `workr::Manifest` — Reproducible Package Environments

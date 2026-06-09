@@ -45,7 +45,7 @@ reference:
       - RunStep
       - RunQuery
   - title: "Project Management"
-    desc: "Utilities for managing workflow projects and loading examples."
+    desc: "Utilities for managing workflow projects, phase configuration, and loading examples."
     contents:
       - loadExample
       - ListWorkflows

@@ -336,6 +336,11 @@ RunProject <- function(
     .phase_config_stop(strPhase, "{strField} must be a single string or null.")
   }
 
+  value <- trimws(value)
+  if (!nzchar(value)) {
+    .phase_config_stop(strPhase, "{strField} must be a non-empty string.")
+  }
+
   value
 }
 

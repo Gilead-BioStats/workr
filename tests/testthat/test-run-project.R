@@ -228,6 +228,47 @@ test_that("RunProject validates per-phase _config.yaml schema (#64)", {
   )
 })
 
+test_that("RunProject rejects empty or whitespace-only output config strings (#64)", {
+  project_path <- file.path(tempdir(), "project_config_empty_string_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_phase",
+    id = "capture",
+    step_name = "identity",
+    output = "captured",
+    params = list(x = "value")
+  )
+
+  writeLines(
+    c(
+      "output:",
+      "  wrap_as: '   '"
+    ),
+    file.path(project_path, "1_phase", "_config.yaml")
+  )
+
+  expect_error(
+    RunProject(project_path, lData = list(value = 1)),
+    "Phase '1_phase'.*output.wrap_as must be a non-empty string"
+  )
+
+  writeLines(
+    c(
+      "output:",
+      "  transform: ''"
+    ),
+    file.path(project_path, "1_phase", "_config.yaml")
+  )
+
+  expect_error(
+    RunProject(project_path, lData = list(value = 1)),
+    "Phase '1_phase'.*output.transform must be a non-empty string"
+  )
+})
+
 test_that("RunProject assembles phase input from config rules (#65)", {
   emit_value <- function(value) value
   capture_data <- function(lData) lData

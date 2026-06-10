@@ -27,7 +27,7 @@ loading examples.
 - [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
   **\[stable\]** : Load workflows from a package/directory.
 - [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
-  **\[stable\]** : Run a multi-phase workflow project
+  **\[experimental\]** : Run a multi-phase workflow project
 
 ## Demo App
 

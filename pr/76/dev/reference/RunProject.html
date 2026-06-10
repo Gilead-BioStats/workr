@@ -54,7 +54,7 @@ MakeWorkflowList() and run via RunWorkflows()."><meta name="robots" content="noi
     </div>
 
     <div class="ref-description section level2">
-    <p><a href="https://lifecycle.r-lib.org/articles/stages.html#stable" class="external-link"><img src="figures/lifecycle-stable.svg" alt="[Stable]"></a></p>
+    <p><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="figures/lifecycle-experimental.svg" alt="[Experimental]"></a></p>
 <p><code>RunProject()</code> runs multiple workflow phase folders in sequence, sharing one
 <code>lData</code> object across phases. Each subdirectory of <code>strPath</code> is treated as a
 phase. Phases are executed in sorted order (or in the order specified by
@@ -129,8 +129,9 @@ in alphabetical order.</p></li>
 <li><p>When <code>strPhases</code> is supplied, phases run in the exact order given (caller
 order is preserved, not re-sorted).</p></li>
 <li><p>A <code>strPhases</code> entry that does not exist on disk is a fatal error.</p></li>
-<li><p>A phase folder that contains no workflow YAMLs emits a warning and is
-skipped; execution proceeds with the remaining phases.</p></li>
+<li><p>A phase folder that contains no workflow YAMLs logs a warning-level
+message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and is skipped;
+execution proceeds with the remaining phases.</p></li>
 </ul><p>Per-phase <code>_config.yaml</code> files may define <code>input</code> and <code>output</code> maps. The
 <code>input</code> map accepts <code>from_phases</code>, <code>from_results</code>, <code>include_workflows</code>, and
 <code>extra</code>. The <code>output</code> map accepts <code>wrap_as</code> and <code>transform</code>. Unknown keys are

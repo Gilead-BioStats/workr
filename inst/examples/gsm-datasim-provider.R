@@ -1,3 +1,6 @@
+# Install or update the optional dependency before running the example:
+# pak::pak("Gilead-BioStats/gsm.datasim@dev")
+
 find_package_root <- function(path = getwd()) {
   current <- normalizePath(path, winslash = "/", mustWork = TRUE)
 

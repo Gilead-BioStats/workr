@@ -24,6 +24,8 @@ navbar:
         href: articles/Overview.html
       - text: "Load and Save Hooks"
         href: articles/load-save-hooks.html
+      - text: "Example: gsm.datasim provider"
+        href: articles/gsm_datasim_provider.html
       - text: "Pharmaverse Case Study"
         href: articles/Pharmaverse.html
       - text: "Cookbook: sdtm.oak"

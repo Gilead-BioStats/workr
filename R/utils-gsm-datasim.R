@@ -69,6 +69,15 @@ gsm_datasim_is_count_greater_than_one <- function(value) {
   !is.na(count) && count > 1
 }
 
+gsm_datasim_supported_args <- function(fn, args) {
+  formal_names <- names(formals(fn))
+  if (is.null(formal_names) || "..." %in% formal_names) {
+    return(args)
+  }
+
+  args[intersect(names(args), formal_names)]
+}
+
 gsm_datasim_api <- function() {
   stop_if(
     !requireNamespace("gsm.datasim", quietly = TRUE),
@@ -176,7 +185,7 @@ gsm_datasim_add_legacy_aliases <- function(lData) {
 }
 
 gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
-  config <- api$create_standard_study_config(
+  standard_args <- list(
     study_id = normalize_gsm_datasim_scalar(gsm_datasim_config_value(
       cfg,
       "study_id"
@@ -224,6 +233,13 @@ gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
     randomization = gsm_datasim_config_value(cfg, "randomization", TRUE),
     overall_response = gsm_datasim_config_value(cfg, "overall_response", TRUE),
     outlier_intensity = gsm_datasim_config_value(cfg, "outlier_intensity", 1)
+  )
+  config <- do.call(
+    api$create_standard_study_config,
+    gsm_datasim_supported_args(
+      fn = api$create_standard_study_config,
+      args = standard_args
+    )
   )
 
   if (is.function(api$set_temporal_config)) {
@@ -379,14 +395,4 @@ gsm_datasim_load_provider <- function(lWorkflow, lConfig, lData) {
   )
 
   utils::modifyList(gsm_datasim_add_legacy_aliases(generated), lData)
-}
-
-workr_register_builtin_providers <- function() {
-  register_load_provider("gsm.datasim", gsm_datasim_load_provider)
-  invisible(TRUE)
-}
-
-.onLoad <- function(libname, pkgname) {
-  workr_register_builtin_providers()
-  invisible(NULL)
 }

@@ -101,6 +101,74 @@ test_that("gsm.datasim provider adapts standard single-snapshot data and aliases
   expect_equal(loaded$caller_value, 11)
 })
 
+test_that("gsm.datasim provider tolerates standard config API drift (#59)", {
+  standard_args <- NULL
+
+  local_mocked_bindings(
+    gsm_datasim_api = function() {
+      list(
+        create_standard_study_config = function(
+          study_id,
+          participant_count,
+          site_count,
+          analytics_package = NULL,
+          analytics_workflows = NULL,
+          study = TRUE,
+          subjects = TRUE,
+          sites_data = TRUE,
+          adverse_events = TRUE,
+          protocol_deviations = TRUE,
+          lab_data = TRUE,
+          subject_visits = TRUE,
+          visit_schedule = TRUE,
+          enrollment = TRUE,
+          data_changes = TRUE,
+          data_entry = TRUE,
+          queries = TRUE,
+          pharmacokinetics = TRUE,
+          study_drug_completion = TRUE,
+          study_completion = TRUE,
+          inclusion_exclusion = TRUE,
+          exclusions = TRUE,
+          country = TRUE,
+          outlier_intensity = 1
+        ) {
+          standard_args <<- as.list(environment())
+          list(built = TRUE)
+        },
+        generate_study_data = function(...) {
+          list(loaded_val = 7)
+        },
+        quick_longitudinal_study = function(...) {
+          stop("unexpected longitudinal call")
+        },
+        set_temporal_config = NULL,
+        create_study_config = NULL,
+        add_dataset_config = NULL
+      )
+    },
+    .package = "workr"
+  )
+
+  loaded <- workr:::gsm_datasim_load_provider(
+    lWorkflow = make_gsm_datasim_workflow("api_drift"),
+    lConfig = list(
+      LoadData = "gsm.datasim",
+      gsm.datasim = list(
+        death = TRUE,
+        randomization = TRUE,
+        overall_response = TRUE
+      )
+    ),
+    lData = list()
+  )
+
+  expect_equal(loaded$loaded_val, 7)
+  expect_false("death" %in% names(standard_args))
+  expect_false("randomization" %in% names(standard_args))
+  expect_false("overall_response" %in% names(standard_args))
+})
+
 test_that("gsm.datasim provider uses latest longitudinal snapshot by default (#59)", {
   quick_args <- NULL
 
@@ -242,4 +310,20 @@ test_that("gsm.datasim provider requires custom config for custom profile (#59)"
     ),
     regexp = "`lConfig\\$gsm\\.datasim\\$config` must be a study configuration list"
   )
+})
+
+test_that("built-in providers are registered together (#59, #60, #61)", {
+  expect_silent(workr:::workr_register_builtin_providers())
+  expect_true(is.function(workr:::resolve_config_hook(
+    list(LoadData = "gsm.datasim"),
+    "LoadData"
+  )))
+  expect_true(is.function(workr:::resolve_config_hook(
+    list(LoadData = "github_artifact"),
+    "LoadData"
+  )))
+  expect_true(is.function(workr:::resolve_config_hook(
+    list(SaveData = "github_artifact"),
+    "SaveData"
+  )))
 })

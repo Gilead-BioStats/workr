@@ -147,7 +147,7 @@ site_summary <- workr::RunWorkflow(
 
 The provider reads its options from `lConfig$gsm.datasim`. Common fields include `profile`, `study_type`, `participants`, `sites`, `snapshot_count`, `months_duration`, and `snapshot`. Generated `Raw_*` objects, such as `Raw_SUBJ` and `Raw_AE`, are also exposed as `df*` aliases, such as `dfSUBJ` and `dfAE`, for compatibility with existing workflows.
 
-For a runnable live example that calls the optional dependency directly through `RunWorkflow()`, see `inst/examples/gsm-datasim-provider.R`.
+For a pkgdown-friendly walkthrough, see the `Using the gsm.datasim Load Provider` article. The same runnable example is also available in `inst/examples/gsm-datasim-provider.R`.
 
 ## Combining Workflows
 

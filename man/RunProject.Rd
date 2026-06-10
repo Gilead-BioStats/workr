@@ -58,8 +58,9 @@ in alphabetical order.
 \item When \code{strPhases} is supplied, phases run in the exact order given (caller
 order is preserved, not re-sorted).
 \item A \code{strPhases} entry that does not exist on disk is a fatal error.
-\item A phase folder that contains no workflow YAMLs emits a warning and is
-skipped; execution proceeds with the remaining phases.
+\item A phase folder that contains no workflow YAMLs logs a warning-level
+message (via \code{LogMessage()}, not an R \code{warning()}) and is skipped;
+execution proceeds with the remaining phases.
 }
 }
 \examples{

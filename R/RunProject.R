@@ -18,8 +18,9 @@
 #' * When `strPhases` is supplied, phases run in the exact order given (caller
 #'   order is preserved, not re-sorted).
 #' * A `strPhases` entry that does not exist on disk is a fatal error.
-#' * A phase folder that contains no workflow YAMLs emits a warning and is
-#'   skipped; execution proceeds with the remaining phases.
+#' * A phase folder that contains no workflow YAMLs logs a warning-level
+#'   message (via `LogMessage()`, not an R `warning()`) and is skipped;
+#'   execution proceeds with the remaining phases.
 #'
 #' @param strPath `character` Path to the project directory. Must contain one or
 #'   more subdirectories, each holding workflow YAML files.

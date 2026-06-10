@@ -1,5 +1,13 @@
 # workr (development version)
 
+* Added a `RunProject()` regression matrix (#67): a no-config flat
+  carry-forward backward-compatibility test and a four-phase configured
+  project scenario exercising `from_phases`, `from_results`,
+  `include_workflows`, `extra`, output `transform`, and `wrap_as`.
+  Documented the manifest/build to `RunProject()` runtime handoff and the
+  per-phase `_config.yaml` contract in the README. `RunProject()` remains
+  `experimental` while the new config surface settles.
+
 * Added per-phase `_config.yaml` support to `RunProject()` (#64, #65, #66):
   phase folders may declare `input` (`from_phases`, `from_results`,
   `include_workflows`, `extra`) and `output` (`wrap_as`, `transform`) maps,

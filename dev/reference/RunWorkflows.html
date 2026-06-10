@@ -26,6 +26,7 @@ as inputs (along with lData) for later workflows."><meta name="robots" content="
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
+    <li><a class="dropdown-item" href="../articles/load-save-hooks.html">Load and Save Hooks</a></li>
     <li><a class="dropdown-item" href="../articles/Pharmaverse.html">Pharmaverse Case Study</a></li>
     <li><a class="dropdown-item" href="../articles/SDTM_example.html">Cookbook: sdtm.oak</a></li>
     <li><a class="dropdown-item" href="../articles/ADAM_example.html">Cookbook: admiral</a></li>
@@ -84,8 +85,13 @@ as inputs (along with <code>lData</code>) for later workflows.</p>
 
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
-<dd><p><code>list</code> A configuration object with two methods:</p><ul><li><p><code>LoadData</code>: A function that loads data specified in <code>lWorkflow$spec</code>.</p></li>
-<li><p><code>SaveData</code>: A function that saves data returned by the last step in <code>lWorkflow$steps</code>.</p></li>
+<dd><p><code>list</code> Optional configuration object passed through to
+<code><a href="RunWorkflow.html">RunWorkflow()</a></code>. Supported hook fields:</p><ul><li><p><code>LoadData</code>: Optional function or registered provider name used before
+spec validation. Functions must accept <code>lWorkflow</code>, <code>lConfig</code>, and
+<code>lData</code> as named formals.</p></li>
+<li><p><code>SaveData</code>: Optional function or registered provider name used before
+returning results when <code>bReturnResult = TRUE</code>. Functions must accept
+<code>lWorkflow</code> and <code>lConfig</code> as named formals.</p></li>
 </ul></dd>
 
 

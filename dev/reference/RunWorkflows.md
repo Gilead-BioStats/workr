@@ -36,13 +36,17 @@ RunWorkflows(
 
 - lConfig:
 
-  `list` A configuration object with two methods:
+  `list` Optional configuration object passed through to
+  [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md).
+  Supported hook fields:
 
-  - `LoadData`: A function that loads data specified in
-    `lWorkflow$spec`.
+  - `LoadData`: Optional function or registered provider name used
+    before spec validation. Functions must accept `lWorkflow`,
+    `lConfig`, and `lData` as named formals.
 
-  - `SaveData`: A function that saves data returned by the last step in
-    `lWorkflow$steps`.
+  - `SaveData`: Optional function or registered provider name used
+    before returning results when `bReturnResult = TRUE`. Functions must
+    accept `lWorkflow` and `lConfig` as named formals.
 
 - bKeepInputData:
 

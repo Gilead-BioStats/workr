@@ -2,6 +2,25 @@
 
 ## workr (development version)
 
+- Added per-phase `_config.yaml` support to
+  [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  ([\#64](https://github.com/Gilead-BioStats/workr/issues/64),
+  [\#65](https://github.com/Gilead-BioStats/workr/issues/65),
+  [\#66](https://github.com/Gilead-BioStats/workr/issues/66)): phase
+  folders may declare `input` (`from_phases`, `from_results`,
+  `include_workflows`, `extra`) and `output` (`wrap_as`, `transform`)
+  maps, validated with strict unknown-key errors. `_config.yaml` /
+  `_config.yml` files are excluded from workflow discovery. Phases
+  without a config file keep the existing flat carry-forward behavior.
+
+- Breaking change for internal callers: `stop_if()` now interpolates its
+  message with
+  [`glue::glue()`](https://glue.tidyverse.org/reference/glue.html) in
+  the caller’s environment. Messages such as
+  `"directory does not exist: {strPath}"` previously printed the braces
+  literally; they now interpolate as intended. Any `stop_if()` message
+  that needs a literal `{` or `}` must escape it as `{{` / `}}`.
+
 - Stabilized the
   [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
   baseline contract
@@ -9,10 +28,12 @@
   `strPath` is now validated to exist *and* be a directory (distinct
   error messages), the phase-discovery and ordering semantics
   (alphabetical by default, caller order preserved when `strPhases` is
-  supplied) are documented, and empty phase folders emit a warning and
-  are skipped rather than erroring. Added unit-test coverage for default
-  ordering, `strPhases` ordering, non-directory `strPath`, and the
-  empty-phase warning path.
+  supplied) are documented, and empty phase folders log a warning-level
+  message (via `LogMessage()`, not an R
+  [`warning()`](https://rdrr.io/r/base/warning.html)) and are skipped
+  rather than erroring. Added unit-test coverage for default ordering,
+  `strPhases` ordering, non-directory `strPath`, and the empty-phase
+  skip path.
 
 ## workr 1.0.0
 

@@ -118,14 +118,58 @@ github_artifact_signal_missing <- function(reason, on_missing, run_id, policy) {
   stop(msg, call. = FALSE)
 }
 
+github_artifact_auth_hint <- function() {
+  paste(
+    "GitHub artifact restore requires a GitHub token with actions: read permission.",
+    "In GitHub Actions, expose the token as `GH_TOKEN` or `GITHUB_PAT`",
+    "and grant `permissions: actions: read`.",
+    "For fine-grained PATs, enable repository Actions access."
+  )
+}
+
+github_artifact_raise_api_error <- function(error, operation) {
+  msg <- conditionMessage(error)
+  is_auth_error <- grepl(
+    "401|403|bad credentials|requires authentication|resource not accessible by integration|forbidden|unauthorized",
+    msg,
+    ignore.case = TRUE
+  )
+
+  if (!is_auth_error) {
+    stop(msg, call. = FALSE)
+  }
+
+  stop(
+    paste(
+      "GitHub artifact",
+      operation,
+      "failed.",
+      github_artifact_auth_hint(),
+      "Original error:",
+      msg
+    ),
+    call. = FALSE
+  )
+}
+
+gh_actions_api <- function(endpoint, ..., operation) {
+  tryCatch(
+    gh::gh(endpoint, ...),
+    error = function(e) {
+      github_artifact_raise_api_error(error = e, operation = operation)
+    }
+  )
+}
+
 gh_actions_find_artifact <- function(repo, run_id, artifact_name) {
   parts <- github_artifact_repo_parts(repo)
-  response <- gh::gh(
+  response <- gh_actions_api(
     "GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts",
     owner = parts$owner,
     repo = parts$repo,
     run_id = run_id,
-    per_page = 100
+    per_page = 100,
+    operation = "listing workflow artifacts"
   )
 
   artifacts <- response$artifacts %||% list()
@@ -168,12 +212,13 @@ gh_actions_download_artifact_bundle <- function(
 
   zip_path <- file.path(bundle_dir, "artifact.zip")
   parts <- github_artifact_repo_parts(repo)
-  gh::gh(
+  gh_actions_api(
     "GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/zip",
     owner = parts$owner,
     repo = parts$repo,
     artifact_id = artifact$id,
-    .destfile = zip_path
+    .destfile = zip_path,
+    operation = "downloading workflow artifact bundles"
   )
 
   utils::unzip(zip_path, exdir = bundle_dir)
@@ -205,12 +250,13 @@ github_artifact_resolve_run_id <- function(cfg, lWorkflow, lConfig) {
   }
 
   parts <- github_artifact_repo_parts(cfg$repo)
-  response <- gh::gh(
+  response <- gh_actions_api(
     "GET /repos/{owner}/{repo}/actions/runs",
     owner = parts$owner,
     repo = parts$repo,
     status = "success",
-    per_page = 1
+    per_page = 1,
+    operation = "listing successful workflow runs"
   )
 
   runs <- response$workflow_runs %||% list()

@@ -205,6 +205,29 @@ test_that("github_artifact load provider resolves latest_success policy (#61)", 
   expect_equal(resolved_policy, "latest_success")
 })
 
+test_that("github_artifact load provider reports required Actions scope on auth failures (#62)", {
+  local_mocked_bindings(
+    gh = function(...) {
+      stop("HTTP 403 Forbidden: Resource not accessible by integration", call. = FALSE)
+    },
+    .package = "gh"
+  )
+
+  expect_error(
+    suppressMessages(workr:::github_artifact_load_provider(
+      lWorkflow = list(meta = list(Type = "demo", ID = "artifact_auth"), steps = list()),
+      lConfig = list(
+        github_artifact = list(
+          repo = "Gilead-BioStats/workr",
+          policy = "latest_success"
+        )
+      ),
+      lData = list()
+    )),
+    regexp = "actions: read"
+  )
+})
+
 test_that("github_artifact load provider errors with run-id and policy on missing artifact (#61)", {
   clear_github_artifact_env()
 

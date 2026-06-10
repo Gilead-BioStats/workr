@@ -194,6 +194,12 @@ env_results$demo_height
 
 `workr` also includes a built-in registered `LoadData` provider named `"gsm.datasim"`. The provider uses the optional `gsm.datasim` package to generate input data, adds legacy `df*` aliases for generated `Raw_*` objects, and merges those generated objects with any caller-supplied `lData`.
 
+Install or update the optional dependency from the `dev` branch before running the example locally:
+
+```r
+pak::pak("Gilead-BioStats/gsm.datasim@dev")
+```
+
 The example is evaluated only when `gsm.datasim` is installed.
 
 ```{r gsm-datasim, eval = requireNamespace("gsm.datasim", quietly = TRUE)}
@@ -244,4 +250,19 @@ head(datasim_results$enrollment_summary)
 head(datasim_results$loaded_names)
 ```
 
-Use `lConfig$gsm.datasim` to tune the simulated study. Common fields include `participants`, `sites`, `snapshot_count`, `months_duration`, `snapshot`, `profile`, and `study_type`. For longitudinal settings, the provider returns the latest snapshot by default, or the snapshot selected by `lConfig$gsm.datasim$snapshot`.
+Use `lConfig$gsm.datasim` to tune the simulated study. Common fields include `participants`, `sites`, `snapshot_count`, `months_duration`, `snapshot`, `profile`, and `study_type`.
+
+For longitudinal settings, the provider returns the latest snapshot by default, or the snapshot selected by `lConfig$gsm.datasim$snapshot`.
+
+```r
+lConfig <- list(
+  LoadData = "gsm.datasim",
+  gsm.datasim = list(
+    study_type = "endpoints",
+    months_duration = 2,
+    participants = 10,
+    sites = 3,
+    snapshot = "latest"
+  )
+)
+```

@@ -84,7 +84,8 @@ should be run.</p></dd>
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
 <dd><p><code>list</code> Optional configuration object. Supported hook fields:</p><ul><li><p><code>LoadData</code>: Optional function or registered provider name used before
 spec validation. Functions must accept <code>lWorkflow</code>, <code>lConfig</code>, and
-<code>lData</code> as named formals.</p></li>
+<code>lData</code> as named formals. workr includes a built-in <code>"gsm.datasim"</code>
+provider that reads adapter settings from <code>lConfig$gsm.datasim</code>.</p></li>
 <li><p><code>SaveData</code>: Optional function or registered provider name used before
 returning results when <code>bReturnResult = TRUE</code>. Functions must accept
 <code>lWorkflow</code> and <code>lConfig</code> as named formals.</p></li>

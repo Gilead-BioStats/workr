@@ -169,8 +169,8 @@ workflow is responsible for uploading that directory after
 </h2>
 <p>Before enabling the full hook cycle in CI:</p>
 <ol style="list-style-type: decimal">
-<li>Confirm the branch contains the hook contract plus both built-in
-providers.</li>
+<li>Confirm the installed <a href="https://gilead-biostats.github.io/workr">workr</a> version contains the hook
+contract plus both built-in providers.</li>
 <li>Set <code>LoadData</code> and <code>SaveData</code> to registered
 provider names, not raw strings elsewhere in the config.</li>
 <li>Provide <code>repo</code> for <code>github_artifact</code> restore

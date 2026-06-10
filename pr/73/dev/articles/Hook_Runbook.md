@@ -96,8 +96,9 @@ completes.
 
 Before enabling the full hook cycle in CI:
 
-1.  Confirm the branch contains the hook contract plus both built-in
-    providers.
+1.  Confirm the installed
+    [workr](https://gilead-biostats.github.io/workr) version contains
+    the hook contract plus both built-in providers.
 2.  Set `LoadData` and `SaveData` to registered provider names, not raw
     strings elsewhere in the config.
 3.  Provide `repo` for `github_artifact` restore when running outside

@@ -21,8 +21,6 @@ Utilities for managing workflow projects and loading examples.
   **\[stable\]** : Load example data for workflow execution
 - [`gsm_datasim_provider`](https://gilead-biostats.github.io/workr/dev/reference/gsm_datasim_provider.md)
   **\[experimental\]** : Built-in gsm.datasim load provider
-- [`github_artifact_provider`](https://gilead-biostats.github.io/workr/dev/reference/github_artifact_provider.md)
-  **\[experimental\]** : Built-in GitHub artifact providers
 - [`register_load_provider()`](https://gilead-biostats.github.io/workr/dev/reference/register_load_provider.md)
   **\[stable\]** : Register a load provider
 - [`register_save_provider()`](https://gilead-biostats.github.io/workr/dev/reference/register_save_provider.md)

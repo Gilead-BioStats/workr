@@ -4,7 +4,6 @@
 <url><loc>https://gilead-biostats.github.io/workr/dev/LICENSE.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/ADAM_example.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/ARS_example.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/articles/Hook_Runbook.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/Overview.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/Pharmaverse.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/articles/SDTM_example.html</loc></url>
@@ -28,7 +27,6 @@
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/gh_get_sha.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/gh_get_version.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/gh_list_contents.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/dev/reference/github_artifact_provider.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/gsm_datasim_provider.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/loadExample.html</loc></url>

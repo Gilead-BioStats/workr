@@ -28,6 +28,7 @@ MakeWorkflowList() and run via RunWorkflows()."><meta name="robots" content="noi
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
+    <li><a class="dropdown-item" href="../articles/load-save-hooks.html">Load and Save Hooks</a></li>
     <li><a class="dropdown-item" href="../articles/Pharmaverse.html">Pharmaverse Case Study</a></li>
     <li><a class="dropdown-item" href="../articles/SDTM_example.html">Cookbook: sdtm.oak</a></li>
     <li><a class="dropdown-item" href="../articles/ADAM_example.html">Cookbook: admiral</a></li>
@@ -129,8 +130,9 @@ in alphabetical order.</p></li>
 <li><p>When <code>strPhases</code> is supplied, phases run in the exact order given (caller
 order is preserved, not re-sorted).</p></li>
 <li><p>A <code>strPhases</code> entry that does not exist on disk is a fatal error.</p></li>
-<li><p>A phase folder that contains no workflow YAMLs emits a warning and is
-skipped; execution proceeds with the remaining phases.</p></li>
+<li><p>A phase folder that contains no workflow YAMLs logs a warning-level
+message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and is skipped;
+execution proceeds with the remaining phases.</p></li>
 </ul></div>
 
     <div class="section level2">

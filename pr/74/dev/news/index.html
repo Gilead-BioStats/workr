@@ -18,6 +18,7 @@
       <ul class="navbar-nav me-auto"><li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-vignettes" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Vignettes</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes"><li><a class="dropdown-item" href="../articles/Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
+    <li><a class="dropdown-item" href="../articles/load-save-hooks.html">Load and Save Hooks</a></li>
     <li><a class="dropdown-item" href="../articles/Pharmaverse.html">Pharmaverse Case Study</a></li>
     <li><a class="dropdown-item" href="../articles/SDTM_example.html">Cookbook: sdtm.oak</a></li>
     <li><a class="dropdown-item" href="../articles/ADAM_example.html">Cookbook: admiral</a></li>
@@ -44,7 +45,7 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="workr-development-version">workr (development version)<a class="anchor" aria-label="anchor" href="#workr-development-version"></a></h2>
-<ul><li>Stabilized the <code><a href="../reference/RunProject.html">RunProject()</a></code> baseline contract (<a href="https://github.com/Gilead-BioStats/workr/issues/63" class="external-link">#63</a>): <code>strPath</code> is now validated to exist <em>and</em> be a directory (distinct error messages), the phase-discovery and ordering semantics (alphabetical by default, caller order preserved when <code>strPhases</code> is supplied) are documented, and empty phase folders emit a warning and are skipped rather than erroring. Added unit-test coverage for default ordering, <code>strPhases</code> ordering, non-directory <code>strPath</code>, and the empty-phase warning path.</li>
+<ul><li>Stabilized the <code><a href="../reference/RunProject.html">RunProject()</a></code> baseline contract (<a href="https://github.com/Gilead-BioStats/workr/issues/63" class="external-link">#63</a>): <code>strPath</code> is now validated to exist <em>and</em> be a directory (distinct error messages), the phase-discovery and ordering semantics (alphabetical by default, caller order preserved when <code>strPhases</code> is supplied) are documented, and empty phase folders log a warning-level message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and are skipped rather than erroring. Added unit-test coverage for default ordering, <code>strPhases</code> ordering, non-directory <code>strPath</code>, and the empty-phase skip path.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="workr-100">workr 1.0.0<a class="anchor" aria-label="anchor" href="#workr-100"></a></h2>

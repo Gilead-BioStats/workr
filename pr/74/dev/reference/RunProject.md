@@ -92,8 +92,10 @@ Phase-discovery and ordering contract:
 
 - A `strPhases` entry that does not exist on disk is a fatal error.
 
-- A phase folder that contains no workflow YAMLs emits a warning and is
-  skipped; execution proceeds with the remaining phases.
+- A phase folder that contains no workflow YAMLs logs a warning-level
+  message (via `LogMessage()`, not an R
+  [`warning()`](https://rdrr.io/r/base/warning.html)) and is skipped;
+  execution proceeds with the remaining phases.
 
 ## Examples
 

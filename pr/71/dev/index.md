@@ -169,10 +169,9 @@ objects, such as `Raw_SUBJ` and `Raw_AE`, are also exposed as `df*`
 aliases, such as `dfSUBJ` and `dfAE`, for compatibility with existing
 workflows.
 
-For a runnable live example that calls the optional dependency directly
-through
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
-see `inst/examples/gsm-datasim-provider.R`.
+For a pkgdown-friendly walkthrough, see the
+`Using the gsm.datasim Load Provider` article. The same runnable example
+is also available in `inst/examples/gsm-datasim-provider.R`.
 
 ## Combining Workflows
 

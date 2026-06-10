@@ -39,6 +39,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-vignettes">
 <li><a class="dropdown-item" href="articles/Overview.html">Intro to {workr} (US Phuse Connect 2026)</a></li>
     <li><a class="dropdown-item" href="articles/load-save-hooks.html">Load and Save Hooks</a></li>
+    <li><a class="dropdown-item" href="articles/gsm_datasim_provider.html">Example: gsm.datasim provider</a></li>
     <li><a class="dropdown-item" href="articles/Pharmaverse.html">Pharmaverse Case Study</a></li>
     <li><a class="dropdown-item" href="articles/SDTM_example.html">Cookbook: sdtm.oak</a></li>
     <li><a class="dropdown-item" href="articles/ADAM_example.html">Cookbook: admiral</a></li>
@@ -183,7 +184,7 @@
 <span>  <span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The provider reads its options from <code>lConfig$gsm.datasim</code>. Common fields include <code>profile</code>, <code>study_type</code>, <code>participants</code>, <code>sites</code>, <code>snapshot_count</code>, <code>months_duration</code>, and <code>snapshot</code>. Generated <code>Raw_*</code> objects, such as <code>Raw_SUBJ</code> and <code>Raw_AE</code>, are also exposed as <code>df*</code> aliases, such as <code>dfSUBJ</code> and <code>dfAE</code>, for compatibility with existing workflows.</p>
-<p>For a runnable live example that calls the optional dependency directly through <code><a href="reference/RunWorkflow.html">RunWorkflow()</a></code>, see <code>inst/examples/gsm-datasim-provider.R</code>.</p>
+<p>For a pkgdown-friendly walkthrough, see the <code>Using the gsm.datasim Load Provider</code> article. The same runnable example is also available in <code>inst/examples/gsm-datasim-provider.R</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="combining-workflows">Combining Workflows<a class="anchor" aria-label="anchor" href="#combining-workflows"></a>

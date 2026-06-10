@@ -14,3 +14,15 @@
 ## usethis namespace: end
 
 NULL
+
+workr_register_builtin_providers <- function() {
+  register_load_provider("github_artifact", github_artifact_load_provider)
+  register_save_provider("github_artifact", github_artifact_save_provider)
+  register_load_provider("gsm.datasim", gsm_datasim_load_provider)
+  invisible(TRUE)
+}
+
+.onLoad <- function(libname, pkgname) {
+  workr_register_builtin_providers()
+  invisible(NULL)
+}

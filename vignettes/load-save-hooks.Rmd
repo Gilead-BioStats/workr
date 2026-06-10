@@ -168,3 +168,101 @@ multi_results$demo_weight
 ```
 
 `lConfig` can be either a list or an environment. This is useful when an existing application already stores configuration in an environment, such as a Shiny app or project runtime.
+
+```{r}
+env_results <- new.env(parent = emptyenv())
+lEnvironmentConfig <- list2env(
+  list(
+    data_store = analysis_data,
+    result_store = env_results,
+    LoadData = "vignette.memory.load",
+    SaveData = "vignette.memory.save"
+  ),
+  parent = emptyenv()
+)
+
+workr::RunWorkflow(
+  lWorkflow = lWorkflow,
+  lData = list(),
+  lConfig = lEnvironmentConfig
+)
+
+env_results$demo_height
+```
+
+# Loading simulated data
+
+`workr` also includes a built-in registered `LoadData` provider named `"gsm.datasim"`. The provider uses the optional `gsm.datasim` package to generate input data, adds legacy `df*` aliases for generated `Raw_*` objects, and merges those generated objects with any caller-supplied `lData`.
+
+Install or update the optional dependency from the `dev` branch before running the example locally:
+
+```r
+pak::pak("Gilead-BioStats/gsm.datasim@dev")
+```
+
+The example is evaluated only when `gsm.datasim` is installed.
+
+```{r gsm-datasim, eval = requireNamespace("gsm.datasim", quietly = TRUE)}
+summarise_enrollment <- function(Raw_SUBJ) {
+  aggregate(
+    Raw_SUBJ$subjid,
+    by = list(site_id = Raw_SUBJ$invid),
+    FUN = length
+  ) |>
+    setNames(c("site_id", "enrolled_subjects"))
+}
+
+lDatasimWorkflow <- list(
+  meta = list(Type = "demo", ID = "datasim_enrollment"),
+  steps = list(
+    list(
+      name = "summarise_enrollment",
+      output = "enrollment_summary",
+      params = list(Raw_SUBJ = "Raw_SUBJ")
+    )
+  )
+)
+
+datasim_results <- new.env(parent = emptyenv())
+
+workr::RunWorkflow(
+  lWorkflow = lDatasimWorkflow,
+  lData = list(),
+  lConfig = list(
+    LoadData = "gsm.datasim",
+    SaveData = function(lWorkflow, lConfig) {
+      assign("enrollment_summary", lWorkflow$lResult, envir = lConfig$result_store)
+      assign("loaded_names", sort(names(lWorkflow$lData)), envir = lConfig$result_store)
+      invisible(NULL)
+    },
+    result_store = datasim_results,
+    gsm.datasim = list(
+      profile = "standard",
+      study_type = "standard",
+      participants = 25,
+      sites = 4,
+      snapshot_count = 1
+    )
+  )
+)
+
+head(datasim_results$enrollment_summary)
+head(datasim_results$loaded_names)
+```
+
+Use `lConfig$gsm.datasim` to tune the simulated study. Common fields include `participants`, `sites`, `snapshot_count`, `months_duration`, `snapshot`, `profile`, and `study_type`.
+
+For longitudinal settings, the provider returns the latest snapshot by default, or the snapshot selected by `lConfig$gsm.datasim$snapshot`.
+
+```r
+lConfig <- list(
+  LoadData = "gsm.datasim",
+  gsm.datasim = list(
+    study_type = "endpoints",
+    months_duration = 2,
+    participants = 10,
+    sites = 3,
+    snapshot = "latest"
+  )
+)
+```

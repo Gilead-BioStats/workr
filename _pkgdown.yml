@@ -50,6 +50,7 @@ reference:
     desc: "Utilities for managing workflow projects and loading examples."
     contents:
       - loadExample
+      - gsm_datasim_provider
       - register_load_provider
       - register_save_provider
       - ListWorkflows

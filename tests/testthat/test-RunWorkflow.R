@@ -171,6 +171,36 @@ test_that("RunWorkflow invokes lConfig$LoadData (#26)", {
   expect_equal(result, 42)
 })
 
+test_that("RunWorkflow invokes environment-backed lConfig$LoadData (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  load_called <- FALSE
+  lConfig <- new.env(parent = emptyenv())
+  lConfig$LoadData <- function(lWorkflow, lConfig, lData) {
+    load_called <<- TRUE
+    c(lData, list(loaded_val = 42))
+  }
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "config_env_test"),
+    steps = list(
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
+    )
+  )
+
+  suppressMessages({
+    result <- RunWorkflow(lWorkflow, lData = list(), lConfig = lConfig)
+  })
+
+  expect_true(load_called)
+  expect_equal(result, 42)
+})
+
 test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE (#26)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
@@ -200,6 +230,179 @@ test_that("RunWorkflow invokes lConfig$SaveData on bReturnResult = TRUE (#26)", 
   })
 
   expect_true(save_called)
+})
+
+test_that("RunWorkflow accepts lConfig without data hooks (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "optional_hooks"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  suppressMessages({
+    result <- RunWorkflow(lWorkflow, lData = list(val = 11), lConfig = list(foo = "bar"))
+  })
+
+  expect_equal(result, 11)
+})
+
+test_that("RunWorkflow resolves registered load providers (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  register_load_provider(
+    "test.load.provider",
+    function(lWorkflow, lConfig, lData) {
+      c(lData, list(loaded_val = 42))
+    }
+  )
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "registered_load"),
+    steps = list(
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "loaded_val")
+      )
+    )
+  )
+
+  suppressMessages({
+    result <- RunWorkflow(
+      lWorkflow,
+      lData = list(),
+      lConfig = list(LoadData = "test.load.provider")
+    )
+  })
+
+  expect_equal(result, 42)
+})
+
+test_that("RunWorkflow resolves registered save providers (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  save_called <- FALSE
+  register_save_provider(
+    "test.save.provider",
+    function(lWorkflow, lConfig) {
+      save_called <<- TRUE
+    }
+  )
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "registered_save"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  suppressMessages({
+    RunWorkflow(
+      lWorkflow,
+      lData = list(val = 99),
+      lConfig = list(SaveData = "test.save.provider")
+    )
+  })
+
+  expect_true(save_called)
+})
+
+test_that("RunWorkflow errors on unknown registered load provider (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  register_load_provider(
+    "known.load.provider",
+    function(lWorkflow, lConfig, lData) lData
+  )
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "unknown_provider"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  expect_error(
+    suppressMessages({
+      RunWorkflow(
+        lWorkflow,
+        lData = list(val = 1),
+        lConfig = list(LoadData = "missing.load.provider")
+      )
+    }),
+    regexp = "Unknown load provider \"missing\\.load\\.provider\"\\.[[:space:]]+Registered providers:"
+  )
+})
+
+test_that("RunWorkflow errors on invalid LoadData formals (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "bad_load_formals"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  expect_error(
+    suppressMessages({
+      RunWorkflow(
+        lWorkflow,
+        lData = list(val = 1),
+        lConfig = list(
+          LoadData = function(study, seed) {
+            list(val = study + seed)
+          }
+        )
+      )
+    }),
+    regexp = "`lConfig\\$LoadData` must accept formals \\(lWorkflow, lConfig, lData\\)"
+  )
+})
+
+test_that("RunWorkflow errors on invalid SaveData formals (#58)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "bad_save_formals"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  expect_error(
+    suppressMessages({
+      RunWorkflow(
+        lWorkflow,
+        lData = list(val = 1),
+        lConfig = list(
+          SaveData = function(study, seed) {
+            invisible(NULL)
+          }
+        )
+      )
+    }),
+    regexp = "`lConfig\\$SaveData` must accept formals \\(lWorkflow, lConfig\\)"
+  )
+})
+
+test_that("register_load_provider validates provider signatures (#58)", {
+  expect_error(
+    register_load_provider(
+      "bad.load.provider",
+      function(study, seed) list()
+    ),
+    regexp = "Registered load provider \"bad\\.load\\.provider\" must accept formals \\(lWorkflow, lConfig, lData\\)"
+  )
 })
 
 test_that("RunWorkflow validates spec when present (#26)", {

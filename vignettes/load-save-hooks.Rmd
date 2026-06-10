@@ -1,0 +1,170 @@
+---
+title: "Load and Save Hooks"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Load and Save Hooks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE
+)
+```
+
+# Overview
+
+`RunWorkflow()` and `RunWorkflows()` accept an optional `lConfig` object with two data hooks:
+
+- `LoadData`, called before workflow spec validation and before the first step runs.
+- `SaveData`, called after the workflow steps finish when `bReturnResult = TRUE`.
+
+Hooks make workflow definitions portable. The workflow can describe what to run, while `lConfig` describes where data should come from and where results should go in a particular environment.
+
+# Example workflow
+
+The examples below use a small workflow that summarizes a measure from an analysis data frame. The workflow does not know how the data is loaded or saved.
+
+```{r}
+summarise_measure <- function(adsl, measure) {
+  data.frame(
+    measure = measure,
+    n = nrow(adsl),
+    mean = mean(adsl[[measure]])
+  )
+}
+
+lWorkflow <- list(
+  meta = list(
+    Type = "demo",
+    ID = "height",
+    Source = "analysis"
+  ),
+  steps = list(
+    list(
+      name = "summarise_measure",
+      output = "summary",
+      params = list(
+        adsl = "adsl",
+        measure = "HEIGHTBL"
+      )
+    )
+  )
+)
+
+analysis_data <- list(
+  analysis = list(
+    adsl = data.frame(
+      USUBJID = sprintf("SUBJ%03d", 1:4),
+      HEIGHTBL = c(160, 172, 168, 181)
+    )
+  )
+)
+```
+
+# Inline hooks
+
+For a single project, the simplest configuration is to provide functions directly in `lConfig`.
+
+`LoadData` must accept `lWorkflow`, `lConfig`, and `lData`. It returns the data list that `RunWorkflow()` should use.
+
+`SaveData` must accept `lWorkflow` and `lConfig`. It can read the completed workflow, including `lWorkflow$lData` and `lWorkflow$lResult`.
+
+```{r}
+saved_results <- new.env(parent = emptyenv())
+
+lConfig <- list(
+  data_store = analysis_data,
+  result_store = saved_results,
+  LoadData = function(lWorkflow, lConfig, lData) {
+    source_name <- lWorkflow$meta$Source
+    c(lData, lConfig$data_store[[source_name]])
+  },
+  SaveData = function(lWorkflow, lConfig) {
+    result_name <- paste(lWorkflow$meta$Type, lWorkflow$meta$ID, sep = "_")
+    assign(result_name, lWorkflow$lResult, envir = lConfig$result_store)
+    invisible(NULL)
+  }
+)
+
+result <- workr::RunWorkflow(
+  lWorkflow = lWorkflow,
+  lData = list(),
+  lConfig = lConfig
+)
+
+result
+saved_results$demo_height
+```
+
+# Registered providers
+
+When the same loading or saving behavior is shared across workflows or projects, register a named provider once and reference it from `lConfig` by name.
+
+```{r}
+workr::register_load_provider(
+  "vignette.memory.load",
+  function(lWorkflow, lConfig, lData) {
+    source_name <- lWorkflow$meta$Source
+    c(lData, lConfig$data_store[[source_name]])
+  }
+)
+
+workr::register_save_provider(
+  "vignette.memory.save",
+  function(lWorkflow, lConfig) {
+    result_name <- paste(lWorkflow$meta$Type, lWorkflow$meta$ID, sep = "_")
+    assign(result_name, lWorkflow$lResult, envir = lConfig$result_store)
+    invisible(NULL)
+  }
+)
+
+registered_results <- new.env(parent = emptyenv())
+
+lRegisteredConfig <- list(
+  data_store = analysis_data,
+  result_store = registered_results,
+  LoadData = "vignette.memory.load",
+  SaveData = "vignette.memory.save"
+)
+
+workr::RunWorkflow(
+  lWorkflow = lWorkflow,
+  lData = list(),
+  lConfig = lRegisteredConfig
+)
+
+registered_results$demo_height
+```
+
+Provider functions are validated when they are registered. `LoadData` providers must include named formals `lWorkflow`, `lConfig`, and `lData`; `SaveData` providers must include named formals `lWorkflow` and `lConfig`.
+
+# Using hooks with multiple workflows
+
+`RunWorkflows()` passes the same `lConfig` through to each workflow. This lets a project use one loading and saving strategy while each workflow selects the data it needs from `meta`.
+
+```{r}
+lWeightWorkflow <- lWorkflow
+lWeightWorkflow$meta$ID <- "weight"
+lWeightWorkflow$steps[[1]]$params$measure <- "WEIGHTBL"
+
+analysis_data$analysis$adsl$WEIGHTBL <- c(60, 72, 68, 81)
+
+multi_results <- new.env(parent = emptyenv())
+lRegisteredConfig$result_store <- multi_results
+lRegisteredConfig$data_store <- analysis_data
+
+workr::RunWorkflows(
+  lWorkflows = list(lWorkflow, lWeightWorkflow),
+  lData = list(),
+  lConfig = lRegisteredConfig
+)
+
+multi_results$demo_height
+multi_results$demo_weight
+```
+
+`lConfig` can be either a list or an environment. This is useful when an existing application already stores configuration in an environment, such as a Shiny app or project runtime.

@@ -169,9 +169,9 @@ objects, such as `Raw_SUBJ` and `Raw_AE`, are also exposed as `df*`
 aliases, such as `dfSUBJ` and `dfAE`, for compatibility with existing
 workflows.
 
-For a pkgdown-friendly walkthrough, see the
-`Using the gsm.datasim Load Provider` article. The same runnable example
-is also available in `inst/examples/gsm-datasim-provider.R`.
+For more detail on configurable load and save hooks, including the
+built-in `"gsm.datasim"` provider, see the `Load and Save Hooks`
+vignette.
 
 ## Combining Workflows
 

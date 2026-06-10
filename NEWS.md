@@ -1,5 +1,18 @@
 # workr (development version)
 
+* Added per-phase `_config.yaml` support to `RunProject()` (#64, #65, #66):
+  phase folders may declare `input` (`from_phases`, `from_results`,
+  `include_workflows`, `extra`) and `output` (`wrap_as`, `transform`) maps,
+  validated with strict unknown-key errors. `_config.yaml` / `_config.yml`
+  files are excluded from workflow discovery. Phases without a config file
+  keep the existing flat carry-forward behavior.
+
+* Breaking change for internal callers: `stop_if()` now interpolates its
+  message with `glue::glue()` in the caller's environment. Messages such as
+  `"directory does not exist: {strPath}"` previously printed the braces
+  literally; they now interpolate as intended. Any `stop_if()` message that
+  needs a literal `{` or `}` must escape it as `{{` / `}}`.
+
 * Stabilized the `RunProject()` baseline contract (#63): `strPath` is now
   validated to exist *and* be a directory (distinct error messages), the
   phase-discovery and ordering semantics (alphabetical by default, caller order

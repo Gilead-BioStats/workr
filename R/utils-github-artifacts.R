@@ -218,7 +218,7 @@ gh_actions_download_artifact_bundle <- function(
     repo = parts$repo,
     artifact_id = artifact$id,
     .destfile = zip_path,
-    operation = "downloading workflow artifact bundles"
+    operation = "downloading the workflow artifact bundle"
   )
 
   utils::unzip(zip_path, exdir = bundle_dir)

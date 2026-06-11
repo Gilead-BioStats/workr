@@ -443,7 +443,7 @@ test_that("pull_workflows does not register missing files as collisions (#46)", 
   workr:::pull_workflows(resolved, tmp)
 
   expect_identical(
-    readLines(file.path(tmp, "workflow", "root.yaml"))[1],
+    readLines(file.path(tmp, "workflows", "root.yaml"))[1],
     "name: pkg.two"
   )
 })
@@ -497,7 +497,7 @@ test_that("pull_workflows warns on destination collisions by default (#46)", {
     "Workflow destination collision.*pkg\\.one.*pkg\\.two"
   )
   expect_identical(
-    readLines(file.path(tmp, "workflow", "root.yaml"))[1],
+    readLines(file.path(tmp, "workflows", "root.yaml"))[1],
     "name: pkg.two"
   )
 })
@@ -558,7 +558,7 @@ test_that("pull_workflows warns on nested destination collisions in directories 
     "Workflow destination collision.*pkg\\.one.*pkg\\.two"
   )
   expect_identical(
-    readLines(file.path(tmp, "workflow", "shared", "nested.yaml"))[1],
+    readLines(file.path(tmp, "workflows", "shared", "nested.yaml"))[1],
     "name: pkg.two.nested"
   )
 })
@@ -621,8 +621,8 @@ test_that("pull_workflows warns and skips file-vs-directory structural collision
     workr:::pull_workflows(resolved, tmp),
     "Cannot create workflow directory"
   )
-  expect_true(file.exists(file.path(tmp, "workflow", "foo")))
-  expect_false(file.exists(file.path(tmp, "workflow", "foo", "bar.yaml")))
+  expect_true(file.exists(file.path(tmp, "workflows", "foo")))
+  expect_false(file.exists(file.path(tmp, "workflows", "foo", "bar.yaml")))
   expect_equal(
     length(grep(
       "pkg.two/contents/inst/workflow/foo/bar.yaml",

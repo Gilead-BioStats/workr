@@ -136,7 +136,7 @@ test_that("RunProject warns on empty phase folder and proceeds (#63)", {
   on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
 
   # Build a project with one populated phase and one empty phase
-  proj <- file.path(tempdir(), "project_empty_phase_test")
+  proj <- tempfile("project_empty_phase_test")
   dir.create(file.path(proj, "1_populated"), recursive = TRUE, showWarnings = FALSE)
   dir.create(file.path(proj, "2_empty"), recursive = TRUE, showWarnings = FALSE)
   on.exit(unlink(proj, recursive = TRUE), add = TRUE)

@@ -52,7 +52,7 @@ test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE (#34)", {
   expect_true(grepl("Raw_AE", combined), info = "Missing Raw_AE in return list")
 })
 
-test_that("03_KRI RunWorkflows completes without error using initData (#34)", {
+test_that("03_KRI RunWorkflows completes without error using initData", {
   skip_if_not_repo()
   skip_if_not_installed("gsm.core")
 

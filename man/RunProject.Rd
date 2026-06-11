@@ -12,7 +12,8 @@ RunProject(
   bRecursive = FALSE,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 }
 \arguments{
@@ -22,7 +23,9 @@ more subdirectories, each holding workflow YAML files.}
 \item{lData}{\code{list} Initial named list of data objects. Default \code{NULL}.}
 
 \item{lConfig}{\code{list} Configuration hooks passed to \code{RunWorkflows()}.
-Default \code{NULL}.}
+Default \code{NULL}. When \code{lConfig$phases} is a named list, entries matching a
+phase name are used only for that phase. When \code{lConfig$project} contains
+\code{LoadData} or \code{SaveData} functions, they run once at the project boundary.}
 
 \item{strPhases}{\code{character} Optional vector of phase folder names to run. If
 \code{NULL} (the default), all sorted subdirectories of \code{strPath} are used.}
@@ -35,10 +38,17 @@ Default \code{NULL}.}
 
 \item{strResultNames}{\code{character} Vector of length two passed to
 \code{RunWorkflows()}. Default \code{c("Type", "ID")}.}
+
+\item{bContinueOnError}{\code{logical} Passed to \code{RunWorkflows()}. If \code{TRUE},
+workflow failures are recorded and the project continues to later
+workflows/phases. The return value is a summary list with \code{results},
+\code{status}, and \code{failures} elements. Default \code{FALSE}.}
 }
 \value{
 A named list with one element per phase. Each element contains the
-result returned by \code{RunWorkflows()} for that phase.
+result returned by \code{RunWorkflows()} for that phase. When
+\code{bContinueOnError = TRUE}, returns a summary list with \code{results}, \code{status},
+and \code{failures}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -83,6 +93,17 @@ input assembly. \code{output.transform} may name a function resolved from the
 calling environment; the function receives the phase result and its return
 value replaces that result. Transform errors fail the phase and identify the
 transform reference.
+
+Hook scoping contract:
+\itemize{
+\item Top-level \code{lConfig$LoadData} and \code{lConfig$SaveData} retain the existing
+behavior and are forwarded to every workflow.
+\item \code{lConfig$phases[[phase_name]]} may define workflow hooks that apply only
+to that phase.
+\item \code{lConfig$project$LoadData} runs once before phase execution and must
+return an \code{lData} list. \code{lConfig$project$SaveData} runs once after project
+execution and receives the project result.
+}
 }
 \examples{
 \dontrun{

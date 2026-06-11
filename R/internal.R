@@ -66,7 +66,7 @@ CheckSpec <- function(lData, lSpec) {
 
   for (domain in names(lSpec)) {
     if (!domain %in% names(lData)) {
-      next
+      stop(glue::glue("Spec-declared input '{domain}' not found in lData."))
     }
 
     spec <- lSpec[[domain]]

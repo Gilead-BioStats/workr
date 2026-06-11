@@ -1,5 +1,11 @@
 # workr (development version)
 
+* Fortified validation ergonomics for project-scale runs: `RunProject()` and
+  `RunWorkflows()` now support opt-in `bContinueOnError` summaries, spec checks
+  fail before step execution when declared inputs are absent from `lData`, and
+  `RunProject()` supports project-scoped and phase-scoped load/save hooks while
+  preserving existing top-level workflow hooks.
+
 * Added a `RunProject()` regression matrix (#67): a no-config flat
   carry-forward backward-compatibility test and a four-phase configured
   project scenario exercising `from_phases`, `from_results`,

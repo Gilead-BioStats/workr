@@ -250,6 +250,38 @@ test_that("RunWorkflow accepts lConfig without data hooks (#58)", {
   expect_equal(result, 11)
 })
 
+test_that("RunWorkflow allows LoadData-only and SaveData-only configs (#17)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "hook_subset"),
+    steps = list(
+      list(name = "identity_step", output = "res", params = list(x = "val"))
+    )
+  )
+
+  save_called <- FALSE
+  suppressMessages({
+    result <- RunWorkflow(
+      lWorkflow,
+      lData = list(val = 1),
+      lConfig = list(SaveData = function(lWorkflow, lConfig) save_called <<- TRUE)
+    )
+  })
+  expect_equal(result, 1)
+  expect_true(save_called)
+
+  suppressMessages({
+    result <- RunWorkflow(
+      lWorkflow,
+      lData = list(),
+      lConfig = list(LoadData = function(lWorkflow, lConfig, lData) list(val = 2))
+    )
+  })
+  expect_equal(result, 2)
+})
+
 test_that("RunWorkflow resolves registered load providers (#58)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
@@ -428,6 +460,25 @@ test_that("RunWorkflow validates spec when present (#26)", {
 
   suppressMessages(RunWorkflow(lWorkflow, lData)) |>
     expect_error("Missing required columns")
+})
+
+test_that("RunWorkflow fails when spec-declared input is absent (#9)", {
+  lWorkflow <- list(
+    meta = list(Type = "demo", ID = "missing_spec_input"),
+    spec = list(
+      my_domain = list(required_cols = c("a", "b"))
+    ),
+    steps = list(
+      list(
+        name = "identity_step",
+        output = "res",
+        params = list(x = "my_domain")
+      )
+    )
+  )
+
+  suppressMessages(RunWorkflow(lWorkflow, lData = list())) |>
+    expect_error("Spec-declared input 'my_domain' not found in lData")
 })
 
 test_that("RunWorkflow runs without spec (#26)", {
@@ -623,4 +674,47 @@ test_that("RunWorkflows handles empty workflow list (#26)", {
     results <- RunWorkflows(list(), list(val = 1))
   })
   expect_equal(length(results), 0)
+})
+
+test_that("RunWorkflows continue-on-error records failures and runs later workflows (#11)", {
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  assign("fail_step", function(x) stop("boom"), envir = .GlobalEnv)
+  on.exit(
+    {
+      rm("identity_step", envir = .GlobalEnv)
+      rm("fail_step", envir = .GlobalEnv)
+    },
+    add = TRUE
+  )
+
+  lWorkflows <- list(
+    list(
+      meta = list(Type = "demo", ID = "ok"),
+      steps = list(
+        list(name = "identity_step", output = "res", params = list(x = "val"))
+      )
+    ),
+    list(
+      meta = list(Type = "demo", ID = "bad"),
+      steps = list(
+        list(name = "fail_step", output = "res", params = list(x = "val"))
+      )
+    ),
+    list(
+      meta = list(Type = "demo", ID = "after"),
+      steps = list(
+        list(name = "identity_step", output = "res", params = list(x = "val"))
+      )
+    )
+  )
+
+  suppressMessages({
+    result <- RunWorkflows(lWorkflows, list(val = 1), bContinueOnError = TRUE)
+  })
+
+  expect_s3_class(result, "workr_run_summary")
+  expect_named(result$results, c("demo_ok", "demo_after"))
+  expect_equal(result$status$status, c("success", "error", "success"))
+  expect_equal(result$failures$workflow, "demo_bad")
+  expect_match(result$failures$message, "boom")
 })

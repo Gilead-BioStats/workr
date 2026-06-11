@@ -43,11 +43,23 @@
 #' value replaces that result. Transform errors fail the phase and identify the
 #' transform reference.
 #'
+#' Hook scoping contract:
+#'
+#' * Top-level `lConfig$LoadData` and `lConfig$SaveData` retain the existing
+#'   behavior and are forwarded to every workflow.
+#' * `lConfig$phases[[phase_name]]` may define workflow hooks that apply only
+#'   to that phase.
+#' * `lConfig$project$LoadData` runs once before phase execution and must
+#'   return an `lData` list. `lConfig$project$SaveData` runs once after project
+#'   execution and receives the project result.
+#'
 #' @param strPath `character` Path to the project directory. Must contain one or
 #'   more subdirectories, each holding workflow YAML files.
 #' @param lData `list` Initial named list of data objects. Default `NULL`.
 #' @param lConfig `list` Configuration hooks passed to `RunWorkflows()`.
-#'   Default `NULL`.
+#'   Default `NULL`. When `lConfig$phases` is a named list, entries matching a
+#'   phase name are used only for that phase. When `lConfig$project` contains
+#'   `LoadData` or `SaveData` functions, they run once at the project boundary.
 #' @param strPhases `character` Optional vector of phase folder names to run. If
 #'   `NULL` (the default), all sorted subdirectories of `strPath` are used.
 #' @param bRecursive `logical` Passed to `MakeWorkflowList()`. Default `FALSE`.
@@ -55,9 +67,15 @@
 #' @param bKeepInputData `logical` Passed to `RunWorkflows()`. Default `FALSE`.
 #' @param strResultNames `character` Vector of length two passed to
 #'   `RunWorkflows()`. Default `c("Type", "ID")`.
+#' @param bContinueOnError `logical` Passed to `RunWorkflows()`. If `TRUE`,
+#'   workflow failures are recorded and the project continues to later
+#'   workflows/phases. The return value is a summary list with `results`,
+#'   `status`, and `failures` elements. Default `FALSE`.
 #'
 #' @return A named list with one element per phase. Each element contains the
-#'   result returned by `RunWorkflows()` for that phase.
+#'   result returned by `RunWorkflows()` for that phase. When
+#'   `bContinueOnError = TRUE`, returns a summary list with `results`, `status`,
+#'   and `failures`.
 #'
 #' @examples
 #' \dontrun{
@@ -74,11 +92,16 @@ RunProject <- function(
   bRecursive = FALSE,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 ) {
   stop_if(!is.character(strPath) || length(strPath) != 1, "[ strPath ] must be a single character string.")
   stop_if(!file.exists(strPath), "[ strPath ] path does not exist: {strPath}")
   stop_if(!dir.exists(strPath), "[ strPath ] path is not a directory: {strPath}")
+  stop_if(
+    !is.logical(bContinueOnError) || length(bContinueOnError) != 1 || is.na(bContinueOnError),
+    "[ bContinueOnError ] must be TRUE or FALSE."
+  )
 
   # Discover phase folders
   all_dirs <- list.dirs(strPath, full.names = FALSE, recursive = FALSE)
@@ -104,6 +127,8 @@ RunProject <- function(
 
   if (is.null(lData)) lData <- list()
   stop_if(!is.list(lData), "[ lData ] must be a list.")
+  .validate_project_hook_config(lConfig)
+  lData <- .apply_project_load_config(lData, lConfig)
 
   lPhaseResults <- list()
   lPhaseData <- list()
@@ -145,10 +170,11 @@ RunProject <- function(
     phase_result <- RunWorkflows(
       lWorkflows = lWorkflows,
       lData = phase_data,
-      lConfig = lConfig,
+      lConfig = .phase_workflow_config(lConfig, phase),
       bReturnResult = bReturnResult,
       bKeepInputData = bKeepInputData,
-      strResultNames = strResultNames
+      strResultNames = strResultNames,
+      bContinueOnError = bContinueOnError
     )
 
     phase_result <- .apply_phase_output_config(
@@ -167,7 +193,117 @@ RunProject <- function(
     )
   }
 
-  return(lPhaseResults)
+  project_result <- lPhaseResults
+  if (isTRUE(bContinueOnError)) {
+    project_result <- .project_run_summary(lPhaseResults)
+  }
+
+  .apply_project_save_config(project_result, lConfig)
+  return(project_result)
+}
+
+.validate_project_hook_config <- function(lConfig) {
+  if (is.null(lConfig)) {
+    return(invisible(TRUE))
+  }
+
+  stop_if(!is.list(lConfig), "[ lConfig ] must be a list.")
+  if ("project" %in% names(lConfig)) {
+    stop_if(
+      !is.null(lConfig$project) && (!is.list(lConfig$project) || is.data.frame(lConfig$project)),
+      "[ lConfig$project ] must be a list."
+    )
+  }
+  if ("phases" %in% names(lConfig)) {
+    phase_config <- lConfig$phases
+    stop_if(
+      !is.null(phase_config) &&
+        (!is.list(phase_config) || is.data.frame(phase_config) || is.null(names(phase_config)) || any(!nzchar(names(phase_config)))),
+      "[ lConfig$phases ] must be a named list of phase configuration lists."
+    )
+    for (phase in names(phase_config)) {
+      stop_if(
+        !is.null(phase_config[[phase]]) && (!is.list(phase_config[[phase]]) || is.data.frame(phase_config[[phase]])),
+        "[ lConfig$phases${phase} ] must be a list."
+      )
+    }
+  }
+
+  invisible(TRUE)
+}
+
+.project_config <- function(lConfig) {
+  if (is.null(lConfig) || is.null(lConfig$project)) {
+    return(NULL)
+  }
+
+  lConfig$project
+}
+
+.apply_project_load_config <- function(lData, lConfig) {
+  project_config <- .project_config(lConfig)
+  if (is.null(project_config) || !exists("LoadData", project_config)) {
+    return(lData)
+  }
+
+  stop_if(
+    !is.function(project_config$LoadData) ||
+      !all(c("lConfig", "lData") %in% names(formals(project_config$LoadData))),
+    "[ lConfig$project$LoadData ] must be a function with parameters: lConfig, lData."
+  )
+
+  LogMessage(
+    level = "info",
+    message = "Loading data with `lConfig$project$LoadData`.",
+    cli_detail = "h3"
+  )
+  loaded_data <- project_config$LoadData(lConfig = project_config, lData = lData)
+  stop_if(!is.list(loaded_data), "[ lConfig$project$LoadData ] must return a list.")
+  loaded_data
+}
+
+.apply_project_save_config <- function(lProject, lConfig) {
+  project_config <- .project_config(lConfig)
+  if (is.null(project_config) || !exists("SaveData", project_config)) {
+    return(invisible(TRUE))
+  }
+
+  stop_if(
+    !is.function(project_config$SaveData) ||
+      !all(c("lProject", "lConfig") %in% names(formals(project_config$SaveData))),
+    "[ lConfig$project$SaveData ] must be a function with parameters: lProject, lConfig."
+  )
+
+  LogMessage(
+    level = "info",
+    message = "Saving project data with `lConfig$project$SaveData`.",
+    cli_detail = "h3"
+  )
+  project_config$SaveData(lProject = lProject, lConfig = project_config)
+  invisible(TRUE)
+}
+
+.phase_workflow_config <- function(lConfig, strPhase) {
+  if (is.null(lConfig)) {
+    return(NULL)
+  }
+
+  has_scoped_config <- "project" %in% names(lConfig) || "phases" %in% names(lConfig)
+  if (!has_scoped_config) {
+    return(lConfig)
+  }
+
+  workflow_config <- lConfig[setdiff(names(lConfig), c("project", "phases"))]
+  phase_config <- lConfig$phases[[strPhase]]
+  if (!is.null(phase_config)) {
+    workflow_config <- utils::modifyList(workflow_config, phase_config)
+  }
+
+  if (!exists("LoadData", workflow_config) && !exists("SaveData", workflow_config)) {
+    return(NULL)
+  }
+
+  workflow_config
 }
 
 .read_phase_config <- function(strPhasePath, strPhase) {
@@ -370,7 +506,7 @@ RunProject <- function(
   for (target_name in names(input$from_results)) {
     source_phase <- input$from_results[[target_name]]
     .require_prior_phase(source_phase, lPhaseResults, strPhase, "input.from_results")
-    lData[[target_name]] <- lPhaseResults[[source_phase]]
+    lData[[target_name]] <- .workflow_summary_results(lPhaseResults[[source_phase]])
   }
 
   if (isTRUE(input$include_workflows)) {
@@ -404,6 +540,16 @@ RunProject <- function(
 }
 
 .apply_phase_output_config <- function(phase_result, lOutputConfig, strPhase, transform_env) {
+  if (.is_workr_run_summary(phase_result)) {
+    phase_result$results <- .apply_phase_output_config(
+      phase_result = phase_result$results,
+      lOutputConfig = lOutputConfig,
+      strPhase = strPhase,
+      transform_env = transform_env
+    )
+    return(phase_result)
+  }
+
   if (!is.null(lOutputConfig$transform)) {
     transform_ref <- lOutputConfig$transform
     transform_fn <- .resolve_phase_transform(transform_ref, transform_env)
@@ -442,6 +588,11 @@ RunProject <- function(
 }
 
 .phase_result_to_data <- function(phase_result, bReturnResult, lOutputConfig, strPhase) {
+  if (.is_workr_run_summary(phase_result) && length(phase_result$results) == 0) {
+    return(list())
+  }
+
+  phase_result <- .workflow_summary_results(phase_result)
   output_was_shaped <- !is.null(lOutputConfig$wrap_as) || !is.null(lOutputConfig$transform)
   if (output_was_shaped || bReturnResult) {
     return(.validate_phase_data_result(phase_result, strPhase))
@@ -463,4 +614,43 @@ RunProject <- function(
   )
 
   phase_result
+}
+
+.project_run_summary <- function(results) {
+  status_parts <- lapply(names(results), function(phase) {
+    phase_result <- results[[phase]]
+    if (!.is_workr_run_summary(phase_result) || nrow(phase_result$status) == 0) {
+      return(NULL)
+    }
+
+    data.frame(
+      phase = phase,
+      phase_result$status,
+      stringsAsFactors = FALSE
+    )
+  })
+  status_parts <- status_parts[!vapply(status_parts, is.null, logical(1))]
+
+  if (length(status_parts) == 0) {
+    status <- data.frame(
+      phase = character(),
+      workflow = character(),
+      status = character(),
+      message = character(),
+      stringsAsFactors = FALSE
+    )
+  } else {
+    status <- do.call(rbind, status_parts)
+    row.names(status) <- NULL
+  }
+
+  failures <- status[status$status == "error", , drop = FALSE]
+  structure(
+    list(
+      results = results,
+      status = status,
+      failures = failures
+    ),
+    class = c("workr_project_summary", "list")
+  )
 }

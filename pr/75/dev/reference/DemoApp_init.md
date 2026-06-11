@@ -34,7 +34,10 @@ DemoApp_init(
   `list` Optional configuration hooks passed to workflow runners.
   Defaults to using
   [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
-  for `LoadData`.
+  for `LoadData`. `LoadData` and `SaveData` may be functions or
+  registered provider names; function hooks must follow the same
+  named-formal contract documented in
+  [`RunWorkflow`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md).
 
 ## Value
 

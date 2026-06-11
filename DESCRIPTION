@@ -30,10 +30,14 @@ Imports:
     rlang,
     yaml
 Suggests:
+    gsm.datasim,
     knitr,
     rmarkdown,
     shiny,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    withr
+Remotes:
+    Gilead-BioStats/gsm.datasim@dev
 VignetteBuilder:
     knitr
 Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak

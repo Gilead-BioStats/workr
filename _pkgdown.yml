@@ -22,6 +22,8 @@ navbar:
       menu:
       - text: "Intro to {workr} (US Phuse Connect 2026)"
         href: articles/Overview.html
+      - text: "Load and Save Hooks"
+        href: articles/load-save-hooks.html
       - text: "Pharmaverse Case Study"
         href: articles/Pharmaverse.html
       - text: "Cookbook: sdtm.oak"
@@ -48,6 +50,9 @@ reference:
     desc: "Utilities for managing workflow projects and loading examples."
     contents:
       - loadExample
+      - gsm_datasim_provider
+      - register_load_provider
+      - register_save_provider
       - ListWorkflows
       - ListWorkflowNames
       - MakeWorkflowList

@@ -223,10 +223,13 @@
 <code>bReturnResult</code> / <code>bKeepInputData</code> — passed through to <code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code>
 </li>
 <li>
+<code>bContinueOnError</code> — collect per-workflow failures and continue validation runs</li>
+<li>
 <code>bRecursive</code> — passed through to <code><a href="reference/MakeWorkflowList.html">MakeWorkflowList()</a></code>
 </li>
 </ul>
 <p>Phases are sorted alphabetically by default (use numeric prefixes like <code>01_</code>, <code>02_</code> to control order).</p>
+<p><code>lConfig</code> hooks can be scoped when a project needs different load/save behavior at different boundaries. Top-level <code>LoadData</code> and <code>SaveData</code> still apply to every workflow. <code>lConfig$phases[["phase_name"]]</code> applies hooks to one phase, while <code>lConfig$project$LoadData</code> and <code>lConfig$project$SaveData</code> run once before and after the full project.</p>
 <p>For reproducible package snapshots, the project directory is also the handoff between manifest generation and runtime execution: <code><a href="reference/pkgManifest.html">pkgManifest()</a></code> or the reusable manifest workflow creates <code>manifest.csv</code>, <code>rproject.toml</code>, and a <code>workflows/</code> directory; <code><a href="reference/RunProject.html">RunProject()</a></code> then treats that <code>workflows/</code> directory as the runnable project.</p>
 <p>Phase folders can include an optional <code>_config.yaml</code> file to make that runtime handoff explicit. The <code>input</code> block controls which prior phase outputs are visible, whether workflow definitions are injected as <code>lData$lWorkflows</code>, and which static values are merged last. The <code>output</code> block can wrap a phase result under a named key or apply a phase-boundary transform.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># workflows/3_reporting/_config.yaml</span></span>

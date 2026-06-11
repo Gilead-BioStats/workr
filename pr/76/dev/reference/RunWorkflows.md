@@ -19,7 +19,8 @@ RunWorkflows(
   lConfig = NULL,
   bKeepInputData = FALSE,
   bReturnResult = TRUE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 ```
 
@@ -67,11 +68,19 @@ RunWorkflows(
   `string` vector of length two, which describes the meta fields used to
   name the output.
 
+- bContinueOnError:
+
+  `logical` If `TRUE`, workflow errors are recorded and later workflows
+  continue to run. The return value is a summary list with `results`,
+  `status`, and `failures` elements. Default `FALSE`.
+
 ## Value
 
 A named list of results from
 [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
-where the names correspond to the names of the workflow ID
+where the names correspond to the workflow ID. When
+`bContinueOnError = TRUE`, returns a summary list with `results`,
+`status`, and `failures`.
 
 ## Examples
 

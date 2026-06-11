@@ -73,7 +73,8 @@ phase. Phases are executed in sorted order (or in the order specified by
 <span>  bRecursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  bReturnResult <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  bKeepInputData <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  strResultNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Type"</span>, <span class="st">"ID"</span><span class="op">)</span></span>
+<span>  strResultNames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Type"</span>, <span class="st">"ID"</span><span class="op">)</span>,</span>
+<span>  bContinueOnError <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,7 +93,9 @@ more subdirectories, each holding workflow YAML files.</p></dd>
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
 <dd><p><code>list</code> Configuration hooks passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>.
-Default <code>NULL</code>.</p></dd>
+Default <code>NULL</code>. When <code>lConfig$phases</code> is a named list, entries matching a
+phase name are used only for that phase. When <code>lConfig$project</code> contains
+<code>LoadData</code> or <code>SaveData</code> functions, they run once at the project boundary.</p></dd>
 
 
 <dt id="arg-strphases">strPhases<a class="anchor" aria-label="anchor" href="#arg-strphases"></a></dt>
@@ -116,11 +119,20 @@ Default <code>NULL</code>.</p></dd>
 <dd><p><code>character</code> Vector of length two passed to
 <code><a href="RunWorkflows.html">RunWorkflows()</a></code>. Default <code>c("Type", "ID")</code>.</p></dd>
 
+
+<dt id="arg-bcontinueonerror">bContinueOnError<a class="anchor" aria-label="anchor" href="#arg-bcontinueonerror"></a></dt>
+<dd><p><code>logical</code> Passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>. If <code>TRUE</code>,
+workflow failures are recorded and the project continues to later
+workflows/phases. The return value is a summary list with <code>results</code>,
+<code>status</code>, and <code>failures</code> elements. Default <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list with one element per phase. Each element contains the
-result returned by <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase.</p>
+result returned by <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase. When
+<code>bContinueOnError = TRUE</code>, returns a summary list with <code>results</code>, <code>status</code>,
+and <code>failures</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -151,7 +163,14 @@ input assembly. <code>output.transform</code> may name a function resolved from 
 calling environment; the function receives the phase result and its return
 value replaces that result. Transform errors fail the phase and identify the
 transform reference.</p>
-    </div>
+<p>Hook scoping contract:</p><ul><li><p>Top-level <code>lConfig$LoadData</code> and <code>lConfig$SaveData</code> retain the existing
+behavior and are forwarded to every workflow.</p></li>
+<li><p><code>lConfig$phases[[phase_name]]</code> may define workflow hooks that apply only
+to that phase.</p></li>
+<li><p><code>lConfig$project$LoadData</code> runs once before phase execution and must
+return an <code>lData</code> list. <code>lConfig$project$SaveData</code> runs once after project
+execution and receives the project result.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

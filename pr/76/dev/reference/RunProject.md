@@ -21,7 +21,8 @@ RunProject(
   bRecursive = FALSE,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 ```
 
@@ -40,7 +41,10 @@ RunProject(
 
   `list` Configuration hooks passed to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
-  Default `NULL`.
+  Default `NULL`. When `lConfig$phases` is a named list, entries
+  matching a phase name are used only for that phase. When
+  `lConfig$project` contains `LoadData` or `SaveData` functions, they
+  run once at the project boundary.
 
 - strPhases:
 
@@ -71,12 +75,21 @@ RunProject(
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
   Default `c("Type", "ID")`.
 
+- bContinueOnError:
+
+  `logical` Passed to
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  If `TRUE`, workflow failures are recorded and the project continues to
+  later workflows/phases. The return value is a summary list with
+  `results`, `status`, and `failures` elements. Default `FALSE`.
+
 ## Value
 
 A named list with one element per phase. Each element contains the
 result returned by
 [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
-for that phase.
+for that phase. When `bContinueOnError = TRUE`, returns a summary list
+with `results`, `status`, and `failures`.
 
 ## Details
 
@@ -119,6 +132,18 @@ downstream input assembly. `output.transform` may name a function
 resolved from the calling environment; the function receives the phase
 result and its return value replaces that result. Transform errors fail
 the phase and identify the transform reference.
+
+Hook scoping contract:
+
+- Top-level `lConfig$LoadData` and `lConfig$SaveData` retain the
+  existing behavior and are forwarded to every workflow.
+
+- `lConfig$phases[[phase_name]]` may define workflow hooks that apply
+  only to that phase.
+
+- `lConfig$project$LoadData` runs once before phase execution and must
+  return an `lData` list. `lConfig$project$SaveData` runs once after
+  project execution and receives the project result.
 
 ## Examples
 

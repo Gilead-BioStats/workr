@@ -2,6 +2,17 @@
 
 ## workr (development version)
 
+- Fortified validation ergonomics for project-scale runs:
+  [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  and
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  now support opt-in `bContinueOnError` summaries, spec checks fail
+  before step execution when declared inputs are absent from `lData`,
+  and
+  [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  supports project-scoped and phase-scoped load/save hooks while
+  preserving existing top-level workflow hooks.
+
 - Added a
   [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
   regression matrix

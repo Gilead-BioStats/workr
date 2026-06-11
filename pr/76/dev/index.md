@@ -234,11 +234,19 @@ Key options:
 - `strPhases` — run a subset of phases, or control their order
 - `bReturnResult` / `bKeepInputData` — passed through to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+- `bContinueOnError` — collect per-workflow failures and continue
+  validation runs
 - `bRecursive` — passed through to
   [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
 
 Phases are sorted alphabetically by default (use numeric prefixes like
 `01_`, `02_` to control order).
+
+`lConfig` hooks can be scoped when a project needs different load/save
+behavior at different boundaries. Top-level `LoadData` and `SaveData`
+still apply to every workflow. `lConfig$phases[["phase_name"]]` applies
+hooks to one phase, while `lConfig$project$LoadData` and
+`lConfig$project$SaveData` run once before and after the full project.
 
 For reproducible package snapshots, the project directory is also the
 handoff between manifest generation and runtime execution:

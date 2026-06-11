@@ -289,42 +289,42 @@ workr::RunWorkflow(
     )
   )
 )
-#> INFO [2026-06-10 20:28:06]  -- Adding snapshot 1...
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_SITE...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_SITE added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_SUBJ...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_SUBJ added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_ENROLL...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_ENROLL added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_VISIT...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_VISIT added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_STUDCOMP...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_STUDCOMP added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_AE...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_AE added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_IE...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_IE added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_LB...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_LB added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_OverallResponse...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_OverallResponse added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_PD...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_PD added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_Randomization...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_Randomization added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_SDRGCOMP...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_SDRGCOMP added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_DATACHG...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_DATACHG added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_DATAENT...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_DATAENT added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_Death...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_Death added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_PK...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_PK added successfully
-#> INFO [2026-06-10 20:28:06]  ---- Adding dataset Raw_QUERY...
-#> INFO [2026-06-10 20:28:06]  ---- Dataset Raw_QUERY added successfully
-#> INFO [2026-06-10 20:28:06]  -- Snapshot 1 added successfully
+#> INFO [2026-06-11 20:16:50]  -- Adding snapshot 1...
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_SITE...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_SITE added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_SUBJ...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_SUBJ added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_ENROLL...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_ENROLL added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_VISIT...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_VISIT added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_STUDCOMP...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_STUDCOMP added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_AE...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_AE added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_IE...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_IE added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_LB...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_LB added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_OverallResponse...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_OverallResponse added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_PD...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_PD added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_Randomization...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_Randomization added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_SDRGCOMP...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_SDRGCOMP added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_DATACHG...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_DATACHG added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_DATAENT...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_DATAENT added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_Death...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_Death added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_PK...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_PK added successfully
+#> INFO [2026-06-11 20:16:50]  ---- Adding dataset Raw_QUERY...
+#> INFO [2026-06-11 20:16:50]  ---- Dataset Raw_QUERY added successfully
+#> INFO [2026-06-11 20:16:50]  -- Snapshot 1 added successfully
 #>   site_id enrolled_subjects
 #> 1  0X1980                 6
 #> 2  0X2614                 7
@@ -361,3 +361,72 @@ lConfig <- list(
   )
 )
 ```
+
+## GitHub Actions artifact operations
+
+The built-in `"github_artifact"` providers support the operational cycle
+used in CI:
+
+1.  Load inputs, for example with `LoadData = "gsm.datasim"`.
+2.  Run the workflow steps.
+3.  Save selected `lData` entries with `SaveData = "github_artifact"`.
+4.  Restore the saved artifact in a later run with
+    `LoadData = "github_artifact"`.
+
+The save provider writes a local bundle containing `manifest.yaml` and
+one `.rds` payload file per selected `lData` entry. If the bundle should
+be available to later GitHub Actions jobs, upload the bundle directory
+after
+[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+completes, for example with `actions/upload-artifact`.
+
+``` r
+
+lConfig <- list(
+  LoadData = "gsm.datasim",
+  SaveData = "github_artifact",
+  gsm.datasim = list(
+    profile = "standard",
+    study_type = "standard",
+    snapshot_count = 1
+  ),
+  github_artifact = list(
+    artifact_name = "workr-study-state",
+    include = c("Raw_SUBJ", "dfSUBJ", "result")
+  )
+)
+```
+
+A later run can restore that bundle by naming the repository and either
+an explicit `run_id` or a restore policy:
+
+``` r
+
+lConfig <- list(
+  LoadData = "github_artifact",
+  github_artifact = list(
+    repo = "owner/repo",
+    artifact_name = "workr-study-state",
+    policy = "latest_success"
+  )
+)
+```
+
+Restoring artifacts uses the GitHub Actions API to list workflow runs,
+list artifacts for the selected run, and download the artifact bundle.
+In GitHub Actions, expose a token to R as `GH_TOKEN` or `GITHUB_PAT` and
+grant at least:
+
+``` yaml
+permissions:
+  contents: read
+  actions: read
+```
+
+For fine-grained personal access tokens, grant repository access plus
+**Actions: Read**.
+
+Common restore failures usually point to one of three setup issues: the
+token is missing or lacks `actions: read`, `artifact_name` or `repo`
+points at the wrong artifact, or the uploaded artifact did not contain
+the full bundle directory with `manifest.yaml` at its root.

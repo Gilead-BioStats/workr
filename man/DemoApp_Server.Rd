@@ -11,7 +11,9 @@ DemoApp_Server(lWorkflows, lData, lConfig = NULL)
 
 \item{lData}{\code{list} Initial data list.}
 
-\item{lConfig}{\code{list} Optional configuration hooks passed to workflow runners.}
+\item{lConfig}{\code{list} Optional configuration hooks passed to workflow runners.
+\code{LoadData} may be a function or registered provider name matching the
+\code{\link{RunWorkflow}} hook contract.}
 }
 \value{
 A Shiny server function.

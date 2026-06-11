@@ -18,10 +18,15 @@ should be run.}
 
 \item{lData}{\code{list} A named list of domain-level data frames.}
 
-\item{lConfig}{\code{list} A configuration object with two methods:
+\item{lConfig}{\code{list} Optional configuration object. Supported hook fields:
 \itemize{
-\item \code{LoadData}: A function that loads data specified in \code{lWorkflow$spec}.
-\item \code{SaveData}: A function that saves data returned by the last step in \code{lWorkflow$steps}.
+\item \code{LoadData}: Optional function or registered provider name used before
+spec validation. Functions must accept \code{lWorkflow}, \code{lConfig}, and
+\code{lData} as named formals. {workr} includes a built-in \code{"gsm.datasim"}
+provider that reads adapter settings from \code{lConfig$gsm.datasim}.
+\item \code{SaveData}: Optional function or registered provider name used before
+returning results when \code{bReturnResult = TRUE}. Functions must accept
+\code{lWorkflow} and \code{lConfig} as named formals.
 }}
 
 \item{bReturnResult}{\code{boolean} should \emph{only} the result from the last step

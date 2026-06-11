@@ -19,7 +19,10 @@ shipped with workr.}
 workflows. Defaults to \code{list(value = 2, cars = datasets::cars)}.}
 
 \item{lConfig}{\code{list} Optional configuration hooks passed to workflow runners.
-Defaults to using \code{loadExample()} for \code{LoadData}.}
+Defaults to using \code{loadExample()} for \code{LoadData}. \code{LoadData}
+and \code{SaveData} may be functions or registered provider names; function
+hooks must follow the same named-formal contract documented in
+\code{\link{RunWorkflow}}.}
 }
 \value{
 A \code{shiny.appobj} (called for its side effect of launching the app).

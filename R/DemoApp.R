@@ -13,7 +13,10 @@
 #' @param lData `list` Initial named list of data objects available to
 #'   workflows. Defaults to \code{list(value = 2, cars = datasets::cars)}.
 #' @param lConfig `list` Optional configuration hooks passed to workflow runners.
-#'   Defaults to using \code{loadExample()} for \code{LoadData}.
+#'   Defaults to using \code{loadExample()} for \code{LoadData}. `LoadData`
+#'   and `SaveData` may be functions or registered provider names; function
+#'   hooks must follow the same named-formal contract documented in
+#'   \code{\link{RunWorkflow}}.
 #'
 #' @return A \code{shiny.appobj} (called for its side effect of launching the app).
 #'
@@ -249,6 +252,8 @@ DemoApp_UI <- function(lWorkflows) {
 #' @param lWorkflows `list` Named list of workflows.
 #' @param lData `list` Initial data list.
 #' @param lConfig `list` Optional configuration hooks passed to workflow runners.
+#'   `LoadData` may be a function or registered provider name matching the
+#'   \code{\link{RunWorkflow}} hook contract.
 #'
 #' @return A Shiny server function.
 #'
@@ -259,14 +264,11 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     init_lData <- list()
   }
 
+  fnLoadData <- resolve_config_hook(lConfig, "LoadData")
+
   get_workflow_data <- function(wf) {
-    if (
-      !is.null(lConfig) &&
-      exists("LoadData", lConfig) &&
-      is.function(lConfig$LoadData) &&
-      all(c("lWorkflow", "lConfig", "lData") %in% names(formals(lConfig$LoadData)))
-    ) {
-      return(lConfig$LoadData(lWorkflow = wf, lConfig = lConfig, lData = list()))
+    if (!is.null(fnLoadData)) {
+      return(fnLoadData(lWorkflow = wf, lConfig = lConfig, lData = list()))
     }
     init_lData
   }

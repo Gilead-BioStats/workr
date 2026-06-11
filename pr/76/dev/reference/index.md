@@ -20,6 +20,12 @@ loading examples.
 
 - [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
   **\[stable\]** : Load example data for workflow execution
+- [`gsm_datasim_provider`](https://gilead-biostats.github.io/workr/dev/reference/gsm_datasim_provider.md)
+  **\[experimental\]** : Built-in gsm.datasim load provider
+- [`register_load_provider()`](https://gilead-biostats.github.io/workr/dev/reference/register_load_provider.md)
+  **\[stable\]** : Register a load provider
+- [`register_save_provider()`](https://gilead-biostats.github.io/workr/dev/reference/register_save_provider.md)
+  **\[stable\]** : Register a save provider
 - [`ListWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflows.md)
   **\[stable\]** : List workflow YAML files in a package/directory.
 - [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)

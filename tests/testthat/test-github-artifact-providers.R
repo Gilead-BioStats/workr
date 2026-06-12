@@ -205,6 +205,78 @@ test_that("github_artifact load provider resolves latest_success policy (#61)", 
   expect_equal(resolved_policy, "latest_success")
 })
 
+test_that("github_artifact load provider ignores GITHUB_RUN_ID and honors latest_success in CI (#67)", {
+  # Inside GitHub Actions GITHUB_RUN_ID is always set (to the CURRENT run).
+  # It must not be treated as an explicit run_id on load, or
+  # policy = "latest_success" can never trigger in exactly the environment
+  # the provider targets.
+  withr::local_envvar(c(
+    GITHUB_RUN_ID = "99999",
+    GITHUB_REPOSITORY = "Gilead-BioStats/workr"
+  ))
+
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  bundle_dir <- make_test_dir("load-ci-policy")
+  on.exit(unlink(bundle_dir, recursive = TRUE, force = TRUE), add = TRUE)
+  write_test_artifact_bundle(bundle_dir, list(loaded_val = 21))
+
+  resolver_called <- FALSE
+  result <- suppressMessages(RunWorkflow(
+    lWorkflow = list(
+      meta = list(Type = "demo", ID = "artifact_load_ci"),
+      steps = list(
+        list(name = "identity_step", output = "res", params = list(x = "loaded_val"))
+      )
+    ),
+    lData = list(),
+    lConfig = list(
+      LoadData = "github_artifact",
+      github_artifact = list(
+        policy = "latest_success",
+        run_resolver = function(...) {
+          resolver_called <<- TRUE
+          "24680"
+        },
+        artifact_fetcher = function(...) bundle_dir
+      )
+    )
+  ))
+
+  expect_true(resolver_called)
+  expect_equal(result, 21)
+})
+
+test_that("github_artifact save provider stamps manifest run_id from GITHUB_RUN_ID (#67)", {
+  withr::local_envvar(c(GITHUB_RUN_ID = "55555"))
+
+  assign("identity_step", function(x) x, envir = .GlobalEnv)
+  on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
+
+  output_dir <- make_test_dir("save-env-run-id")
+  on.exit(unlink(output_dir, recursive = TRUE, force = TRUE), add = TRUE)
+
+  suppressMessages(RunWorkflow(
+    lWorkflow = list(
+      meta = list(Type = "demo", ID = "artifact_save_env"),
+      steps = list(
+        list(name = "identity_step", output = "results", params = list(x = "val"))
+      )
+    ),
+    lData = list(val = 1),
+    lConfig = list(
+      SaveData = "github_artifact",
+      github_artifact = list(path = output_dir)
+    )
+  ))
+
+  manifest <- yaml::read_yaml(
+    file.path(output_dir, "workr-artifact_save_env", "manifest.yaml")
+  )
+  expect_equal(manifest$run_id, "55555")
+})
+
 test_that("github_artifact load provider reports required Actions scope on auth failures (#62)", {
   local_mocked_bindings(
     gh = function(...) {

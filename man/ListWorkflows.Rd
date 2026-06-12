@@ -4,7 +4,7 @@
 \alias{ListWorkflows}
 \title{List workflow YAML files in a package/directory.}
 \usage{
-ListWorkflows(strPath = "workflow", strPackage = NULL, bRecursive = TRUE)
+ListWorkflows(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
 }
 \arguments{
 \item{strPath}{\code{character} The location of workflow YAML files, relative to
@@ -27,6 +27,6 @@ to \code{\link[fs:dir_ls]{fs::dir_ls()}}. Use \code{\link[=ListWorkflowNames]{Li
 names, or \code{\link[=MakeWorkflowList]{MakeWorkflowList()}} to load and validate the workflows.
 }
 \examples{
-ListWorkflows(strPath = "workflow", strPackage = "workr")
+ListWorkflows(strPath = "example_workflows", strPackage = "workr")
 
 }

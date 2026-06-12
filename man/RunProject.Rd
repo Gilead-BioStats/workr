@@ -51,7 +51,7 @@ phase. Phases are executed in sorted order (or in the order specified by
 }
 \examples{
 \dontrun{
-results <- RunProject("inst/workflow")
+results <- RunProject("inst/example_workflows")
 }
 
 }

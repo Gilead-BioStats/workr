@@ -119,7 +119,7 @@ test_that("MakeWorkflowList sets default Priority to 0 (#26)", {
 
 test_that("MakeWorkflowList loads from package (#26)", {
   wf_list <- MakeWorkflowList(
-    strPath = "workflow",
+    strPath = "example_workflows",
     strPackage = "workr"
   )
   expect_true(is.list(wf_list))

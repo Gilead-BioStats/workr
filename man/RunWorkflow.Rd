@@ -53,7 +53,7 @@ and metadata (\code{lMapping}). Calls \code{RunStep} for each item in
 \dontrun{
 # Load a simple workflow from YAML
 wf <- yaml::read_yaml(
-  system.file("workflow", "cars.yaml", package = "workr")
+  system.file("example_workflows", "cars.yaml", package = "workr")
 )
 lData <- list(cars = cars)
 

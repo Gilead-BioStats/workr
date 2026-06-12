@@ -7,7 +7,7 @@
 MakeWorkflowList(
   strNames = ListWorkflowNames(strPath = strPath, strPackage = strPackage, bRecursive =
     bRecursive),
-  strPath = "workflow",
+  strPath = "example_workflows",
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
   bRecursive = TRUE,
@@ -46,14 +46,14 @@ Create a list of workflows for use in pipelines.
 \examples{
 # Load all active workflows from a package
 workflow <- MakeWorkflowList(
-  strPath = "workflow",
+  strPath = "example_workflows",
   strPackage = "workr"
 )
 
 # Load a specific workflow by name
 workflow <- MakeWorkflowList(
   strNames = "cars",
-  strPath = "workflow",
+  strPath = "example_workflows",
   strPackage = "workr"
 )
 

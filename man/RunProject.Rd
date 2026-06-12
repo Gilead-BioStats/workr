@@ -107,7 +107,7 @@ execution and receives the project result.
 }
 \examples{
 \dontrun{
-results <- RunProject("inst/workflow")
+results <- RunProject("inst/example_workflows")
 }
 
 }

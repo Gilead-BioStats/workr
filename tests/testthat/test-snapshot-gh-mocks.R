@@ -241,6 +241,19 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution (#4
   expect_equal(out$package, c("gsm.core", "gsm.mapping"))
   expect_equal(resolve_calls[[1]]$ref, "v1.2.3")
   expect_equal(resolve_calls[[2]]$ref, "dev")
+
+  # rproject.toml must pin by commit SHA, not by DESCRIPTION-version tag:
+  # the version string never matches a real git tag (tags carry a `v`
+  # prefix; `.9000` dev versions are untagged), so tag pins break rv sync.
+  toml <- readLines(file.path(tmp, "rproject.toml"))
+  dep_lines <- grep("name = \"gsm\\.", toml, value = TRUE)
+  expect_length(dep_lines, 2)
+  expect_true(all(grepl('commit = "sha-', dep_lines)))
+  expect_false(any(grepl("tag = ", toml)))
+})
+
+test_that("write_rproject_toml is exported for direct consumers (#90)", {
+  expect_true("write_rproject_toml" %in% getNamespaceExports("workr"))
 })
 
 test_that("pull_workflows skips packages with no workflow directory (#45)", {

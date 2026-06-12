@@ -250,7 +250,7 @@ test_that("RunWorkflow accepts lConfig without data hooks (#58)", {
   expect_equal(result, 11)
 })
 
-test_that("RunWorkflow allows LoadData-only and SaveData-only configs (#17)", {
+test_that("RunWorkflow allows LoadData-only and SaveData-only configs (#67)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   on.exit(rm("identity_step", envir = .GlobalEnv), add = TRUE)
 
@@ -462,7 +462,7 @@ test_that("RunWorkflow validates spec when present (#26)", {
     expect_error("Missing required columns")
 })
 
-test_that("RunWorkflow fails when spec-declared input is absent (#9)", {
+test_that("RunWorkflow fails when spec-declared input is absent (#67)", {
   lWorkflow <- list(
     meta = list(Type = "demo", ID = "missing_spec_input"),
     spec = list(
@@ -676,7 +676,7 @@ test_that("RunWorkflows handles empty workflow list (#26)", {
   expect_equal(length(results), 0)
 })
 
-test_that("RunWorkflows continue-on-error records failures and runs later workflows (#11)", {
+test_that("RunWorkflows continue-on-error records failures and runs later workflows (#67)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   assign("fail_step", function(x) stop("boom"), envir = .GlobalEnv)
   on.exit(

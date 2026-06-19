@@ -25,13 +25,12 @@
 #' @param bKeepInputData `boolean` should the input data be included in `lData` after the workflow is run? Only
 #' relevant when bReturnResult is FALSE. Default is `TRUE`.
 #' @param strResultNames `string` vector of length two, which describes the meta fields used to name the output.
-#' @param bContinueOnError `logical` If `TRUE`, workflow errors are recorded
-#'   and later workflows continue to run. The return value is a summary list
-#'   with `results`, `status`, and `failures` elements. Default `FALSE`.
+#' @param bContinueOnError `logical` If `TRUE`, failed workflows are recorded
+#'   and later workflows still run. Default `FALSE`.
 #'
 #' @return A named list of results from `RunWorkflow()`, where the names
 #' correspond to the workflow ID. When `bContinueOnError = TRUE`, returns a
-#' summary list with `results`, `status`, and `failures`.
+#' summary with `results`, `status`, and `failures`.
 #'
 #' @examples
 #' sum_step <- function(x, y) {x + y}

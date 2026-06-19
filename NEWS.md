@@ -1,40 +1,29 @@
 # workr (development version)
 
-* Fortified validation ergonomics for project-scale runs: `RunProject()` and
-  `RunWorkflows()` now support opt-in `bContinueOnError` summaries, spec checks
-  fail before step execution when declared inputs are absent from `lData`, and
-  `RunProject()` supports project-scoped and phase-scoped load/save hooks while
-  preserving existing top-level workflow hooks.
+* Added `bContinueOnError` to `RunProject()` and `RunWorkflows()`, so long runs
+  can keep going after workflow failures and return `results`, `status`, and
+  `failures`.
 
-* Added a `RunProject()` regression matrix (#67): a no-config flat
-  carry-forward backward-compatibility test and a four-phase configured
-  project scenario exercising `from_phases`, `from_results`,
-  `include_workflows`, `extra`, output `transform`, and `wrap_as`.
-  Documented the manifest/build to `RunProject()` runtime handoff and the
-  per-phase `_config.yaml` contract in the README. `RunProject()` remains
-  `experimental` while the new config surface settles.
+* `RunWorkflow()` now checks declared spec inputs before running steps.
 
-* Added per-phase `_config.yaml` support to `RunProject()` (#64, #65, #66):
-  phase folders may declare `input` (`from_phases`, `from_results`,
-  `include_workflows`, `extra`) and `output` (`wrap_as`, `transform`) maps,
-  validated with strict unknown-key errors. `_config.yaml` / `_config.yml`
-  files are excluded from workflow discovery. Phases without a config file
-  keep the existing flat carry-forward behavior.
+* `RunProject()` now supports project-level and phase-level load/save hooks
+  (#67).
 
-* Breaking change for internal callers: `stop_if()` now interpolates its
-  message with `glue::glue()` in the caller's environment. Messages such as
-  `"directory does not exist: {strPath}"` previously printed the braces
-  literally; they now interpolate as intended. Any `stop_if()` message that
-  needs a literal `{` or `}` must escape it as `{{` / `}}`.
+* Added per-phase `_config.yaml` / `_config.yml` files for `RunProject()`
+  (#64, #65, #66). A phase can choose which earlier outputs it receives and
+  can wrap or transform its own output. Projects without config files keep the
+  existing flat carry-forward behavior.
 
-* Stabilized the `RunProject()` baseline contract (#63): `strPath` is now
-  validated to exist *and* be a directory (distinct error messages), the
-  phase-discovery and ordering semantics (alphabetical by default, caller order
-  preserved when `strPhases` is supplied) are documented, and empty phase
-  folders log a warning-level message (via `LogMessage()`, not an R
-  `warning()`) and are skipped rather than erroring. Added unit-test coverage
-  for default ordering, `strPhases` ordering, non-directory `strPath`, and the
-  empty-phase skip path.
+* Internal breaking change: `stop_if()` now interpolates glue-style values in
+  the caller's environment. This fixes messages like
+  `"directory does not exist: {strPath}"` so they show the actual path; callers
+  that need literal braces should escape them as `{{` / `}}`.
+
+* Made `RunProject()` behavior more predictable and easier to diagnose (#63):
+  `strPath` now reports distinct errors when the path is missing or is not a
+  directory, phase ordering is documented, and empty phase folders are skipped
+  with a workflow log message instead of stopping the run. Added unit-test
+  coverage for the updated ordering, validation, and empty-phase behavior.
 
 # workr 1.0.0
 

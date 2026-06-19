@@ -47,7 +47,7 @@ reference:
       - RunStep
       - RunQuery
   - title: "Project Management"
-    desc: "Utilities for managing workflow projects, phase configuration, and loading examples."
+    desc: "Project workflow helpers, phase configuration, and bundled examples."
     contents:
       - loadExample
       - gsm_datasim_provider

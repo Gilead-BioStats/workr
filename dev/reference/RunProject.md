@@ -82,6 +82,6 @@ for that phase.
 
 ``` r
 if (FALSE) { # \dontrun{
-results <- RunProject("inst/workflow")
+results <- RunProject("inst/example_workflows")
 } # }
 ```

@@ -13,7 +13,7 @@ to load and validate the workflows.
 ## Usage
 
 ``` r
-ListWorkflows(strPath = "workflow", strPackage = NULL, bRecursive = TRUE)
+ListWorkflows(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
 ```
 
 ## Arguments
@@ -40,27 +40,27 @@ where names are the bare filenames (e.g. `"cars.yaml"`).
 ## Examples
 
 ``` r
-ListWorkflows(strPath = "workflow", strPackage = "workr")
-#>                                                                                           hello_cars.yaml 
-#>                           "/home/runner/work/_temp/Library/workr/workflow/01_RunWorkflow/hello_cars.yaml" 
-#>                                                                                                 mean.yaml 
-#>                                "/home/runner/work/_temp/Library/workr/workflow/02_RunWorkflows/mean.yaml" 
-#>                                                                                               subset.yaml 
-#>                              "/home/runner/work/_temp/Library/workr/workflow/02_RunWorkflows/subset.yaml" 
-#>                                                                                                   AE.yaml 
-#>                                           "/home/runner/work/_temp/Library/workr/workflow/03_KRI/AE.yaml" 
-#>                                                                                                 SUBJ.yaml 
-#>                                         "/home/runner/work/_temp/Library/workr/workflow/03_KRI/SUBJ.yaml" 
-#>                                                                                              kri0001.yaml 
-#>                                      "/home/runner/work/_temp/Library/workr/workflow/03_KRI/kri0001.yaml" 
-#>                                                                                                   DM.yaml 
-#>                           "/home/runner/work/_temp/Library/workr/workflow/04_Example_RAW_TO_SDTM/DM.yaml" 
-#>                                                                                                   VS.yaml 
-#>                           "/home/runner/work/_temp/Library/workr/workflow/04_Example_RAW_TO_SDTM/VS.yaml" 
-#>                                                                                                 ADVS.yaml 
-#>                        "/home/runner/work/_temp/Library/workr/workflow/05_Example_SDTM_TO_ADAM/ADVS.yaml" 
-#>                                                                                         WorkProduct1.yaml 
-#>                 "/home/runner/work/_temp/Library/workr/workflow/06_Example_ADAM_TO_TFL/WorkProduct1.yaml" 
-#>                                                                         table_mean_arterial_pressure.yaml 
-#> "/home/runner/work/_temp/Library/workr/workflow/07_Example_ADAM_TO_ARS/table_mean_arterial_pressure.yaml" 
+ListWorkflows(strPath = "example_workflows", strPackage = "workr")
+#>                                                                                                    hello_cars.yaml 
+#>                           "/home/runner/work/_temp/Library/workr/example_workflows/01_RunWorkflow/hello_cars.yaml" 
+#>                                                                                                          mean.yaml 
+#>                                "/home/runner/work/_temp/Library/workr/example_workflows/02_RunWorkflows/mean.yaml" 
+#>                                                                                                        subset.yaml 
+#>                              "/home/runner/work/_temp/Library/workr/example_workflows/02_RunWorkflows/subset.yaml" 
+#>                                                                                                            AE.yaml 
+#>                                           "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/AE.yaml" 
+#>                                                                                                          SUBJ.yaml 
+#>                                         "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/SUBJ.yaml" 
+#>                                                                                                       kri0001.yaml 
+#>                                      "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/kri0001.yaml" 
+#>                                                                                                            DM.yaml 
+#>                           "/home/runner/work/_temp/Library/workr/example_workflows/04_Example_RAW_TO_SDTM/DM.yaml" 
+#>                                                                                                            VS.yaml 
+#>                           "/home/runner/work/_temp/Library/workr/example_workflows/04_Example_RAW_TO_SDTM/VS.yaml" 
+#>                                                                                                          ADVS.yaml 
+#>                        "/home/runner/work/_temp/Library/workr/example_workflows/05_Example_SDTM_TO_ADAM/ADVS.yaml" 
+#>                                                                                                  WorkProduct1.yaml 
+#>                 "/home/runner/work/_temp/Library/workr/example_workflows/06_Example_ADAM_TO_TFL/WorkProduct1.yaml" 
+#>                                                                                  table_mean_arterial_pressure.yaml 
+#> "/home/runner/work/_temp/Library/workr/example_workflows/07_Example_ADAM_TO_ARS/table_mean_arterial_pressure.yaml" 
 ```

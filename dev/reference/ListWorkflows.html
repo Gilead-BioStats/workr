@@ -59,7 +59,7 @@ names, or <code><a href="MakeWorkflowList.html">MakeWorkflowList()</a></code> to
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ListWorkflows</span><span class="op">(</span>strPath <span class="op">=</span> <span class="st">"workflow"</span>, strPackage <span class="op">=</span> <span class="cn">NULL</span>, bRecursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ListWorkflows</span><span class="op">(</span>strPath <span class="op">=</span> <span class="st">"example_workflows"</span>, strPackage <span class="op">=</span> <span class="cn">NULL</span>, bRecursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -88,29 +88,29 @@ where names are the bare filenames (e.g. <code>"cars.yaml"</code>).</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ListWorkflows</span><span class="op">(</span>strPath <span class="op">=</span> <span class="st">"workflow"</span>, strPackage <span class="op">=</span> <span class="st">"workr"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                           hello_cars.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/workflow/01_RunWorkflow/hello_cars.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                 mean.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                "/home/runner/work/_temp/Library/workr/workflow/02_RunWorkflows/mean.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                               subset.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                              "/home/runner/work/_temp/Library/workr/workflow/02_RunWorkflows/subset.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                   AE.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                           "/home/runner/work/_temp/Library/workr/workflow/03_KRI/AE.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                 SUBJ.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                         "/home/runner/work/_temp/Library/workr/workflow/03_KRI/SUBJ.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                              kri0001.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                      "/home/runner/work/_temp/Library/workr/workflow/03_KRI/kri0001.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                   DM.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/workflow/04_Example_RAW_TO_SDTM/DM.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                   VS.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/workflow/04_Example_RAW_TO_SDTM/VS.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                 ADVS.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                        "/home/runner/work/_temp/Library/workr/workflow/05_Example_SDTM_TO_ADAM/ADVS.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                         WorkProduct1.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 "/home/runner/work/_temp/Library/workr/workflow/06_Example_ADAM_TO_TFL/WorkProduct1.yaml" </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                         table_mean_arterial_pressure.yaml </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> "/home/runner/work/_temp/Library/workr/workflow/07_Example_ADAM_TO_ARS/table_mean_arterial_pressure.yaml" </span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ListWorkflows</span><span class="op">(</span>strPath <span class="op">=</span> <span class="st">"example_workflows"</span>, strPackage <span class="op">=</span> <span class="st">"workr"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                    hello_cars.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/example_workflows/01_RunWorkflow/hello_cars.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                          mean.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                "/home/runner/work/_temp/Library/workr/example_workflows/02_RunWorkflows/mean.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                        subset.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                              "/home/runner/work/_temp/Library/workr/example_workflows/02_RunWorkflows/subset.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                            AE.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                           "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/AE.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                          SUBJ.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                         "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/SUBJ.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                       kri0001.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                      "/home/runner/work/_temp/Library/workr/example_workflows/03_KRI/kri0001.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                            DM.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/example_workflows/04_Example_RAW_TO_SDTM/DM.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                            VS.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                           "/home/runner/work/_temp/Library/workr/example_workflows/04_Example_RAW_TO_SDTM/VS.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                          ADVS.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                        "/home/runner/work/_temp/Library/workr/example_workflows/05_Example_SDTM_TO_ADAM/ADVS.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                                  WorkProduct1.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 "/home/runner/work/_temp/Library/workr/example_workflows/06_Example_ADAM_TO_TFL/WorkProduct1.yaml" </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                                                  table_mean_arterial_pressure.yaml </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> "/home/runner/work/_temp/Library/workr/example_workflows/07_Example_ADAM_TO_ARS/table_mean_arterial_pressure.yaml" </span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -137,7 +137,11 @@ test_that("RunProject warns on empty phase folder and proceeds (#63)", {
 
   # Build a project with one populated phase and one empty phase
   proj <- tempfile("project_empty_phase_test")
-  dir.create(file.path(proj, "1_populated"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(
+    file.path(proj, "1_populated"),
+    recursive = TRUE,
+    showWarnings = FALSE
+  )
   dir.create(file.path(proj, "2_empty"), recursive = TRUE, showWarnings = FALSE)
   on.exit(unlink(proj, recursive = TRUE), add = TRUE)
 
@@ -186,40 +190,16 @@ test_that("RunProject bReturnResult and bKeepInputData pass through (#26)", {
   expect_true("lData" %in% names(result_false$phase_A[["phase1_add_ten"]]))
 })
 
-write_project_workflow <- function(project_path, phase, id, step_name, output, params = list()) {
-  phase_path <- file.path(project_path, phase)
-  dir.create(phase_path, recursive = TRUE, showWarnings = FALSE)
-
-  workflow <- list(
-    meta = list(Type = "phase", ID = id),
-    steps = list(
-      list(name = step_name, output = output, params = params)
-    )
-  )
-
-  yaml::write_yaml(workflow, file.path(phase_path, paste0(id, ".yaml")))
-}
-
 test_that("RunProject validates per-phase _config.yaml schema (#64)", {
-  project_path <- file.path(tempdir(), "project_config_schema_test")
-  unlink(project_path, recursive = TRUE)
-  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
-
-  write_project_workflow(
+  project_path <- withr::local_tempdir("project_config_schema_test")
+  write_project_workflow(project_path, phase = "1_phase", id = "capture")
+  write_phase_config(
     project_path,
-    phase = "1_phase",
-    id = "capture",
-    step_name = "identity",
-    output = "captured",
-    params = list(x = "value")
-  )
-
-  writeLines(
+    "1_phase",
     c(
       "input:",
       "  unexpected: true"
-    ),
-    file.path(project_path, "1_phase", "_config.yaml")
+    )
   )
 
   expect_error(
@@ -229,25 +209,15 @@ test_that("RunProject validates per-phase _config.yaml schema (#64)", {
 })
 
 test_that("RunProject rejects empty or whitespace-only output config strings (#64)", {
-  project_path <- file.path(tempdir(), "project_config_empty_string_test")
-  unlink(project_path, recursive = TRUE)
-  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
-
-  write_project_workflow(
+  project_path <- withr::local_tempdir("project_config_empty_string_test")
+  write_project_workflow(project_path, phase = "1_phase", id = "capture")
+  write_phase_config(
     project_path,
-    phase = "1_phase",
-    id = "capture",
-    step_name = "identity",
-    output = "captured",
-    params = list(x = "value")
-  )
-
-  writeLines(
+    "1_phase",
     c(
       "output:",
       "  wrap_as: '   '"
-    ),
-    file.path(project_path, "1_phase", "_config.yaml")
+    )
   )
 
   expect_error(
@@ -255,12 +225,13 @@ test_that("RunProject rejects empty or whitespace-only output config strings (#6
     "Phase '1_phase'.*output.wrap_as must be a non-empty string"
   )
 
-  writeLines(
+  write_phase_config(
+    project_path,
+    "1_phase",
     c(
       "output:",
       "  transform: ''"
-    ),
-    file.path(project_path, "1_phase", "_config.yaml")
+    )
   )
 
   expect_error(
@@ -270,48 +241,19 @@ test_that("RunProject rejects empty or whitespace-only output config strings (#6
 })
 
 test_that("RunProject assembles phase input from config rules (#65)", {
-  emit_value <- function(value) value
-  capture_data <- function(lData) lData
-  assign("emit_value", emit_value, envir = globalenv())
-  assign("capture_data", capture_data, envir = globalenv())
-  on.exit(
-    {
-      rm("emit_value", envir = globalenv())
-      rm("capture_data", envir = globalenv())
-    },
-    add = TRUE
-  )
-
-  project_path <- file.path(tempdir(), "project_config_input_test")
-  unlink(project_path, recursive = TRUE)
-  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
-
-  write_project_workflow(
-    project_path,
-    phase = "1_source",
-    id = "p1",
-    step_name = "emit_value",
-    output = "out",
-    params = list(value = "phase1")
-  )
-  write_project_workflow(
-    project_path,
-    phase = "2_source",
-    id = "p2",
-    step_name = "emit_value",
-    output = "out",
-    params = list(value = "phase2")
-  )
+  project_path <- withr::local_tempdir("project_config_input_test")
+  write_project_workflow(project_path, phase = "1_source", id = "p1")
+  write_project_workflow(project_path, phase = "2_source", id = "p2")
   write_project_workflow(
     project_path,
     phase = "3_capture",
     id = "capture",
-    step_name = "capture_data",
-    output = "captured",
-    params = list(lData = "lData")
+    params = list(x = "lData")
   )
 
-  writeLines(
+  write_phase_config(
+    project_path,
+    "3_capture",
     c(
       "input:",
       "  from_phases: [1_source]",
@@ -322,8 +264,7 @@ test_that("RunProject assembles phase input from config rules (#65)", {
       "  extra:",
       "    phase_p1: extra_wins",
       "    literal_date: Sys.Date()"
-    ),
-    file.path(project_path, "3_capture", "_config.yaml")
+    )
   )
 
   result <- RunProject(project_path, lData = list(seed = "initial"))
@@ -332,98 +273,59 @@ test_that("RunProject assembles phase input from config rules (#65)", {
   expect_equal(captured$seed, "initial")
   expect_equal(captured$phase_p1, "extra_wins")
   expect_false("phase_p2" %in% names(captured))
-  expect_equal(captured$aliased_p2$phase_p2, "phase2")
+  expect_equal(captured$aliased_p2$phase_p2, "p2")
   expect_equal(names(captured$lWorkflows), "p2")
   expect_equal(captured$literal_date, "Sys.Date()")
 })
 
 test_that("RunProject wraps and transforms phase output (#66)", {
-  emit_value <- function(value) value
-  capture_data <- function(lData) lData
-  append_suffix <- function(result) {
-    result$phase_p1 <- paste0(result$phase_p1, "_transformed")
-    result
-  }
-  assign("emit_value", emit_value, envir = globalenv())
-  assign("capture_data", capture_data, envir = globalenv())
-  on.exit(
-    {
-      rm("emit_value", envir = globalenv())
-      rm("capture_data", envir = globalenv())
-    },
-    add = TRUE
-  )
-
-  project_path <- file.path(tempdir(), "project_config_output_test")
-  unlink(project_path, recursive = TRUE)
-  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
-
-  write_project_workflow(
-    project_path,
-    phase = "1_source",
-    id = "p1",
-    step_name = "emit_value",
-    output = "out",
-    params = list(value = "phase1")
-  )
+  project_path <- withr::local_tempdir("project_config_output_test")
+  write_project_workflow(project_path, phase = "1_source", id = "p1")
   write_project_workflow(
     project_path,
     phase = "2_capture",
     id = "capture",
-    step_name = "capture_data",
-    output = "captured",
-    params = list(lData = "lData")
+    params = list(x = "lData")
   )
 
-  writeLines(
+  write_phase_config(
+    project_path,
+    "1_source",
     c(
       "output:",
       "  wrap_as: wrapped",
-      "  transform: append_suffix"
-    ),
-    file.path(project_path, "1_source", "_config.yaml")
+      "  transform: base::unlist"
+    )
   )
-  writeLines(
+  write_phase_config(
+    project_path,
+    "2_capture",
     c(
       "input:",
       "  from_phases: [1_source]"
-    ),
-    file.path(project_path, "2_capture", "_config.yaml")
+    )
   )
 
   result <- RunProject(project_path)
   captured <- result$`2_capture`$phase_capture
 
   expect_named(result$`1_source`, "wrapped")
-  expect_equal(captured$wrapped$phase_p1, "phase1_transformed")
+  expect_equal(captured$wrapped, c(phase_p1 = "p1"))
   expect_false("phase_p1" %in% names(captured))
 })
 
 test_that("RunProject transform failures identify the transform reference (#66)", {
-  emit_value <- function(value) value
   bad_transform <- function(result) stop("boom")
-  assign("emit_value", emit_value, envir = globalenv())
-  on.exit(rm("emit_value", envir = globalenv()), add = TRUE)
 
-  project_path <- file.path(tempdir(), "project_config_transform_failure_test")
-  unlink(project_path, recursive = TRUE)
-  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
-
-  write_project_workflow(
+  project_path <- withr::local_tempdir("project_config_transform_failure_test")
+  write_project_workflow(project_path, phase = "1_source", id = "p1")
+  write_phase_config(
     project_path,
-    phase = "1_source",
-    id = "p1",
-    step_name = "emit_value",
-    output = "out",
-    params = list(value = "phase1")
-  )
-
-  writeLines(
+    "1_source",
     c(
       "output:",
       "  transform: bad_transform"
-    ),
-    file.path(project_path, "1_source", "_config.yaml")
+    )
   )
 
   expect_error(

@@ -10,11 +10,22 @@ skip_if_not_repo <- function() {
   )
 }
 
-kri_init <- file.path(repo_root, "inst", "example_workflows", "03_KRI", "initData.R")
+kri_init <- file.path(
+  repo_root,
+  "inst",
+  "example_workflows",
+  "03_KRI",
+  "initData.R"
+)
 
 test_that("03_AEKRI directory does not exist (#34)", {
   skip_if_not_repo()
-  expect_false(dir.exists(file.path(repo_root, "inst", "example_workflows", "03_AEKRI")))
+  expect_false(dir.exists(file.path(
+    repo_root,
+    "inst",
+    "example_workflows",
+    "03_AEKRI"
+  )))
 })
 
 test_that("03_KRI initData.R does not reference gsm.core::lSource (#34)", {
@@ -48,11 +59,14 @@ test_that("03_KRI initData.R returns Raw_SUBJ and Raw_AE (#34)", {
   skip_if_not_repo()
   lines <- readLines(kri_init)
   combined <- paste(lines, collapse = "\n")
-  expect_true(grepl("Raw_SUBJ", combined), info = "Missing Raw_SUBJ in return list")
+  expect_true(
+    grepl("Raw_SUBJ", combined),
+    info = "Missing Raw_SUBJ in return list"
+  )
   expect_true(grepl("Raw_AE", combined), info = "Missing Raw_AE in return list")
 })
 
-test_that("03_KRI RunWorkflows completes without error using initData", {
+test_that("03_KRI RunWorkflows completes without error using initData (#34)", {
   skip_if_not_repo()
   skip_if_not_installed("gsm.core")
 

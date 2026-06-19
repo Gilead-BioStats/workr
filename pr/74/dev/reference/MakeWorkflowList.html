@@ -56,7 +56,7 @@ Create a list of workflows for use in pipelines."><meta name="robots" content="n
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">MakeWorkflowList</span><span class="op">(</span></span>
 <span>  strNames <span class="op">=</span> <span class="fu"><a href="ListWorkflowNames.html">ListWorkflowNames</a></span><span class="op">(</span>strPath <span class="op">=</span> <span class="va">strPath</span>, strPackage <span class="op">=</span> <span class="va">strPackage</span>, bRecursive <span class="op">=</span></span>
 <span>    <span class="va">bRecursive</span><span class="op">)</span>,</span>
-<span>  strPath <span class="op">=</span> <span class="st">"workflow"</span>,</span>
+<span>  strPath <span class="op">=</span> <span class="st">"example_workflows"</span>,</span>
 <span>  strPackage <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bExact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">strNames</span>, <span class="st">"AsIs"</span><span class="op">)</span>,</span>
 <span>  bRecursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -109,14 +109,14 @@ regardless of their <code>Active</code> setting.</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load all active workflows from a package</span></span></span>
 <span class="r-in"><span><span class="va">workflow</span> <span class="op">&lt;-</span> <span class="fu">MakeWorkflowList</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  strPath <span class="op">=</span> <span class="st">"workflow"</span>,</span></span>
+<span class="r-in"><span>  strPath <span class="op">=</span> <span class="st">"example_workflows"</span>,</span></span>
 <span class="r-in"><span>  strPackage <span class="op">=</span> <span class="st">"workr"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Load a specific workflow by name</span></span></span>
 <span class="r-in"><span><span class="va">workflow</span> <span class="op">&lt;-</span> <span class="fu">MakeWorkflowList</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  strNames <span class="op">=</span> <span class="st">"cars"</span>,</span></span>
-<span class="r-in"><span>  strPath <span class="op">=</span> <span class="st">"workflow"</span>,</span></span>
+<span class="r-in"><span>  strPath <span class="op">=</span> <span class="st">"example_workflows"</span>,</span></span>
 <span class="r-in"><span>  strPackage <span class="op">=</span> <span class="st">"workr"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

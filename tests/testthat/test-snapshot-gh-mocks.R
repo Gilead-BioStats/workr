@@ -1,3 +1,38 @@
+test_that("gh_api_client passes .limit only for paginated requests", {
+  calls <- list()
+
+  local_mocked_bindings(
+    gh = function(...) {
+      calls[[length(calls) + 1]] <<- list(...)
+      list()
+    },
+    .package = "gh"
+  )
+
+  expect_equal(
+    workr:::gh_api_client(
+      c("api", "repos/Gilead-BioStats/gsm.core/releases", "--paginate")
+    ),
+    "OK"
+  )
+  expect_identical(
+    calls[[1]][[1]],
+    "GET /repos/Gilead-BioStats/gsm.core/releases"
+  )
+  expect_true(".limit" %in% names(calls[[1]]))
+  expect_identical(calls[[1]]$.limit, Inf)
+
+  expect_equal(
+    workr:::gh_api_client(c("api", "repos/Gilead-BioStats/gsm.core/releases")),
+    "OK"
+  )
+  expect_identical(
+    calls[[2]][[1]],
+    "GET /repos/Gilead-BioStats/gsm.core/releases"
+  )
+  expect_false(".limit" %in% names(calls[[2]]))
+})
+
 test_that("resolve_package resolves explicit refs via mocked gh api (#43)", {
   local_mocked_bindings(
     gh_api_client = function(args) {
@@ -206,6 +241,19 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution (#4
   expect_equal(out$package, c("gsm.core", "gsm.mapping"))
   expect_equal(resolve_calls[[1]]$ref, "v1.2.3")
   expect_equal(resolve_calls[[2]]$ref, "dev")
+
+  # rproject.toml must pin by commit SHA, not by DESCRIPTION-version tag:
+  # the version string never matches a real git tag (tags carry a `v`
+  # prefix; `.9000` dev versions are untagged), so tag pins break rv sync.
+  toml <- readLines(file.path(tmp, "rproject.toml"))
+  dep_lines <- grep("name = \"gsm\\.", toml, value = TRUE)
+  expect_length(dep_lines, 2)
+  expect_true(all(grepl('commit = "sha-', dep_lines)))
+  expect_false(any(grepl("tag = ", toml)))
+})
+
+test_that("write_rproject_toml is exported for direct consumers (#90)", {
+  expect_true("write_rproject_toml" %in% getNamespaceExports("workr"))
 })
 
 test_that("pull_workflows skips packages with no workflow directory (#45)", {

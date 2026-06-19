@@ -1,13 +1,10 @@
 # workr (development version)
 
-* Stabilized the `RunProject()` baseline contract (#63): `strPath` is now
-  validated to exist *and* be a directory (distinct error messages), the
-  phase-discovery and ordering semantics (alphabetical by default, caller order
-  preserved when `strPhases` is supplied) are documented, and empty phase
-  folders log a warning-level message (via `LogMessage()`, not an R
-  `warning()`) and are skipped rather than erroring. Added unit-test coverage
-  for default ordering, `strPhases` ordering, non-directory `strPath`, and the
-  empty-phase skip path.
+* Made `RunProject()` behavior more predictable and easier to diagnose (#63):
+  `strPath` now reports distinct errors when the path is missing or is not a
+  directory, phase ordering is documented, and empty phase folders are skipped
+  with a workflow log message instead of stopping the run. Added unit-test
+  coverage for the updated ordering, validation, and empty-phase behavior.
 
 # workr 1.0.0
 

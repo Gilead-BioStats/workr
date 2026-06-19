@@ -2,19 +2,15 @@
 
 ## workr (development version)
 
-- Stabilized the
+- Made
   [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
-  baseline contract
+  behavior more predictable and easier to diagnose
   ([\#63](https://github.com/Gilead-BioStats/workr/issues/63)):
-  `strPath` is now validated to exist *and* be a directory (distinct
-  error messages), the phase-discovery and ordering semantics
-  (alphabetical by default, caller order preserved when `strPhases` is
-  supplied) are documented, and empty phase folders log a warning-level
-  message (via `LogMessage()`, not an R
-  [`warning()`](https://rdrr.io/r/base/warning.html)) and are skipped
-  rather than erroring. Added unit-test coverage for default ordering,
-  `strPhases` ordering, non-directory `strPath`, and the empty-phase
-  skip path.
+  `strPath` now reports distinct errors when the path is missing or is
+  not a directory, phase ordering is documented, and empty phase folders
+  are skipped with a workflow log message instead of stopping the run.
+  Added unit-test coverage for the updated ordering, validation, and
+  empty-phase behavior.
 
 ## workr 1.0.0
 

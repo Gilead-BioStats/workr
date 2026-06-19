@@ -39,7 +39,7 @@ DemoApp_init <- function(
   }
   if (is.null(lWorkflows)) {
     lWorkflows <- MakeWorkflowList(
-      strPath = "workflow",
+      strPath = "example_workflows",
       strPackage = "workr"
     )
   }

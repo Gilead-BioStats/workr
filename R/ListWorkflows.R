@@ -16,11 +16,11 @@
 #'   where names are the bare filenames (e.g. `"cars.yaml"`).
 #'
 #' @examples
-#' ListWorkflows(strPath = "workflow", strPackage = "workr")
+#' ListWorkflows(strPath = "example_workflows", strPackage = "workr")
 #'
 #' @export
 ListWorkflows <- function(
-  strPath = "workflow",
+  strPath = "example_workflows",
   strPackage = NULL,
   bRecursive = TRUE
 ) {
@@ -45,11 +45,11 @@ ListWorkflows <- function(
 #'   `"AsIs"` so that [MakeWorkflowList()] treats them as exact matches.
 #'
 #' @examples
-#' ListWorkflowNames(strPath = "workflow", strPackage = "workr")
+#' ListWorkflowNames(strPath = "example_workflows", strPackage = "workr")
 #'
 #' @export
 ListWorkflowNames <- function(
-  strPath = "workflow",
+  strPath = "example_workflows",
   strPackage = NULL,
   bRecursive = TRUE
 ) {

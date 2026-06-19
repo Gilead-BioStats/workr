@@ -4,7 +4,7 @@
 \alias{ListWorkflowNames}
 \title{List workflow names in a package/directory.}
 \usage{
-ListWorkflowNames(strPath = "workflow", strPackage = NULL, bRecursive = TRUE)
+ListWorkflowNames(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
 }
 \arguments{
 \item{strPath}{\code{character} The location of workflow YAML files, relative to
@@ -30,6 +30,6 @@ Note: this function only inspects filenames — it does not read the workflow
 files. Active/inactive filtering happens inside \code{\link[=MakeWorkflowList]{MakeWorkflowList()}}.
 }
 \examples{
-ListWorkflowNames(strPath = "workflow", strPackage = "workr")
+ListWorkflowNames(strPath = "example_workflows", strPackage = "workr")
 
 }

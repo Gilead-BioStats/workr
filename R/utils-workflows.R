@@ -10,7 +10,7 @@
 #' @param resolved List of resolved package metadata (each with org, repo, sha).
 #' @param path Character. Output directory.
 pull_workflows <- function(resolved, path) {
-  workflows_dir <- file.path(path, "workflow")
+  workflows_dir <- file.path(path, "workflows")
   seen_files <- new.env(parent = emptyenv())
   if (!dir.exists(workflows_dir)) {
     dir.create(workflows_dir, recursive = TRUE)

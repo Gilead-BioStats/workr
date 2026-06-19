@@ -14,7 +14,7 @@ workflow files. Active/inactive filtering happens inside
 ## Usage
 
 ``` r
-ListWorkflowNames(strPath = "workflow", strPackage = NULL, bRecursive = TRUE)
+ListWorkflowNames(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
 ```
 
 ## Arguments
@@ -43,7 +43,7 @@ treats them as exact matches.
 ## Examples
 
 ``` r
-ListWorkflowNames(strPath = "workflow", strPackage = "workr")
+ListWorkflowNames(strPath = "example_workflows", strPackage = "workr")
 #>  [1] "hello_cars"                   "mean"                        
 #>  [3] "subset"                       "AE"                          
 #>  [5] "SUBJ"                         "kri0001"                     

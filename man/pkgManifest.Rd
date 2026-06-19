@@ -4,7 +4,12 @@
 \alias{pkgManifest}
 \title{Create a Package Manifest}
 \usage{
-pkgManifest(path = ".", packageList = character(), date = NULL, branch = NULL)
+pkgManifest(
+  path = ".",
+  packageList = character(),
+  date = NULL,
+  branch = NULL
+)
 }
 \arguments{
 \item{path}{Character. Path to save the manifest output. Default: "."}

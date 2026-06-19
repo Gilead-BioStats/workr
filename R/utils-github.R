@@ -69,10 +69,14 @@ gh_api_client <- function(args) {
   jq <- if (!is.na(jq_idx) && jq_idx < length(args)) args[jq_idx + 1] else NULL
 
   response <- tryCatch(
-    gh::gh(
-      paste0("GET /", endpoint),
-      .limit = if (paginate) Inf else 1
-    ),
+    if (paginate) {
+      gh::gh(
+        paste0("GET /", endpoint),
+        .limit = Inf
+      )
+    } else {
+      gh::gh(paste0("GET /", endpoint))
+    },
     error = function(e) {
       msg <- conditionMessage(e)
       if (grepl("404|not found", msg, ignore.case = TRUE)) {

@@ -1,5 +1,5 @@
 test_that(".workflow_path resolves package path (#53)", {
-  path <- .workflow_path("workflow", "workr")
+  path <- .workflow_path("example_workflows", "workr")
   expect_true(dir.exists(path))
   expect_true(grepl("workr", path, fixed = TRUE))
 })
@@ -30,7 +30,7 @@ test_that("ListWorkflows returns named character vector of yaml paths (#53)", {
 })
 
 test_that("ListWorkflows resolves strPackage (#53)", {
-  result <- ListWorkflows(strPath = "workflow", strPackage = "workr")
+  result <- ListWorkflows(strPath = "example_workflows", strPackage = "workr")
   expect_type(result, "character")
   expect_true(length(result) > 0)
   expect_true(all(file.exists(result)))
@@ -72,7 +72,7 @@ test_that("ListWorkflowNames includes all workflows regardless of Active (#53)",
 })
 
 test_that("ListWorkflowNames resolves strPackage (#53)", {
-  result <- ListWorkflowNames(strPath = "workflow", strPackage = "workr")
+  result <- ListWorkflowNames(strPath = "example_workflows", strPackage = "workr")
   expect_type(result, "character")
   expect_true(length(result) > 0)
 })

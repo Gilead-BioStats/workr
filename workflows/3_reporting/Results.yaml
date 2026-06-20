@@ -3,6 +3,7 @@ meta:
   ID: Results
   Description: Reporting Results Data
   Priority: 1
+  Active: true
 spec:
   Mapped_STUDY:
     GroupID:

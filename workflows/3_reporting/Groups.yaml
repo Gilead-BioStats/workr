@@ -3,6 +3,7 @@ meta:
   ID: Groups
   Description: Reporting Groups Data
   Priority: 1
+  Active: true
 spec:
   Mapped_STUDY:
     _all:

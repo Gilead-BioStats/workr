@@ -70,17 +70,16 @@ RunWorkflows(
 
 - bContinueOnError:
 
-  `logical` If `TRUE`, workflow errors are recorded and later workflows
-  continue to run. The return value is a summary list with `results`,
-  `status`, and `failures` elements. Default `FALSE`.
+  `logical` If `TRUE`, failed workflows are recorded and later workflows
+  still run. Default `FALSE`.
 
 ## Value
 
 A named list of results from
 [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
 where the names correspond to the workflow ID. When
-`bContinueOnError = TRUE`, returns a summary list with `results`,
-`status`, and `failures`.
+`bContinueOnError = TRUE`, returns a summary with `results`, `status`,
+and `failures`.
 
 ## Examples
 

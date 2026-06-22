@@ -199,7 +199,7 @@
 <h3 id="workrrunproject-calls-multiple-sets-of-workflows">
 <code>workr::RunProject</code> calls multiple sets of workflows<a class="anchor" aria-label="anchor" href="#workrrunproject-calls-multiple-sets-of-workflows"></a>
 </h3>
-<p>Last but not least, sometimes you want to chain multiple calls of <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. <code><a href="reference/RunProject.html">workr::RunProject()</a></code> calls <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code> for every sub-directory (phase) in a given project directory. By default, phase outputs carry forward as a flat named list, preserving the original project behavior for folders without configuration files.</p>
+<p>Use <code><a href="reference/RunProject.html">workr::RunProject()</a></code> when a project is split into phases. Each immediate subdirectory is one phase, and each phase is run with <code><a href="reference/RunWorkflows.html">workr::RunWorkflows()</a></code>. Without config files, each phase’s outputs are carried forward to the next phase as a flat named list.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Project directory structure:</span></span>
 <span><span class="co"># project/</span></span>
@@ -223,15 +223,15 @@
 <code>bReturnResult</code> / <code>bKeepInputData</code> — passed through to <code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code>
 </li>
 <li>
-<code>bContinueOnError</code> — collect per-workflow failures and continue validation runs</li>
+<code>bContinueOnError</code> — record workflow failures and keep running</li>
 <li>
 <code>bRecursive</code> — passed through to <code><a href="reference/MakeWorkflowList.html">MakeWorkflowList()</a></code>
 </li>
 </ul>
 <p>Phases are sorted alphabetically by default (use numeric prefixes like <code>01_</code>, <code>02_</code> to control order).</p>
-<p><code>lConfig</code> hooks can be scoped when a project needs different load/save behavior at different boundaries. Top-level <code>LoadData</code> and <code>SaveData</code> still apply to every workflow. <code>lConfig$phases[["phase_name"]]</code> applies hooks to one phase, while <code>lConfig$project$LoadData</code> and <code>lConfig$project$SaveData</code> run once before and after the full project.</p>
-<p>For reproducible package snapshots, the project directory is also the handoff between manifest generation and runtime execution: <code><a href="reference/pkgManifest.html">pkgManifest()</a></code> or the reusable manifest workflow creates <code>manifest.csv</code>, <code>rproject.toml</code>, and a <code>workflows/</code> directory; <code><a href="reference/RunProject.html">RunProject()</a></code> then treats that <code>workflows/</code> directory as the runnable project.</p>
-<p>Phase folders can include an optional <code>_config.yaml</code> file to make that runtime handoff explicit. The <code>input</code> block controls which prior phase outputs are visible, whether workflow definitions are injected as <code>lData$lWorkflows</code>, and which static values are merged last. The <code>output</code> block can wrap a phase result under a named key or apply a phase-boundary transform.</p>
+<p><code>lConfig</code> can also control load/save hooks at different levels. Top-level <code>LoadData</code> and <code>SaveData</code> apply to every phase. <code>lConfig$phases[["phase_name"]]</code> applies hooks to one phase, and <code>lConfig$project$LoadData</code> or <code>lConfig$project$SaveData</code> runs once before or after the full project.</p>
+<p>For snapshot branches, the manifest step usually creates <code>manifest.csv</code>, <code>rproject.toml</code>, and a <code>workflows/</code> directory. Pass that <code>workflows/</code> directory to <code><a href="reference/RunProject.html">RunProject()</a></code>.</p>
+<p>Phase folders can include <code>_config.yaml</code> when the default carry-forward behavior is too broad. Use <code>input</code> to choose what the phase receives, and <code>output</code> to shape what later phases see.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># workflows/3_reporting/_config.yaml</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="fu">input</span><span class="kw">:</span></span>
 <span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="at">  </span><span class="fu">from_phases</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">1_mappings</span><span class="kw">]</span></span>
@@ -244,7 +244,7 @@
 <span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="fu">output</span><span class="kw">:</span></span>
 <span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="at">  </span><span class="fu">wrap_as</span><span class="kw">:</span><span class="at"> lReports</span></span>
 <span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a><span class="at">  </span><span class="fu">transform</span><span class="kw">:</span><span class="at"> </span><span class="ch">null</span></span></code></pre></div>
-<p>This lets a manifest-produced <code>workflows/</code> bundle remain declarative while still supporting realistic phase handoff patterns such as mapped data flowing into metrics, analyzed metrics flowing into reporting, and reporting outputs flowing into modules.</p>
+<p>In this example, reporting receives mapping data, metrics results as <code>lAnalyzed</code>, the metrics workflow definitions, and a snapshot date. The reporting output is stored as <code>lReports</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="workrmanifest--reproducible-package-environments">

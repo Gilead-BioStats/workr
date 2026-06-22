@@ -41,10 +41,10 @@ RunProject(
 
   `list` Configuration hooks passed to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
-  Default `NULL`. When `lConfig$phases` is a named list, entries
-  matching a phase name are used only for that phase. When
-  `lConfig$project` contains `LoadData` or `SaveData` functions, they
-  run once at the project boundary.
+  Default `NULL`. Top-level hooks are passed to
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  for every phase. Use `lConfig$phases` for phase-specific hooks and
+  `lConfig$project` for hooks that run once for the whole project.
 
 - strPhases:
 
@@ -79,21 +79,20 @@ RunProject(
 
   `logical` Passed to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
-  If `TRUE`, workflow failures are recorded and the project continues to
-  later workflows/phases. The return value is a summary list with
-  `results`, `status`, and `failures` elements. Default `FALSE`.
+  If `TRUE`, failed workflows are recorded and later workflows/phases
+  still run. Default `FALSE`.
 
 ## Value
 
 A named list with one element per phase. Each element contains the
 result returned by
 [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
-for that phase. When `bContinueOnError = TRUE`, returns a summary list
-with `results`, `status`, and `failures`.
+for that phase. When `bContinueOnError = TRUE`, returns a summary with
+`results`, `status`, and `failures`.
 
 ## Details
 
-Phase-discovery and ordering contract:
+Phase folders and order:
 
 - `strPath` must exist and be a directory; otherwise execution stops.
 
@@ -103,47 +102,32 @@ Phase-discovery and ordering contract:
 - When `strPhases` is supplied, phases run in the exact order given
   (caller order is preserved, not re-sorted).
 
-- A `strPhases` entry that does not exist on disk is a fatal error.
+- A `strPhases` entry that does not exist on disk stops execution.
 
-- A phase folder that contains no workflow YAMLs logs a warning-level
-  message (via `LogMessage()`, not an R
-  [`warning()`](https://rdrr.io/r/base/warning.html)) and is skipped;
-  execution proceeds with the remaining phases.
+- A phase folder that contains no workflow YAMLs is skipped with a
+  workflow log message; execution proceeds with the remaining phases.
 
-Per-phase `_config.yaml` files may define `input` and `output` maps. The
-`input` map accepts `from_phases`, `from_results`, `include_workflows`,
-and `extra`. The `output` map accepts `wrap_as` and `transform`. Unknown
-keys are fatal errors. Without `_config.yaml`, phases retain the default
-carry-forward behavior: all prior phase outputs are available to the
-next phase.
+Per-phase `_config.yaml` files may define `input` and `output` maps.
+Unknown keys stop execution. Without `_config.yaml`, all prior phase
+outputs are available to the next phase.
 
-`input.from_phases` is a character vector of prior phase folder names to
-merge into `lData`; by default all prior phases are included.
-`input.from_results` is a named map of `target_name: source_phase` that
-adds a prior phase result under a target key. `input.include_workflows`
-may be `true` to add the current phase workflow list as
-`lData$lWorkflows`, or `{from_phase: <name>}` to add a prior phase
-workflow list. `input.extra` is a static named map merged last, so it
-takes precedence over prior phase data. String values in `extra` are
-passed literally.
+Use `input.from_phases` or `input.from_results` to select earlier phase
+data, `input.include_workflows` to pass workflow definitions, and
+`input.extra` for static values. Use `output.wrap_as` to store a phase
+result under one name or `output.transform` to apply a function before
+later phases use the result.
 
-`output.wrap_as` wraps the phase result under one named key before
-downstream input assembly. `output.transform` may name a function
-resolved from the calling environment; the function receives the phase
-result and its return value replaces that result. Transform errors fail
-the phase and identify the transform reference.
+Load/save hooks:
 
-Hook scoping contract:
+- Put `LoadData` or `SaveData` at the top level of `lConfig` to use it
+  for every phase.
 
-- Top-level `lConfig$LoadData` and `lConfig$SaveData` retain the
-  existing behavior and are forwarded to every workflow.
+- Put hooks under `lConfig$phases[[phase_name]]` to use them only for
+  that phase. Phase hooks override top-level hooks with the same name.
 
-- `lConfig$phases[[phase_name]]` may define workflow hooks that apply
-  only to that phase.
-
-- `lConfig$project$LoadData` runs once before phase execution and must
-  return an `lData` list. `lConfig$project$SaveData` runs once after
-  project execution and receives the project result.
+- Put `LoadData` or `SaveData` under `lConfig$project` to run once
+  before or after the whole project. Project `LoadData` must return an
+  `lData` list; project `SaveData` receives the project result.
 
 ## Examples
 

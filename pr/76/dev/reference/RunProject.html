@@ -93,9 +93,9 @@ more subdirectories, each holding workflow YAML files.</p></dd>
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
 <dd><p><code>list</code> Configuration hooks passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>.
-Default <code>NULL</code>. When <code>lConfig$phases</code> is a named list, entries matching a
-phase name are used only for that phase. When <code>lConfig$project</code> contains
-<code>LoadData</code> or <code>SaveData</code> functions, they run once at the project boundary.</p></dd>
+Default <code>NULL</code>. Top-level hooks are passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for every
+phase. Use <code>lConfig$phases</code> for phase-specific hooks and <code>lConfig$project</code>
+for hooks that run once for the whole project.</p></dd>
 
 
 <dt id="arg-strphases">strPhases<a class="anchor" aria-label="anchor" href="#arg-strphases"></a></dt>
@@ -122,54 +122,41 @@ phase name are used only for that phase. When <code>lConfig$project</code> conta
 
 <dt id="arg-bcontinueonerror">bContinueOnError<a class="anchor" aria-label="anchor" href="#arg-bcontinueonerror"></a></dt>
 <dd><p><code>logical</code> Passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>. If <code>TRUE</code>,
-workflow failures are recorded and the project continues to later
-workflows/phases. The return value is a summary list with <code>results</code>,
-<code>status</code>, and <code>failures</code> elements. Default <code>FALSE</code>.</p></dd>
+failed workflows are recorded and later workflows/phases still run.
+Default <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list with one element per phase. Each element contains the
 result returned by <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase. When
-<code>bContinueOnError = TRUE</code>, returns a summary list with <code>results</code>, <code>status</code>,
+<code>bContinueOnError = TRUE</code>, returns a summary with <code>results</code>, <code>status</code>,
 and <code>failures</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Phase-discovery and ordering contract:</p><ul><li><p><code>strPath</code> must exist and be a directory; otherwise execution stops.</p></li>
+    <p>Phase folders and order:</p><ul><li><p><code>strPath</code> must exist and be a directory; otherwise execution stops.</p></li>
 <li><p>By default phases are the immediate subdirectories of <code>strPath</code>, executed
 in alphabetical order.</p></li>
 <li><p>When <code>strPhases</code> is supplied, phases run in the exact order given (caller
 order is preserved, not re-sorted).</p></li>
-<li><p>A <code>strPhases</code> entry that does not exist on disk is a fatal error.</p></li>
-<li><p>A phase folder that contains no workflow YAMLs logs a warning-level
-message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and is skipped;
-execution proceeds with the remaining phases.</p></li>
-</ul><p>Per-phase <code>_config.yaml</code> files may define <code>input</code> and <code>output</code> maps. The
-<code>input</code> map accepts <code>from_phases</code>, <code>from_results</code>, <code>include_workflows</code>, and
-<code>extra</code>. The <code>output</code> map accepts <code>wrap_as</code> and <code>transform</code>. Unknown keys are
-fatal errors. Without <code>_config.yaml</code>, phases retain the default carry-forward
-behavior: all prior phase outputs are available to the next phase.</p>
-<p><code>input.from_phases</code> is a character vector of prior phase folder names to
-merge into <code>lData</code>; by default all prior phases are included.
-<code>input.from_results</code> is a named map of <code>target_name: source_phase</code> that adds
-a prior phase result under a target key. <code>input.include_workflows</code> may be
-<code>true</code> to add the current phase workflow list as <code>lData$lWorkflows</code>, or
-<code>{from_phase: &lt;name&gt;}</code> to add a prior phase workflow list. <code>input.extra</code> is a
-static named map merged last, so it takes precedence over prior phase data.
-String values in <code>extra</code> are passed literally.</p>
-<p><code>output.wrap_as</code> wraps the phase result under one named key before downstream
-input assembly. <code>output.transform</code> may name a function resolved from the
-calling environment; the function receives the phase result and its return
-value replaces that result. Transform errors fail the phase and identify the
-transform reference.</p>
-<p>Hook scoping contract:</p><ul><li><p>Top-level <code>lConfig$LoadData</code> and <code>lConfig$SaveData</code> retain the existing
-behavior and are forwarded to every workflow.</p></li>
-<li><p><code>lConfig$phases[[phase_name]]</code> may define workflow hooks that apply only
-to that phase.</p></li>
-<li><p><code>lConfig$project$LoadData</code> runs once before phase execution and must
-return an <code>lData</code> list. <code>lConfig$project$SaveData</code> runs once after project
-execution and receives the project result.</p></li>
+<li><p>A <code>strPhases</code> entry that does not exist on disk stops execution.</p></li>
+<li><p>A phase folder that contains no workflow YAMLs is skipped with a workflow
+log message; execution proceeds with the remaining phases.</p></li>
+</ul><p>Per-phase <code>_config.yaml</code> files may define <code>input</code> and <code>output</code> maps. Unknown
+keys stop execution. Without <code>_config.yaml</code>, all prior phase outputs are
+available to the next phase.</p>
+<p>Use <code>input.from_phases</code> or <code>input.from_results</code> to select earlier phase data,
+<code>input.include_workflows</code> to pass workflow definitions, and <code>input.extra</code> for
+static values. Use <code>output.wrap_as</code> to store a phase result under one name or
+<code>output.transform</code> to apply a function before later phases use the result.</p>
+<p>Load/save hooks:</p><ul><li><p>Put <code>LoadData</code> or <code>SaveData</code> at the top level of <code>lConfig</code> to use it for
+every phase.</p></li>
+<li><p>Put hooks under <code>lConfig$phases[[phase_name]]</code> to use them only for that
+phase. Phase hooks override top-level hooks with the same name.</p></li>
+<li><p>Put <code>LoadData</code> or <code>SaveData</code> under <code>lConfig$project</code> to run once before or
+after the whole project. Project <code>LoadData</code> must return an <code>lData</code> list;
+project <code>SaveData</code> receives the project result.</p></li>
 </ul></div>
 
     <div class="section level2">

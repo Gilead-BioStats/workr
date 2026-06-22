@@ -23,9 +23,10 @@ more subdirectories, each holding workflow YAML files.}
 \item{lData}{\code{list} Initial named list of data objects. Default \code{NULL}.}
 
 \item{lConfig}{\code{list} Configuration hooks passed to \code{RunWorkflows()}.
-Default \code{NULL}. Top-level hooks are passed to \code{RunWorkflows()} for every
-phase. Use \code{lConfig$phases} for phase-specific hooks and \code{lConfig$project}
-for hooks that run once for the whole project.}
+Default \code{NULL}. Top-level \code{LoadData} and \code{SaveData} hooks are passed
+through to \code{RunWorkflows()} for each phase and run for each workflow in that
+phase. Use \code{lConfig$phases} for phase-specific workflow hooks and
+\code{lConfig$project} for hooks that run once for the whole project.}
 
 \item{strPhases}{\code{character} Optional vector of phase folder names to run. If
 \code{NULL} (the default), all sorted subdirectories of \code{strPath} are used.}
@@ -83,8 +84,9 @@ static values. Use \code{output.wrap_as} to store a phase result under one name 
 
 Load/save hooks:
 \itemize{
-\item Put \code{LoadData} or \code{SaveData} at the top level of \code{lConfig} to use it for
-every phase.
+\item Put \code{LoadData} or \code{SaveData} at the top level of \code{lConfig} to pass those
+hooks to \code{RunWorkflows()} for each phase. \code{RunWorkflows()} then applies
+them to each workflow in that phase.
 \item Put hooks under \code{lConfig$phases[[phase_name]]} to use them only for that
 phase. Phase hooks override top-level hooks with the same name.
 \item Put \code{LoadData} or \code{SaveData} under \code{lConfig$project} to run once before or

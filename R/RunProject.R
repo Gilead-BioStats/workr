@@ -32,8 +32,9 @@
 #'
 #' Load/save hooks:
 #'
-#' * Put `LoadData` or `SaveData` at the top level of `lConfig` to use it for
-#'   every phase.
+#' * Put `LoadData` or `SaveData` at the top level of `lConfig` to pass those
+#'   hooks to `RunWorkflows()` for each phase. `RunWorkflows()` then applies
+#'   them to each workflow in that phase.
 #' * Put hooks under `lConfig$phases[[phase_name]]` to use them only for that
 #'   phase. Phase hooks override top-level hooks with the same name.
 #' * Put `LoadData` or `SaveData` under `lConfig$project` to run once before or
@@ -43,9 +44,11 @@
 #' @param strPath `character` Path to the project directory. Must contain one or
 #'   more subdirectories, each holding workflow YAML files.
 #' @param lData `list` Initial named list of data objects. Default `NULL`.
-#' @param lConfig `list` Configuration hooks. Top-level hooks are passed to
-#'   `RunWorkflows()` for every phase. Use `lConfig$phases` for phase-specific
-#'   hooks and `lConfig$project` for hooks that run once for the whole project.
+#' @param lConfig `list` Configuration hooks. Top-level `LoadData` and
+#'   `SaveData` hooks are passed through to `RunWorkflows()` for each phase and
+#'   run for each workflow in that phase. Use `lConfig$phases` for
+#'   phase-specific workflow hooks and `lConfig$project` for hooks that run once
+#'   for the whole project.
 #' @param strPhases `character` Optional vector of phase folder names to run. If
 #'   `NULL` (the default), all sorted subdirectories of `strPath` are used.
 #' @param bRecursive `logical` Passed to `MakeWorkflowList()`. Default `FALSE`.

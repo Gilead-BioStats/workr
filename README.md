@@ -191,7 +191,7 @@ Key options:
 
 Phases are sorted alphabetically by default (use numeric prefixes like `01_`, `02_` to control order).
 
-`lConfig` can also control load/save hooks at different levels. Top-level `LoadData` and `SaveData` apply to every phase. `lConfig$phases[["phase_name"]]` applies hooks to one phase, and `lConfig$project$LoadData` or `lConfig$project$SaveData` runs once before or after the full project.
+`lConfig` can also control load/save hooks at different levels. Top-level `LoadData` and `SaveData` are passed to `RunWorkflows()` for each phase, so they run for each workflow in that phase. `lConfig$phases[["phase_name"]]` applies hooks to one phase, and `lConfig$project$LoadData` or `lConfig$project$SaveData` runs once before or after the full project.
 
 For snapshot branches, the manifest step usually creates `manifest.csv`, `rproject.toml`, and a `workflows/` directory. Pass that `workflows/` directory to `RunProject()`.
 

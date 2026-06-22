@@ -80,7 +80,9 @@ RunProject(
   `logical` Passed to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
   If `TRUE`, failed workflows are recorded and later workflows/phases
-  still run. Default `FALSE`.
+  still run. Default `FALSE` retains the existing fail-fast behavior
+  from
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
 
 ## Value
 

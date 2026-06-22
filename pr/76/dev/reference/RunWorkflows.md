@@ -71,7 +71,7 @@ RunWorkflows(
 - bContinueOnError:
 
   `logical` If `TRUE`, failed workflows are recorded and later workflows
-  still run. Default `FALSE`.
+  still run. Default `FALSE` retains the existing fail-fast behavior.
 
 ## Value
 

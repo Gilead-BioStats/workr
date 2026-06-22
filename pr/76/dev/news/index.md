@@ -7,7 +7,8 @@
   and
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md),
   so long runs can keep going after workflow failures and return
-  `results`, `status`, and `failures`.
+  `results`, `status`, and `failures`. The default keeps the existing
+  fail-fast behavior.
 
 - [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
   now checks declared spec inputs before running steps.

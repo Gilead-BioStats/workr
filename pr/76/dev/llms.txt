@@ -233,7 +233,9 @@ Key options:
 - `strPhases` — run a subset of phases, or control their order
 - `bReturnResult` / `bKeepInputData` — passed through to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
-- `bContinueOnError` — record workflow failures and keep running
+- `bContinueOnError` — record workflow failures and keep running; the
+  default keeps the existing fail-fast behavior from
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
 - `bRecursive` — passed through to
   [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
 

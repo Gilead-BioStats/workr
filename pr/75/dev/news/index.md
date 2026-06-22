@@ -7,11 +7,9 @@
   ([\#64](https://github.com/Gilead-BioStats/workr/issues/64),
   [\#65](https://github.com/Gilead-BioStats/workr/issues/65),
   [\#66](https://github.com/Gilead-BioStats/workr/issues/66)). A phase
-  can now choose which earlier phase data, results, workflows, and extra
-  values it receives, then optionally wrap or transform its output
-  before later phases use it. Config files are validated with clear
-  errors and ignored during workflow discovery. Projects without config
-  files keep the existing flat carry-forward behavior.
+  can choose which earlier outputs it receives and can wrap or transform
+  its own output. Projects without config files keep the existing flat
+  carry-forward behavior.
 
 - Internal breaking change: `stop_if()` now interpolates glue-style
   values in the caller’s environment. This fixes messages like

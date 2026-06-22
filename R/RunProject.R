@@ -55,7 +55,8 @@
 #'   `RunWorkflows()`. Default `c("Type", "ID")`.
 #' @param bContinueOnError `logical` Passed to `RunWorkflows()`. If `TRUE`,
 #'   failed workflows are recorded and later workflows/phases still run.
-#'   Default `FALSE`.
+#'   Default `FALSE` retains the existing fail-fast behavior from
+#'   `RunWorkflows()`.
 #'
 #' @return A named list with one element per phase. Each element contains the
 #'   result returned by `RunWorkflows()` for that phase. When

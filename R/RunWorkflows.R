@@ -26,7 +26,8 @@
 #' relevant when bReturnResult is FALSE. Default is `TRUE`.
 #' @param strResultNames `string` vector of length two, which describes the meta fields used to name the output.
 #' @param bContinueOnError `logical` If `TRUE`, failed workflows are recorded
-#'   and later workflows still run. Default `FALSE`.
+#'   and later workflows still run. Default `FALSE` retains the existing
+#'   fail-fast behavior.
 #'
 #' @return A named list of results from `RunWorkflow()`, where the names
 #' correspond to the workflow ID. When `bContinueOnError = TRUE`, returns a

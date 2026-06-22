@@ -41,7 +41,8 @@ for hooks that run once for the whole project.}
 
 \item{bContinueOnError}{\code{logical} Passed to \code{RunWorkflows()}. If \code{TRUE},
 failed workflows are recorded and later workflows/phases still run.
-Default \code{FALSE}.}
+Default \code{FALSE} retains the existing fail-fast behavior from
+\code{RunWorkflows()}.}
 }
 \value{
 A named list with one element per phase. Each element contains the

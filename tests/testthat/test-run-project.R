@@ -584,6 +584,53 @@ test_that("RunProject continue-on-error returns project failure summary (#11)", 
   expect_equal(result$results$`2_capture`$results$phase_capture$seed, "initial")
 })
 
+test_that("RunProject retains fail-fast behavior by default (#67)", {
+  fail_value <- function(value) stop("phase boom")
+  capture_ran <- FALSE
+  capture_data <- function(lData) {
+    capture_ran <<- TRUE
+    lData
+  }
+  assign("fail_value", fail_value, envir = globalenv())
+  assign("capture_data", capture_data, envir = globalenv())
+  on.exit(
+    {
+      rm("fail_value", envir = globalenv())
+      rm("capture_data", envir = globalenv())
+    },
+    add = TRUE
+  )
+
+  project_path <- file.path(tempdir(), "project_fail_fast_test")
+  unlink(project_path, recursive = TRUE)
+  on.exit(unlink(project_path, recursive = TRUE), add = TRUE)
+
+  write_project_workflow(
+    project_path,
+    phase = "1_failing_source",
+    id = "bad",
+    step_name = "fail_value",
+    output = "out",
+    params = list(value = "seed")
+  )
+  write_project_workflow(
+    project_path,
+    phase = "2_capture",
+    id = "capture",
+    step_name = "capture_data",
+    output = "captured",
+    params = list(lData = "lData")
+  )
+
+  suppressMessages({
+    expect_error(
+      RunProject(project_path, lData = list(seed = "initial")),
+      "phase boom"
+    )
+  })
+  expect_false(capture_ran)
+})
+
 test_that("RunProject supports phase-scoped and project-scoped hooks (#17)", {
   capture_data <- function(lData) lData
   assign("capture_data", capture_data, envir = globalenv())

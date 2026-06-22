@@ -676,6 +676,42 @@ test_that("RunWorkflows handles empty workflow list (#26)", {
   expect_equal(length(results), 0)
 })
 
+test_that("RunWorkflows retains fail-fast behavior by default (#67)", {
+  assign("fail_step", function(x) stop("boom"), envir = .GlobalEnv)
+  after_ran <- FALSE
+  assign("after_step", function(x) {
+    after_ran <<- TRUE
+    x
+  }, envir = .GlobalEnv)
+  on.exit(
+    {
+      rm("fail_step", envir = .GlobalEnv)
+      rm("after_step", envir = .GlobalEnv)
+    },
+    add = TRUE
+  )
+
+  lWorkflows <- list(
+    list(
+      meta = list(Type = "demo", ID = "bad"),
+      steps = list(
+        list(name = "fail_step", output = "res", params = list(x = "val"))
+      )
+    ),
+    list(
+      meta = list(Type = "demo", ID = "after"),
+      steps = list(
+        list(name = "after_step", output = "res", params = list(x = "val"))
+      )
+    )
+  )
+
+  suppressMessages({
+    expect_error(RunWorkflows(lWorkflows, list(val = 1)), "boom")
+  })
+  expect_false(after_ran)
+})
+
 test_that("RunWorkflows continue-on-error records failures and runs later workflows (#67)", {
   assign("identity_step", function(x) x, envir = .GlobalEnv)
   assign("fail_step", function(x) stop("boom"), envir = .GlobalEnv)

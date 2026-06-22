@@ -40,7 +40,8 @@ the full workflow (including \code{lResults}) is returned. Default is \code{TRUE
 \item{strResultNames}{\code{string} vector of length two, which describes the meta fields used to name the output.}
 
 \item{bContinueOnError}{\code{logical} If \code{TRUE}, failed workflows are recorded
-and later workflows still run. Default \code{FALSE}.}
+and later workflows still run. Default \code{FALSE} retains the existing
+fail-fast behavior.}
 }
 \value{
 A named list of results from \code{RunWorkflow()}, where the names

@@ -2,7 +2,7 @@
 
 * Added `bContinueOnError` to `RunProject()` and `RunWorkflows()`, so long runs
   can keep going after workflow failures and return `results`, `status`, and
-  `failures`.
+  `failures`. The default keeps the existing fail-fast behavior.
 
 * `RunWorkflow()` now checks declared spec inputs before running steps.
 

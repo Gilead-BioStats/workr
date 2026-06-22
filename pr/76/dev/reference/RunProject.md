@@ -41,9 +41,11 @@ RunProject(
 
   `list` Configuration hooks passed to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
-  Default `NULL`. Top-level hooks are passed to
+  Default `NULL`. Top-level `LoadData` and `SaveData` hooks are passed
+  through to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
-  for every phase. Use `lConfig$phases` for phase-specific hooks and
+  for each phase and run for each workflow in that phase. Use
+  `lConfig$phases` for phase-specific workflow hooks and
   `lConfig$project` for hooks that run once for the whole project.
 
 - strPhases:
@@ -121,8 +123,12 @@ later phases use the result.
 
 Load/save hooks:
 
-- Put `LoadData` or `SaveData` at the top level of `lConfig` to use it
-  for every phase.
+- Put `LoadData` or `SaveData` at the top level of `lConfig` to pass
+  those hooks to
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  for each phase.
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  then applies them to each workflow in that phase.
 
 - Put hooks under `lConfig$phases[[phase_name]]` to use them only for
   that phase. Phase hooks override top-level hooks with the same name.

@@ -230,7 +230,7 @@
 </li>
 </ul>
 <p>Phases are sorted alphabetically by default (use numeric prefixes like <code>01_</code>, <code>02_</code> to control order).</p>
-<p><code>lConfig</code> can also control load/save hooks at different levels. Top-level <code>LoadData</code> and <code>SaveData</code> apply to every phase. <code>lConfig$phases[["phase_name"]]</code> applies hooks to one phase, and <code>lConfig$project$LoadData</code> or <code>lConfig$project$SaveData</code> runs once before or after the full project.</p>
+<p><code>lConfig</code> can also control load/save hooks at different levels. Top-level <code>LoadData</code> and <code>SaveData</code> are passed to <code><a href="reference/RunWorkflows.html">RunWorkflows()</a></code> for each phase, so they run for each workflow in that phase. <code>lConfig$phases[["phase_name"]]</code> applies hooks to one phase, and <code>lConfig$project$LoadData</code> or <code>lConfig$project$SaveData</code> runs once before or after the full project.</p>
 <p>For snapshot branches, the manifest step usually creates <code>manifest.csv</code>, <code>rproject.toml</code>, and a <code>workflows/</code> directory. Pass that <code>workflows/</code> directory to <code><a href="reference/RunProject.html">RunProject()</a></code>.</p>
 <p>Phase folders can include <code>_config.yaml</code> when the default carry-forward behavior is too broad. Use <code>input</code> to choose what the phase receives, and <code>output</code> to shape what later phases see.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># workflows/3_reporting/_config.yaml</span></span>

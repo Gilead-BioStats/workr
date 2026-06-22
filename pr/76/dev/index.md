@@ -243,7 +243,9 @@ Phases are sorted alphabetically by default (use numeric prefixes like
 `01_`, `02_` to control order).
 
 `lConfig` can also control load/save hooks at different levels.
-Top-level `LoadData` and `SaveData` apply to every phase.
+Top-level `LoadData` and `SaveData` are passed to
+[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+for each phase, so they run for each workflow in that phase.
 `lConfig$phases[["phase_name"]]` applies hooks to one phase, and
 `lConfig$project$LoadData` or `lConfig$project$SaveData` runs once
 before or after the full project.

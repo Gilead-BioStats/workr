@@ -93,9 +93,10 @@ more subdirectories, each holding workflow YAML files.</p></dd>
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
 <dd><p><code>list</code> Configuration hooks passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>.
-Default <code>NULL</code>. Top-level hooks are passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for every
-phase. Use <code>lConfig$phases</code> for phase-specific hooks and <code>lConfig$project</code>
-for hooks that run once for the whole project.</p></dd>
+Default <code>NULL</code>. Top-level <code>LoadData</code> and <code>SaveData</code> hooks are passed
+through to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for each phase and run for each workflow in that
+phase. Use <code>lConfig$phases</code> for phase-specific workflow hooks and
+<code>lConfig$project</code> for hooks that run once for the whole project.</p></dd>
 
 
 <dt id="arg-strphases">strPhases<a class="anchor" aria-label="anchor" href="#arg-strphases"></a></dt>
@@ -151,8 +152,9 @@ available to the next phase.</p>
 <code>input.include_workflows</code> to pass workflow definitions, and <code>input.extra</code> for
 static values. Use <code>output.wrap_as</code> to store a phase result under one name or
 <code>output.transform</code> to apply a function before later phases use the result.</p>
-<p>Load/save hooks:</p><ul><li><p>Put <code>LoadData</code> or <code>SaveData</code> at the top level of <code>lConfig</code> to use it for
-every phase.</p></li>
+<p>Load/save hooks:</p><ul><li><p>Put <code>LoadData</code> or <code>SaveData</code> at the top level of <code>lConfig</code> to pass those
+hooks to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for each phase. <code><a href="RunWorkflows.html">RunWorkflows()</a></code> then applies
+them to each workflow in that phase.</p></li>
 <li><p>Put hooks under <code>lConfig$phases[[phase_name]]</code> to use them only for that
 phase. Phase hooks override top-level hooks with the same name.</p></li>
 <li><p>Put <code>LoadData</code> or <code>SaveData</code> under <code>lConfig$project</code> to run once before or

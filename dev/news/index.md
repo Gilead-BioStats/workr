@@ -1,5 +1,17 @@
 # Changelog
 
+## workr (development version)
+
+- Made
+  [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  behavior more predictable and easier to diagnose
+  ([\#63](https://github.com/Gilead-BioStats/workr/issues/63)):
+  `strPath` now reports distinct errors when the path is missing or is
+  not a directory, phase ordering is documented, and empty phase folders
+  are skipped with a workflow log message instead of stopping the run.
+  Added unit-test coverage for the updated ordering, validation, and
+  empty-phase behavior.
+
 ## workr 1.0.0
 
 ### Initial Release

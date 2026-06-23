@@ -78,6 +78,25 @@ result returned by
 [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
 for that phase.
 
+## Details
+
+Phase-discovery and ordering contract:
+
+- `strPath` must exist and be a directory; otherwise execution stops.
+
+- By default phases are the immediate subdirectories of `strPath`,
+  executed in alphabetical order.
+
+- When `strPhases` is supplied, phases run in the exact order given
+  (caller order is preserved, not re-sorted).
+
+- A `strPhases` entry that does not exist on disk is a fatal error.
+
+- A phase folder that contains no workflow YAMLs logs a warning-level
+  message (via `LogMessage()`, not an R
+  [`warning()`](https://rdrr.io/r/base/warning.html)) and is skipped;
+  execution proceeds with the remaining phases.
+
 ## Examples
 
 ``` r

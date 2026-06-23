@@ -122,6 +122,18 @@ Default <code>NULL</code>.</p></dd>
     <p>A named list with one element per phase. Each element contains the
 result returned by <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase.</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>Phase-discovery and ordering contract:</p><ul><li><p><code>strPath</code> must exist and be a directory; otherwise execution stops.</p></li>
+<li><p>By default phases are the immediate subdirectories of <code>strPath</code>, executed
+in alphabetical order.</p></li>
+<li><p>When <code>strPhases</code> is supplied, phases run in the exact order given (caller
+order is preserved, not re-sorted).</p></li>
+<li><p>A <code>strPhases</code> entry that does not exist on disk is a fatal error.</p></li>
+<li><p>A phase folder that contains no workflow YAMLs logs a warning-level
+message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and is skipped;
+execution proceeds with the remaining phases.</p></li>
+</ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

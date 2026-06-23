@@ -95,6 +95,69 @@ test_that("RunProject errors on empty project directory (#26)", {
     expect_error("No phase folders")
 })
 
+test_that("RunProject discovers phases in alphabetical order by default (#63)", {
+  sum_step <- function(lData, y) lData$value + y
+  assign("sum_step", sum_step, envir = globalenv())
+  on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
+
+  result <- RunProject(
+    strPath = test_path("project_ordered"),
+    lData = list(value = 5)
+  )
+
+  # Folders 3_x, 1_y, 2_z on disk -> alphabetical discovery: 1_y, 2_z, 3_x
+  expect_named(result, c("1_y", "2_z", "3_x"))
+})
+
+test_that("RunProject runs strPhases in caller order, not sorted (#63)", {
+  sum_step <- function(lData, y) lData$value + y
+  assign("sum_step", sum_step, envir = globalenv())
+  on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
+
+  result <- RunProject(
+    strPath = test_path("project_ordered"),
+    lData = list(value = 5),
+    strPhases = c("3_x", "1_y", "2_z")
+  )
+
+  expect_named(result, c("3_x", "1_y", "2_z"))
+})
+
+test_that("RunProject errors when strPath is not a directory (#63)", {
+  expect_error(
+    RunProject(strPath = test_path("project_ordered", "1_y", "y_step.yaml")),
+    "not a directory"
+  )
+})
+
+test_that("RunProject warns on empty phase folder and proceeds (#63)", {
+  sum_step <- function(lData, y) lData$value + y
+  assign("sum_step", sum_step, envir = globalenv())
+  on.exit(rm("sum_step", envir = globalenv()), add = TRUE)
+
+  # Build a project with one populated phase and one empty phase
+  proj <- tempfile("project_empty_phase_test")
+  dir.create(file.path(proj, "1_populated"), recursive = TRUE, showWarnings = FALSE)
+  dir.create(file.path(proj, "2_empty"), recursive = TRUE, showWarnings = FALSE)
+  on.exit(unlink(proj, recursive = TRUE), add = TRUE)
+
+  file.copy(
+    test_path("project_ordered", "1_y", "y_step.yaml"),
+    file.path(proj, "1_populated", "y_step.yaml")
+  )
+
+  # Assign inside expect_message(): it returns the matched condition, not the
+  # value of the expression, so capture RunProject()'s result via assignment.
+  result <- NULL
+  expect_message(
+    result <- RunProject(strPath = proj, lData = list(value = 5)),
+    "no workflows"
+  )
+
+  # Empty phase is skipped (warning, not error); populated phase still runs
+  expect_named(result, "1_populated")
+})
+
 test_that("RunProject bReturnResult and bKeepInputData pass through (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())

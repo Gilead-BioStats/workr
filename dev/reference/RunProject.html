@@ -133,7 +133,25 @@ order is preserved, not re-sorted).</p></li>
 <li><p>A phase folder that contains no workflow YAMLs logs a warning-level
 message (via <code>LogMessage()</code>, not an R <code><a href="https://rdrr.io/r/base/warning.html" class="external-link">warning()</a></code>) and is skipped;
 execution proceeds with the remaining phases.</p></li>
-</ul></div>
+</ul><p>Per-phase <code>_config.yaml</code> files may define <code>input</code> and <code>output</code> maps. The
+<code>input</code> map accepts <code>from_phases</code>, <code>from_results</code>, <code>include_workflows</code>, and
+<code>extra</code>. The <code>output</code> map accepts <code>wrap_as</code> and <code>transform</code>. Unknown keys are
+fatal errors. Without <code>_config.yaml</code>, phases retain the default carry-forward
+behavior: all prior phase outputs are available to the next phase.</p>
+<p><code>input.from_phases</code> is a character vector of prior phase folder names to
+merge into <code>lData</code>; by default all prior phases are included.
+<code>input.from_results</code> is a named map of <code>target_name: source_phase</code> that adds
+a prior phase result under a target key. <code>input.include_workflows</code> may be
+<code>true</code> to add the current phase workflow list as <code>lData$lWorkflows</code>, or
+<code>{from_phase: &lt;name&gt;}</code> to add a prior phase workflow list. <code>input.extra</code> is a
+static named map merged last, so it takes precedence over prior phase data.
+String values in <code>extra</code> are passed literally.</p>
+<p><code>output.wrap_as</code> wraps the phase result under one named key before downstream
+input assembly. <code>output.transform</code> may name a function resolved from the
+calling environment; the function receives the phase result and its return
+value replaces that result. Transform errors fail the phase and identify the
+transform reference.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>

@@ -97,6 +97,29 @@ Phase-discovery and ordering contract:
   [`warning()`](https://rdrr.io/r/base/warning.html)) and is skipped;
   execution proceeds with the remaining phases.
 
+Per-phase `_config.yaml` files may define `input` and `output` maps. The
+`input` map accepts `from_phases`, `from_results`, `include_workflows`,
+and `extra`. The `output` map accepts `wrap_as` and `transform`. Unknown
+keys are fatal errors. Without `_config.yaml`, phases retain the default
+carry-forward behavior: all prior phase outputs are available to the
+next phase.
+
+`input.from_phases` is a character vector of prior phase folder names to
+merge into `lData`; by default all prior phases are included.
+`input.from_results` is a named map of `target_name: source_phase` that
+adds a prior phase result under a target key. `input.include_workflows`
+may be `true` to add the current phase workflow list as
+`lData$lWorkflows`, or `{from_phase: <name>}` to add a prior phase
+workflow list. `input.extra` is a static named map merged last, so it
+takes precedence over prior phase data. String values in `extra` are
+passed literally.
+
+`output.wrap_as` wraps the phase result under one named key before
+downstream input assembly. `output.transform` may name a function
+resolved from the calling environment; the function receives the phase
+result and its return value replaces that result. Transform errors fail
+the phase and identify the transform reference.
+
 ## Examples
 
 ``` r

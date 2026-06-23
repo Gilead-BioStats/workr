@@ -96,7 +96,7 @@ CheckSpec <- function(lData, lSpec) {
 #' @noRd
 stop_if <- function(cnd, message) {
   if (isTRUE(cnd)) {
-    stop(message, call. = FALSE)
+    stop(glue::glue(message, .envir = parent.frame()), call. = FALSE)
   }
   invisible(TRUE)
 }

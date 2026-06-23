@@ -84,6 +84,7 @@ ListWorkflowNames <- function(
     full.names = TRUE,
     recursive = bRecursive
   )
+  yaml_files <- yaml_files[!basename(yaml_files) %in% c("_config.yaml", "_config.yml")]
   names(yaml_files) <- basename(yaml_files)
   yaml_files
 }

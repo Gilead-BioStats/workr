@@ -62,6 +62,27 @@ order is preserved, not re-sorted).
 message (via \code{LogMessage()}, not an R \code{warning()}) and is skipped;
 execution proceeds with the remaining phases.
 }
+
+Per-phase \code{_config.yaml} files may define \code{input} and \code{output} maps. The
+\code{input} map accepts \code{from_phases}, \code{from_results}, \code{include_workflows}, and
+\code{extra}. The \code{output} map accepts \code{wrap_as} and \code{transform}. Unknown keys are
+fatal errors. Without \code{_config.yaml}, phases retain the default carry-forward
+behavior: all prior phase outputs are available to the next phase.
+
+\code{input.from_phases} is a character vector of prior phase folder names to
+merge into \code{lData}; by default all prior phases are included.
+\code{input.from_results} is a named map of \code{target_name: source_phase} that adds
+a prior phase result under a target key. \code{input.include_workflows} may be
+\code{true} to add the current phase workflow list as \code{lData$lWorkflows}, or
+\code{{from_phase: <name>}} to add a prior phase workflow list. \code{input.extra} is a
+static named map merged last, so it takes precedence over prior phase data.
+String values in \code{extra} are passed literally.
+
+\code{output.wrap_as} wraps the phase result under one named key before downstream
+input assembly. \code{output.transform} may name a function resolved from the
+calling environment; the function receives the phase result and its return
+value replaces that result. Transform errors fail the phase and identify the
+transform reference.
 }
 \examples{
 \dontrun{

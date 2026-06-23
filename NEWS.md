@@ -1,5 +1,15 @@
 # workr (development version)
 
+* Added per-phase `_config.yaml` / `_config.yml` files for `RunProject()`
+  (#64, #65, #66). A phase can choose which earlier outputs it receives and
+  can wrap or transform its own output. Projects without config files keep the
+  existing flat carry-forward behavior.
+
+* Internal breaking change: `stop_if()` now interpolates glue-style values in
+  the caller's environment. This fixes messages like
+  `"directory does not exist: {strPath}"` so they show the actual path; callers
+  that need literal braces should escape them as `{{` / `}}`.
+
 * Made `RunProject()` behavior more predictable and easier to diagnose (#63):
   `strPath` now reports distinct errors when the path is missing or is not a
   directory, phase ordering is documented, and empty phase folders are skipped

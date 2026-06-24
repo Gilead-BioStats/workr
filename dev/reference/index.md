@@ -15,7 +15,7 @@ Core functions for running workflows and individual steps.
 
 ## Project Management
 
-Utilities for managing workflow projects and loading examples.
+Project workflow helpers, phase configuration, and bundled examples.
 
 - [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
   **\[stable\]** : Load example data for workflow execution

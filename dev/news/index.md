@@ -2,6 +2,21 @@
 
 ## workr (development version)
 
+- Added `bContinueOnError` to
+  [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  and
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md),
+  so long runs can keep going after workflow failures and return
+  `results`, `status`, and `failures`. The default keeps the existing
+  fail-fast behavior.
+
+- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+  now checks declared spec inputs before running steps.
+
+- [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
+  now supports project-level and phase-level load/save hooks
+  ([\#67](https://github.com/Gilead-BioStats/workr/issues/67)).
+
 - Added per-phase `_config.yaml` / `_config.yml` files for
   [`RunProject()`](https://gilead-biostats.github.io/workr/dev/reference/RunProject.md)
   ([\#64](https://github.com/Gilead-BioStats/workr/issues/64),

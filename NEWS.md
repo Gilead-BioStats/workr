@@ -1,5 +1,14 @@
 # workr (development version)
 
+* Added `bContinueOnError` to `RunProject()` and `RunWorkflows()`, so long runs
+  can keep going after workflow failures and return `results`, `status`, and
+  `failures`. The default keeps the existing fail-fast behavior.
+
+* `RunWorkflow()` now checks declared spec inputs before running steps.
+
+* `RunProject()` now supports project-level and phase-level load/save hooks
+  (#67).
+
 * Added per-phase `_config.yaml` / `_config.yml` files for `RunProject()`
   (#64, #65, #66). A phase can choose which earlier outputs it receives and
   can wrap or transform its own output. Projects without config files keep the

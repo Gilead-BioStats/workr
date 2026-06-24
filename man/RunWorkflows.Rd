@@ -10,7 +10,8 @@ RunWorkflows(
   lConfig = NULL,
   bKeepInputData = FALSE,
   bReturnResult = TRUE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 }
 \arguments{
@@ -37,10 +38,15 @@ relevant when bReturnResult is FALSE. Default is \code{TRUE}.}
 the full workflow (including \code{lResults}) is returned. Default is \code{TRUE}.}
 
 \item{strResultNames}{\code{string} vector of length two, which describes the meta fields used to name the output.}
+
+\item{bContinueOnError}{\code{logical} If \code{TRUE}, failed workflows are recorded
+and later workflows still run. Default \code{FALSE} retains the existing
+fail-fast behavior.}
 }
 \value{
-A named list of results from \code{RunWorkflow()}, where the names correspond to the names of
-the workflow ID
+A named list of results from \code{RunWorkflow()}, where the names
+correspond to the workflow ID. When \code{bContinueOnError = TRUE}, returns a
+summary with \code{results}, \code{status}, and \code{failures}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#stable}{\figure{lifecycle-stable.svg}{options: alt='[Stable]'}}}{\strong{[Stable]}}

@@ -37,8 +37,11 @@ github_artifact_config <- function(lConfig, lWorkflow = NULL) {
       "GITHUB_REPOSITORY",
       unset = ""
     ))
-  cfg$run_id <- normalize_github_artifact_scalar(cfg$run_id) %||%
-    normalize_github_artifact_scalar(Sys.getenv("GITHUB_RUN_ID", unset = ""))
+  # Only a user-supplied run_id is kept here. Defaulting from GITHUB_RUN_ID
+  # (the CURRENT run) made the load provider treat every in-Actions run as
+  # `policy = "explicit"`, so `latest_success` could never trigger in CI.
+  # The save provider stamps the current run id into the manifest itself.
+  cfg$run_id <- normalize_github_artifact_scalar(cfg$run_id)
   cfg$policy <- normalize_github_artifact_scalar(cfg$policy)
   cfg$on_missing <- normalize_github_artifact_scalar(cfg$on_missing) %||%
     "fatal"
@@ -249,22 +252,46 @@ github_artifact_resolve_run_id <- function(cfg, lWorkflow, lConfig) {
     )
   }
 
+  # Artifact-presence-aware resolution: walk recent successful runs (newest
+  # first), skip the current run, and return the first run that actually
+  # carries the named artifact. The latest successful run of *any* workflow
+  # may not hold it (different workflow, expired artifact, or the current
+  # run itself on re-runs), which would turn `on_missing` into a false
+  # negative for consumers that do have prior history.
   parts <- github_artifact_repo_parts(cfg$repo)
+  current_run <- normalize_github_artifact_scalar(
+    Sys.getenv("GITHUB_RUN_ID", unset = "")
+  )
   response <- gh_actions_api(
     "GET /repos/{owner}/{repo}/actions/runs",
     owner = parts$owner,
     repo = parts$repo,
     status = "success",
-    per_page = 1,
+    per_page = 30,
     operation = "listing successful workflow runs"
   )
 
   runs <- response$workflow_runs %||% list()
-  if (length(runs) == 0) {
-    stop("No successful workflow runs found.", call. = FALSE)
+  for (run in runs) {
+    run_id <- as.character(run$id)
+    if (identical(run_id, current_run)) {
+      next
+    }
+    artifact <- tryCatch(
+      gh_actions_find_artifact(cfg$repo, run_id, cfg$artifact_name),
+      error = function(e) NULL
+    )
+    if (!is.null(artifact)) {
+      return(run_id)
+    }
   }
 
-  as.character(runs[[1]]$id)
+  stop(
+    glue::glue(
+      "No successful workflow run carries artifact `{cfg$artifact_name %||% '<first>'}`."
+    ),
+    call. = FALSE
+  )
 }
 
 github_artifact_save_provider <- function(lWorkflow, lConfig) {
@@ -292,7 +319,9 @@ github_artifact_save_provider <- function(lWorkflow, lConfig) {
   manifest <- list(
     provider = "github_artifact",
     artifact_name = cfg$artifact_name,
-    run_id = cfg$run_id,
+    # The producing run id: user-supplied, else the current Actions run.
+    run_id = cfg$run_id %||%
+      normalize_github_artifact_scalar(Sys.getenv("GITHUB_RUN_ID", unset = "")),
     workflow_id = lWorkflow$meta$ID %||% NULL,
     retention_days = cfg$retention_days %||% NULL,
     entries = entries

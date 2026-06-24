@@ -12,7 +12,8 @@ RunProject(
   bRecursive = FALSE,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 }
 \arguments{
@@ -21,8 +22,12 @@ more subdirectories, each holding workflow YAML files.}
 
 \item{lData}{\code{list} Initial named list of data objects. Default \code{NULL}.}
 
-\item{lConfig}{\code{list} Configuration hooks passed to \code{RunWorkflows()}.
-Default \code{NULL}.}
+\item{lConfig}{\code{list} Runtime configuration hooks. Top-level \code{LoadData} and
+\code{SaveData} hooks are passed through to \code{RunWorkflows()} for each phase and
+run for each workflow in that phase. Use \code{lConfig$phases} for
+phase-specific workflow hooks and \code{lConfig$project} for hooks that run once
+for the whole project. Phase handoff settings such as \code{input.from_phases}
+belong in per-phase \verb{_config.yaml} files, not in \code{lConfig$phases}.}
 
 \item{strPhases}{\code{character} Optional vector of phase folder names to run. If
 \code{NULL} (the default), all sorted subdirectories of \code{strPath} are used.}
@@ -35,10 +40,17 @@ Default \code{NULL}.}
 
 \item{strResultNames}{\code{character} Vector of length two passed to
 \code{RunWorkflows()}. Default \code{c("Type", "ID")}.}
+
+\item{bContinueOnError}{\code{logical} Passed to \code{RunWorkflows()}. If \code{TRUE},
+failed workflows are recorded and later workflows/phases still run.
+Default \code{FALSE} retains the existing fail-fast behavior from
+\code{RunWorkflows()}.}
 }
 \value{
 A named list with one element per phase. Each element contains the
-result returned by \code{RunWorkflows()} for that phase.
+result returned by \code{RunWorkflows()} for that phase. When
+\code{bContinueOnError = TRUE}, returns a summary with \code{results}, \code{status}, and
+\code{failures}.
 }
 \description{
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
@@ -50,39 +62,43 @@ phase. Phases are executed in sorted order (or in the order specified by
 \code{MakeWorkflowList()} and run via \code{RunWorkflows()}.
 }
 \details{
-Phase-discovery and ordering contract:
+Phase folders and order:
 \itemize{
 \item \code{strPath} must exist and be a directory; otherwise execution stops.
 \item By default phases are the immediate subdirectories of \code{strPath}, executed
 in alphabetical order.
 \item When \code{strPhases} is supplied, phases run in the exact order given (caller
 order is preserved, not re-sorted).
-\item A \code{strPhases} entry that does not exist on disk is a fatal error.
-\item A phase folder that contains no workflow YAMLs logs a warning-level
-message (via \code{LogMessage()}, not an R \code{warning()}) and is skipped;
-execution proceeds with the remaining phases.
+\item A \code{strPhases} entry that does not exist on disk stops execution.
+\item A phase folder that contains no workflow YAMLs is skipped with a workflow
+log message; execution proceeds with the remaining phases.
 }
 
-Per-phase \code{_config.yaml} files may define \code{input} and \code{output} maps. The
-\code{input} map accepts \code{from_phases}, \code{from_results}, \code{include_workflows}, and
-\code{extra}. The \code{output} map accepts \code{wrap_as} and \code{transform}. Unknown keys are
-fatal errors. Without \code{_config.yaml}, phases retain the default carry-forward
-behavior: all prior phase outputs are available to the next phase.
+Per-phase \verb{_config.yaml} files may define \code{input} and \code{output} maps. Unknown
+keys stop execution. Without \verb{_config.yaml}, all prior phase outputs are
+available to the next phase.
 
-\code{input.from_phases} is a character vector of prior phase folder names to
-merge into \code{lData}; by default all prior phases are included.
-\code{input.from_results} is a named map of \code{target_name: source_phase} that adds
-a prior phase result under a target key. \code{input.include_workflows} may be
-\code{true} to add the current phase workflow list as \code{lData$lWorkflows}, or
-\code{{from_phase: <name>}} to add a prior phase workflow list. \code{input.extra} is a
-static named map merged last, so it takes precedence over prior phase data.
-String values in \code{extra} are passed literally.
+Think of \verb{_config.yaml} and \code{lConfig$phases} as two phase-scoped settings at
+different layers. \verb{_config.yaml} is project orchestration config: use
+\code{input.from_phases} or \code{input.from_results} to select earlier phase data,
+\code{input.include_workflows} to pass workflow definitions, and \code{input.extra} for
+static values. Use \code{output.wrap_as} to store a phase result under one name or
+\code{output.transform} to apply a function before later phases use the result.
+\code{lConfig$phases[[phase_name]]} is workflow runtime config: it is merged into
+the \code{lConfig} passed to \code{RunWorkflows()} for that phase, so use it for
+phase-specific hooks such as \code{LoadData} and \code{SaveData}.
 
-\code{output.wrap_as} wraps the phase result under one named key before downstream
-input assembly. \code{output.transform} may name a function resolved from the
-calling environment; the function receives the phase result and its return
-value replaces that result. Transform errors fail the phase and identify the
-transform reference.
+Load/save hooks:
+\itemize{
+\item Put \code{LoadData} or \code{SaveData} at the top level of \code{lConfig} to pass those
+hooks to \code{RunWorkflows()} for each phase. \code{RunWorkflows()} then applies
+them to each workflow in that phase.
+\item Put hooks under \code{lConfig$phases[[phase_name]]} to use them only for that
+phase. Phase hooks override top-level hooks with the same name.
+\item Put \code{LoadData} or \code{SaveData} under \code{lConfig$project} to run once before or
+after the whole project. Project \code{LoadData} must return an \code{lData} list;
+project \code{SaveData} receives the project result.
+}
 }
 \examples{
 \dontrun{

@@ -25,9 +25,13 @@
 #' @param bKeepInputData `boolean` should the input data be included in `lData` after the workflow is run? Only
 #' relevant when bReturnResult is FALSE. Default is `TRUE`.
 #' @param strResultNames `string` vector of length two, which describes the meta fields used to name the output.
+#' @param bContinueOnError `logical` If `TRUE`, failed workflows are recorded
+#'   and later workflows still run. Default `FALSE` retains the existing
+#'   fail-fast behavior.
 #'
-#' @return A named list of results from `RunWorkflow()`, where the names correspond to the names of
-#' the workflow ID
+#' @return A named list of results from `RunWorkflow()`, where the names
+#' correspond to the workflow ID. When `bContinueOnError = TRUE`, returns a
+#' summary with `results`, `status`, and `failures`.
 #'
 #' @examples
 #' sum_step <- function(x, y) {x + y}
@@ -50,8 +54,14 @@ RunWorkflows <- function(
   lConfig = NULL,
   bKeepInputData = FALSE,
   bReturnResult = TRUE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 ) {
+  stop_if(
+    !is.logical(bContinueOnError) || length(bContinueOnError) != 1 || is.na(bContinueOnError),
+    "[ bContinueOnError ] must be TRUE or FALSE."
+  )
+
   LogMessage(
     level = "info",
     message = "Running {length(lWorkflows)} Workflows",
@@ -59,20 +69,103 @@ RunWorkflows <- function(
   )
 
   lResults <- list()
-  for (wf in lWorkflows) {
-    lResult <- RunWorkflow(
-      lWorkflow = wf,
-      lData = c(lResults, lData),
-      lConfig = lConfig,
-      bReturnResult = bReturnResult,
-      bKeepInputData = bKeepInputData
-    )
+  status <- .workflow_status_frame()
+  for (workflow in lWorkflows) {
+    resultName <- .workflow_result_name(workflow, strResultNames)
 
-    resultName <- purrr::map(strResultNames, function(name) wf$meta[[name]])
-    resultName <- paste0(resultName, collapse = "_")
+    run_workflow <- function() {
+      RunWorkflow(
+        lWorkflow = workflow,
+        lData = c(lResults, lData),
+        lConfig = lConfig,
+        bReturnResult = bReturnResult,
+        bKeepInputData = bKeepInputData
+      )
+    }
+
+    if (isTRUE(bContinueOnError)) {
+      lResult <- tryCatch(run_workflow(), error = function(err) err)
+      if (inherits(lResult, "error")) {
+        err_message <- conditionMessage(lResult)
+        LogMessage(
+          level = "error",
+          message = "Workflow '{resultName}' failed: {err_message}"
+        )
+        status <- .append_workflow_status(status, resultName, "error", err_message)
+        next
+      }
+
+      status <- .append_workflow_status(status, resultName, "success")
+    } else {
+      lResult <- run_workflow()
+    }
 
     lResults[[resultName]] <- lResult
   }
 
+  if (isTRUE(bContinueOnError)) {
+    return(.workflow_run_summary(lResults, status))
+  }
+
   return(lResults)
+}
+
+.workflow_result_name <- function(workflow, strResultNames) {
+  resultName <- vapply(strResultNames, function(name) {
+    value <- workflow$meta[[name]]
+    stop_if(
+      is.null(value) || length(value) != 1,
+      "[ strResultNames ] field '{name}' is missing or not scalar in workflow meta."
+    )
+    as.character(value)
+  }, character(1))
+
+  paste0(resultName, collapse = "_")
+}
+
+.workflow_status_frame <- function() {
+  data.frame(
+    workflow = character(),
+    status = character(),
+    message = character(),
+    stringsAsFactors = FALSE
+  )
+}
+
+.append_workflow_status <- function(status, workflow, state, message = NA_character_) {
+  rbind(
+    status,
+    data.frame(
+      workflow = workflow,
+      status = state,
+      message = message,
+      stringsAsFactors = FALSE
+    )
+  )
+}
+
+.workflow_run_summary <- function(results, status) {
+  failures <- status[status$status == "error", , drop = FALSE]
+  structure(
+    list(
+      results = results,
+      status = status,
+      failures = failures
+    ),
+    class = c("workr_run_summary", "list")
+  )
+}
+
+.is_workr_run_summary <- function(value) {
+  inherits(value, "workr_run_summary") &&
+    is.list(value) &&
+    all(c("results", "status", "failures") %in% names(value))
+}
+
+.workflow_summary_results <- function(value) {
+  if (.is_workr_run_summary(value)) {
+    return(value$results)
+  }
+
+  value
 }

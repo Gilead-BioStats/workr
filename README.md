@@ -162,7 +162,7 @@ While `workr::RunWorkflow` runs all the `steps` in a single workflow, `workr::Ru
 
 ### `workr::RunProject` calls multiple sets of workflows
 
-Last but not least, sometimes you want to chain multiple calls of `workr::RunWorkflows()`. `workr::RunProject()` calls `workr::RunWorkflows()` for every sub-directory (phase) in a given project directory, sharing one `lData` object across phases.
+Use `workr::RunProject()` when a project is split into phases. Each immediate subdirectory is one phase, and each phase is run with `workr::RunWorkflows()`. Without config files, each phase's outputs are carried forward to the next phase as a flat named list.
 
 ```r
 # Project directory structure:
@@ -185,9 +185,34 @@ Key options:
 
 - `strPhases` — run a subset of phases, or control their order
 - `bReturnResult` / `bKeepInputData` — passed through to `RunWorkflows()`
+- `bContinueOnError` — record workflow failures and keep running; the default
+  keeps the existing fail-fast behavior from `RunWorkflows()`
 - `bRecursive` — passed through to `MakeWorkflowList()`
 
 Phases are sorted alphabetically by default (use numeric prefixes like `01_`, `02_` to control order).
+
+`lConfig` can also control load/save hooks at different levels. Top-level `LoadData` and `SaveData` are passed to `RunWorkflows()` for each phase, so they run for each workflow in that phase. `lConfig$phases[["phase_name"]]` applies hooks to one phase, and `lConfig$project$LoadData` or `lConfig$project$SaveData` runs once before or after the full project.
+
+For snapshot branches, the manifest step usually creates `manifest.csv`, `rproject.toml`, and a `workflows/` directory. Pass that `workflows/` directory to `RunProject()`.
+
+Phase folders can include `_config.yaml` when the default carry-forward behavior is too broad. Use `input` to choose what the phase receives, and `output` to shape what later phases see.
+
+```yaml
+# workflows/3_reporting/_config.yaml
+input:
+  from_phases: [1_mappings]
+  from_results:
+    lAnalyzed: 2_metrics
+  include_workflows:
+    from_phase: 2_metrics
+  extra:
+    dSnapshotDate: "2026-06-09"
+output:
+  wrap_as: lReports
+  transform: null
+```
+
+In this example, reporting receives mapping data, metrics results as `lAnalyzed`, the metrics workflow definitions, and a snapshot date. The reporting output is stored as `lReports`.
 
 
 ### `workr::Manifest` — Reproducible Package Environments

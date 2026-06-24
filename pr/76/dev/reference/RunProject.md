@@ -39,14 +39,14 @@ RunProject(
 
 - lConfig:
 
-  `list` Configuration hooks passed to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
-  Default `NULL`. Top-level `LoadData` and `SaveData` hooks are passed
-  through to
+  `list` Runtime configuration hooks. Top-level `LoadData` and
+  `SaveData` hooks are passed through to
   [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
   for each phase and run for each workflow in that phase. Use
   `lConfig$phases` for phase-specific workflow hooks and
-  `lConfig$project` for hooks that run once for the whole project.
+  `lConfig$project` for hooks that run once for the whole project. Phase
+  handoff settings such as `input.from_phases` belong in per-phase
+  `_config.yaml` files, not in `lConfig$phases`.
 
 - strPhases:
 
@@ -115,11 +115,18 @@ Per-phase `_config.yaml` files may define `input` and `output` maps.
 Unknown keys stop execution. Without `_config.yaml`, all prior phase
 outputs are available to the next phase.
 
-Use `input.from_phases` or `input.from_results` to select earlier phase
-data, `input.include_workflows` to pass workflow definitions, and
-`input.extra` for static values. Use `output.wrap_as` to store a phase
-result under one name or `output.transform` to apply a function before
-later phases use the result.
+Think of `_config.yaml` and `lConfig$phases` as two phase-scoped
+settings at different layers. `_config.yaml` is project orchestration
+config: use `input.from_phases` or `input.from_results` to select
+earlier phase data, `input.include_workflows` to pass workflow
+definitions, and `input.extra` for static values. Use `output.wrap_as`
+to store a phase result under one name or `output.transform` to apply a
+function before later phases use the result.
+`lConfig$phases[[phase_name]]` is workflow runtime config: it is merged
+into the `lConfig` passed to
+[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+for that phase, so use it for phase-specific hooks such as `LoadData`
+and `SaveData`.
 
 Load/save hooks:
 

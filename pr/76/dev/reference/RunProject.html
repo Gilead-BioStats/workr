@@ -92,11 +92,12 @@ more subdirectories, each holding workflow YAML files.</p></dd>
 
 
 <dt id="arg-lconfig">lConfig<a class="anchor" aria-label="anchor" href="#arg-lconfig"></a></dt>
-<dd><p><code>list</code> Configuration hooks passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code>.
-Default <code>NULL</code>. Top-level <code>LoadData</code> and <code>SaveData</code> hooks are passed
-through to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for each phase and run for each workflow in that
-phase. Use <code>lConfig$phases</code> for phase-specific workflow hooks and
-<code>lConfig$project</code> for hooks that run once for the whole project.</p></dd>
+<dd><p><code>list</code> Runtime configuration hooks. Top-level <code>LoadData</code> and
+<code>SaveData</code> hooks are passed through to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for each phase and
+run for each workflow in that phase. Use <code>lConfig$phases</code> for
+phase-specific workflow hooks and <code>lConfig$project</code> for hooks that run once
+for the whole project. Phase handoff settings such as <code>input.from_phases</code>
+belong in per-phase <code>_config.yaml</code> files, not in <code>lConfig$phases</code>.</p></dd>
 
 
 <dt id="arg-strphases">strPhases<a class="anchor" aria-label="anchor" href="#arg-strphases"></a></dt>
@@ -132,8 +133,8 @@ Default <code>FALSE</code> retains the existing fail-fast behavior from
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list with one element per phase. Each element contains the
 result returned by <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase. When
-<code>bContinueOnError = TRUE</code>, returns a summary with <code>results</code>, <code>status</code>,
-and <code>failures</code>.</p>
+<code>bContinueOnError = TRUE</code>, returns a summary with <code>results</code>, <code>status</code>, and
+<code>failures</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -148,10 +149,15 @@ log message; execution proceeds with the remaining phases.</p></li>
 </ul><p>Per-phase <code>_config.yaml</code> files may define <code>input</code> and <code>output</code> maps. Unknown
 keys stop execution. Without <code>_config.yaml</code>, all prior phase outputs are
 available to the next phase.</p>
-<p>Use <code>input.from_phases</code> or <code>input.from_results</code> to select earlier phase data,
+<p>Think of <code>_config.yaml</code> and <code>lConfig$phases</code> as two phase-scoped settings at
+different layers. <code>_config.yaml</code> is project orchestration config: use
+<code>input.from_phases</code> or <code>input.from_results</code> to select earlier phase data,
 <code>input.include_workflows</code> to pass workflow definitions, and <code>input.extra</code> for
 static values. Use <code>output.wrap_as</code> to store a phase result under one name or
-<code>output.transform</code> to apply a function before later phases use the result.</p>
+<code>output.transform</code> to apply a function before later phases use the result.
+<code>lConfig$phases[[phase_name]]</code> is workflow runtime config: it is merged into
+the <code>lConfig</code> passed to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for that phase, so use it for
+phase-specific hooks such as <code>LoadData</code> and <code>SaveData</code>.</p>
 <p>Load/save hooks:</p><ul><li><p>Put <code>LoadData</code> or <code>SaveData</code> at the top level of <code>lConfig</code> to pass those
 hooks to <code><a href="RunWorkflows.html">RunWorkflows()</a></code> for each phase. <code><a href="RunWorkflows.html">RunWorkflows()</a></code> then applies
 them to each workflow in that phase.</p></li>

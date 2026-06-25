@@ -35,8 +35,8 @@ FilterWorkflows(lWorkflows, ...)
     `TRUE`/`FALSE` value (coercion handles YAML string forms like
     `"true"`).
 
-  - `numeric`: keep workflows where `meta[[field]]` equals any element
-    of `value` (equality only; no comparison operators).
+  - `numeric` or `integer`: keep workflows where `meta[[field]]` equals
+    any element of `value` (equality only; no comparison operators).
 
   - other types: an informative error is raised.
 

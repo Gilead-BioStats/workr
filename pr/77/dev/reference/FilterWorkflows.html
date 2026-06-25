@@ -83,8 +83,8 @@ matching behaviour:</p><ul><li><p><code>character</code>: keep workflows where a
 any element of <code>value</code> (case-insensitive).</p></li>
 <li><p><code>logical</code>: keep workflows where <code>meta[[field]]</code> coerces to the given
 <code>TRUE</code>/<code>FALSE</code> value (coercion handles YAML string forms like <code>"true"</code>).</p></li>
-<li><p><code>numeric</code>: keep workflows where <code>meta[[field]]</code> equals any element of
-<code>value</code> (equality only; no comparison operators).</p></li>
+<li><p><code>numeric</code> or <code>integer</code>: keep workflows where <code>meta[[field]]</code> equals any
+element of <code>value</code> (equality only; no comparison operators).</p></li>
 <li><p>other types: an informative error is raised.</p></li>
 </ul></dd>
 

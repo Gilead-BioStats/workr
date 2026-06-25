@@ -240,3 +240,63 @@ test_that(".filter_yaml_files partial match works (#53)", {
   result <- .filter_yaml_files(yaml_files, strNames = "metric", bExact = FALSE)
   expect_true(all(grepl("metric", names(result))))
 })
+
+# `...` filtering ----
+
+test_that("MakeWorkflowList filters via ... character value (#72)", {
+  {
+    result <- MakeWorkflowList(strPath = strFilterPath, Category = "kri")
+  } |>
+    expect_message("Keeping 2 of 5 workflows where Category matches kri.") |>
+    expect_message("Kept 2 of 5 workflows after applying 1 filter")
+  expect_named(result, c("kri_only", "multi_category"))
+})
+
+test_that("MakeWorkflowList filters via ... logical value (#72)", {
+  # bActiveOnly = FALSE so inactive_kri is loaded before the ... filter
+  {
+    result <- MakeWorkflowList(
+      strPath = strFilterPath,
+      bActiveOnly = FALSE,
+      Active = TRUE
+    )
+  } |>
+    expect_message("Keeping 5 of 6 workflows where Active matches TRUE.") |>
+    expect_message("Kept 5 of 6 workflows after applying 1 filter")
+  expect_named(
+    result,
+    c(
+      "country_only",
+      "kri_only",
+      "multi_category",
+      "no_category",
+      "null_category"
+    )
+  )
+})
+
+test_that("MakeWorkflowList applies multiple ... filters with AND logic (#72)", {
+  {
+    result <- MakeWorkflowList(
+      strPath = strFilterPath,
+      bActiveOnly = FALSE,
+      Category = "kri",
+      Active = TRUE
+    )
+  } |>
+    expect_message("Keeping 3 of 6 workflows where Category matches kri.") |>
+    expect_message("Keeping 2 of 3 workflows where Active matches TRUE.") |>
+    expect_message("Kept 2 of 6 workflows after applying 2 filter")
+  expect_named(result, c("kri_only", "multi_category"))
+})
+
+test_that("MakeWorkflowList warns when ... filters leave empty list (#72)", {
+  {
+    MakeWorkflowList(strPath = strFilterPath, Category = "nonexistent")
+  } |>
+    expect_message(
+      "Keeping 0 of 5 workflows where Category matches nonexistent."
+    ) |>
+    expect_message("Kept 0 of 5 workflows after applying 1 filter") |>
+    expect_message("No workflows found")
+})

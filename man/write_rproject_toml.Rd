@@ -16,7 +16,7 @@ write_rproject_toml(manifest, path, project_name = "library")
 \description{
 Dependencies are pinned by commit SHA, not by tag: the DESCRIPTION version
 recorded in the manifest does not match the repos' git tags (tags carry a
-\verb{v} prefix, and \verb{.9000} dev versions have no tag at all), so tag pins can
+\code{v} prefix, and \code{.9000} dev versions have no tag at all), so tag pins can
 never resolve. The SHA is the same reproducibility anchor manifest.csv
 records.
 }

@@ -263,7 +263,7 @@ gsm_datasim_standard_config <- function(api, cfg, default_study_id) {
 #' `r lifecycle::badge("experimental")`
 #'
 #' The built-in `"gsm.datasim"` `LoadData` provider generates workflow inputs
-#' with the optional {gsm.datasim} package. Configure it by setting
+#' with the optional `{gsm.datasim}` package. Configure it by setting
 #' `lConfig$LoadData = "gsm.datasim"` and passing provider options in
 #' `lConfig$gsm.datasim`.
 #'

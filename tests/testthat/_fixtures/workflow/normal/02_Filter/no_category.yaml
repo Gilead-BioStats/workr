@@ -1,0 +1,9 @@
+meta:
+  Type: report
+  ID: no_category
+  Active: true
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

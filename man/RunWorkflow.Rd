@@ -22,7 +22,7 @@ should be run.}
 \itemize{
 \item \code{LoadData}: Optional function or registered provider name used before
 spec validation. Functions must accept \code{lWorkflow}, \code{lConfig}, and
-\code{lData} as named formals. {workr} includes a built-in \code{"gsm.datasim"}
+\code{lData} as named formals. \code{{workr}} includes a built-in \code{"gsm.datasim"}
 provider that reads adapter settings from \code{lConfig$gsm.datasim}.
 \item \code{SaveData}: Optional function or registered provider name used before
 returning results when \code{bReturnResult = TRUE}. Functions must accept

@@ -32,10 +32,14 @@ DemoApp_init <- function(
   lConfig = NULL
 ) {
   if (!requireNamespace("shiny", quietly = TRUE)) {
-    stop("Package 'shiny' is required. Install it with install.packages('shiny').")
+    stop(
+      "Package 'shiny' is required. Install it with install.packages('shiny')."
+    )
   }
   if (!requireNamespace("yaml", quietly = TRUE)) {
-    stop("Package 'yaml' is required. Install it with install.packages('yaml').")
+    stop(
+      "Package 'yaml' is required. Install it with install.packages('yaml')."
+    )
   }
   if (is.null(lWorkflows)) {
     lWorkflows <- MakeWorkflowList(
@@ -48,15 +52,28 @@ DemoApp_init <- function(
     lConfig <- list(LoadData = loadExample)
   }
 
-  # Register helper functions used by example workflows
-  sum_step <- function(lData, y) lData$value + y
-  environment(sum_step) <- globalenv()
-  assign("sum_step", sum_step, envir = globalenv())
-
   shiny::shinyApp(
     ui = DemoApp_UI(lWorkflows),
     server = DemoApp_Server(lWorkflows, lData, lConfig)
   )
+}
+
+#' Simple example function
+#'
+#' This function is used in the demo workflows to demonstrate how to run a
+#' workflow step that performs a simple operation.
+#'
+#' @param lData `list` A named list of data objects. The function expects
+#'   `lData$value` to be a numeric value.
+#' @param y `numeric` A numeric value to add to `lData$value`.
+#'
+#' @returns `numeric` The result of adding `y` to `lData$value`.
+#'
+#' @export
+#' @examples
+#' sum_step(list(value = 5), 3)
+sum_step <- function(lData, y) {
+  lData$value + y
 }
 
 #' Demo app UI
@@ -82,7 +99,8 @@ DemoApp_UI <- function(lWorkflows) {
   folder_choices <- unique(folder_names)
 
   shiny::fluidPage(
-    shiny::tags$style(shiny::HTML("
+    shiny::tags$style(shiny::HTML(
+      "
       html, body { height: 100%; margin: 0; overflow: hidden; }
       .container-fluid { display: flex; flex-direction: column; height: 100vh; padding: 8px 15px; }
       h2 { margin: 0 0 4px 0; font-size: 20px; }
@@ -128,8 +146,10 @@ DemoApp_UI <- function(lWorkflows) {
                    height: 120px; overflow-y: auto; padding: 6px; font-family: monospace;
                    font-size: 11px; background: #1e1e1e; color: #d4d4d4; white-space: pre-wrap; }
       .log-panel #log_output { margin: 0; padding: 0; background: transparent; border: none; color: inherit; }
-    ")),
-    shiny::tags$script(shiny::HTML("\
+    "
+    )),
+    shiny::tags$script(shiny::HTML(
+      "\
       Shiny.addCustomMessageHandler('setButtonDisabled', function(message) {\
         var btn = document.getElementById(message.id);\
         if (!btn) return;\
@@ -194,43 +214,61 @@ DemoApp_UI <- function(lWorkflows) {
           });\
         }\
       });\
-    ")),
+    "
+    )),
     shiny::tags$h2("workr Demo"),
-    shiny::tags$div(class = "header-row",
+    shiny::tags$div(
+      class = "header-row",
       shiny::tags$div(
-        shiny::selectInput("folder_select", NULL, choices = folder_choices, width = "250px")
+        shiny::selectInput(
+          "folder_select",
+          NULL,
+          choices = folder_choices,
+          width = "250px"
+        )
       ),
       shiny::actionButton("run_all", "Run All"),
       shiny::actionButton("run_step", "Run Step"),
       shiny::actionButton("reset", "Reset"),
-      shiny::tags$span(class = "step-status", shiny::textOutput("step_status", inline = TRUE))
+      shiny::tags$span(
+        class = "step-status",
+        shiny::textOutput("step_status", inline = TRUE)
+      )
     ),
-    shiny::tags$div(class = "main-row",
-      shiny::tags$div(class = "yaml-col",
+    shiny::tags$div(
+      class = "main-row",
+      shiny::tags$div(
+        class = "yaml-col",
         shiny::tags$div(class = "col-label", "lWorkflows"),
-        shiny::tags$div(class = "yaml-editor-list", shiny::uiOutput("yaml_editors"))
+        shiny::tags$div(
+          class = "yaml-editor-list",
+          shiny::uiOutput("yaml_editors")
+        )
       ),
       shiny::tags$div(class = "panel-resize-handle"),
-      shiny::tags$div(class = "data-keys-col",
+      shiny::tags$div(
+        class = "data-keys-col",
         shiny::tags$div(class = "col-label", "lData"),
-        shiny::tags$div(class = "data-key-list",
-          shiny::uiOutput("data_keys")
-        )
+        shiny::tags$div(class = "data-key-list", shiny::uiOutput("data_keys"))
       ),
       shiny::tags$div(class = "panel-resize-handle"),
-      shiny::tags$div(class = "detail-col",
-        shiny::tags$div(class = "col-label", shiny::textOutput("detail_title", inline = TRUE)),
-        shiny::tags$div(class = "data-detail",
-          shiny::uiOutput("data_detail")
-        )
+      shiny::tags$div(
+        class = "detail-col",
+        shiny::tags$div(
+          class = "col-label",
+          shiny::textOutput("detail_title", inline = TRUE)
+        ),
+        shiny::tags$div(class = "data-detail", shiny::uiOutput("data_detail"))
       )
     ),
     shiny::tags$div(class = "log-resize-handle"),
-    shiny::tags$div(class = "log-section",
+    shiny::tags$div(
+      class = "log-section",
       shiny::tags$div(
         class = "log-toggle",
         onclick = "var p = document.getElementById('log-panel'); p.style.display = p.style.display === 'none' ? 'block' : 'none';",
-        shiny::icon("terminal"), " Log"
+        shiny::icon("terminal"),
+        " Log"
       ),
       shiny::tags$div(
         id = "log-panel",
@@ -286,8 +324,16 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
     workflow_to_yaml_text <- function(wf) {
       wf_path <- wf$path %||% ""
-      if (is.character(wf_path) && length(wf_path) == 1 && nzchar(wf_path) && file.exists(wf_path)) {
-        return(paste(readLines(wf_path, warn = FALSE, encoding = "UTF-8"), collapse = "\n"))
+      if (
+        is.character(wf_path) &&
+          length(wf_path) == 1 &&
+          nzchar(wf_path) &&
+          file.exists(wf_path)
+      ) {
+        return(paste(
+          readLines(wf_path, warn = FALSE, encoding = "UTF-8"),
+          collapse = "\n"
+        ))
       }
       yaml::as.yaml(wf)
     }
@@ -296,7 +342,10 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
     rv <- shiny::reactiveValues(
       lData = init_lData,
-      step_state = stats::setNames(rep(0L, length(workflow_names)), workflow_names),
+      step_state = stats::setNames(
+        rep(0L, length(workflow_names)),
+        workflow_names
+      ),
       selected_key = NULL,
       logs = stats::setNames(rep("", length(folder_levels)), folder_levels),
       current_folder = folder_levels[[1]],
@@ -311,39 +360,63 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
     # Edit button observers: open a modal for each workflow.
     purrr::walk(workflow_names, function(wf_name) {
-      shiny::observeEvent(input[[wf_edit_btn_id(wf_name)]], {
-        yaml_text <- rv$yaml_cache[[wf_name]] %||% yaml::as.yaml(lWorkflows[[wf_name]])
-        editing_wf_name(wf_name)
-        shiny::showModal(shiny::modalDialog(
-          title = paste0("Edit: ", wf_name),
-          shiny::textAreaInput(
-            "modal_yaml_editor",
-            label = NULL,
-            value = yaml_text,
-            width = "100%",
-            height = "400px"
-          ),
-          shiny::tags$style(".modal-body #modal_yaml_editor { font-family: monospace; font-size: 13px; }"),
-          footer = shiny::tagList(
-            shiny::modalButton("Cancel"),
-            shiny::actionButton("modal_yaml_save", "Save & Reset", class = "btn-primary")
-          ),
-          size = "l",
-          easyClose = TRUE
-        ))
-      }, ignoreInit = TRUE)
+      shiny::observeEvent(
+        input[[wf_edit_btn_id(wf_name)]],
+        {
+          yaml_text <- rv$yaml_cache[[wf_name]] %||%
+            yaml::as.yaml(lWorkflows[[wf_name]])
+          editing_wf_name(wf_name)
+          shiny::showModal(shiny::modalDialog(
+            title = paste0("Edit: ", wf_name),
+            shiny::textAreaInput(
+              "modal_yaml_editor",
+              label = NULL,
+              value = yaml_text,
+              width = "100%",
+              height = "400px"
+            ),
+            shiny::tags$style(
+              ".modal-body #modal_yaml_editor { font-family: monospace; font-size: 13px; }"
+            ),
+            footer = shiny::tagList(
+              shiny::modalButton("Cancel"),
+              shiny::actionButton(
+                "modal_yaml_save",
+                "Save & Reset",
+                class = "btn-primary"
+              )
+            ),
+            size = "l",
+            easyClose = TRUE
+          ))
+        },
+        ignoreInit = TRUE
+      )
     })
 
     # Modal save: update cache, reset that workflow's folder, close modal.
     shiny::observeEvent(input$modal_yaml_save, {
       new_yaml <- input$modal_yaml_editor
       wf_name <- editing_wf_name()
-      if (is.character(new_yaml) && length(new_yaml) == 1 &&
-          is.character(wf_name) && length(wf_name) == 1 && nzchar(wf_name)) {
+      if (
+        is.character(new_yaml) &&
+          length(new_yaml) == 1 &&
+          is.character(wf_name) &&
+          length(wf_name) == 1 &&
+          nzchar(wf_name)
+      ) {
         rv$yaml_cache[[wf_name]] <- new_yaml
         # Reset the folder so the change takes effect (but keep edited yaml)
-        initialize_folder_state(rv$current_folder, reset_logs = FALSE, reset_yaml = FALSE)
-        append_log(paste0("[INFO] YAML updated for `", wf_name, "`. Workflow reset.\n"))
+        initialize_folder_state(
+          rv$current_folder,
+          reset_logs = FALSE,
+          reset_yaml = FALSE
+        )
+        append_log(paste0(
+          "[INFO] YAML updated for `",
+          wf_name,
+          "`. Workflow reset.\n"
+        ))
       }
       editing_wf_name(NULL)
       shiny::removeModal()
@@ -411,14 +484,18 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         }
       }
 
-      html_lines <- vapply(seq_along(lines), function(i) {
-        txt <- escape_html(lines[[i]])
-        if (done_line[[i]]) {
-          paste0('<span class="yaml-done">', txt, "</span>")
-        } else {
-          txt
-        }
-      }, character(1))
+      html_lines <- vapply(
+        seq_along(lines),
+        function(i) {
+          txt <- escape_html(lines[[i]])
+          if (done_line[[i]]) {
+            paste0('<span class="yaml-done">', txt, "</span>")
+          } else {
+            txt
+          }
+        },
+        character(1)
+      )
 
       shiny::tags$pre(shiny::HTML(paste(html_lines, collapse = "\n")))
     }
@@ -428,7 +505,8 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     }
 
     get_workflow_from_editor <- function(wf_name) {
-      yaml_text <- rv$yaml_cache[[wf_name]] %||% yaml::as.yaml(lWorkflows[[wf_name]])
+      yaml_text <- rv$yaml_cache[[wf_name]] %||%
+        yaml::as.yaml(lWorkflows[[wf_name]])
       lWorkflow <- tryCatch(
         yaml::yaml.load(yaml_text, eval.expr = TRUE),
         error = function(e) NULL
@@ -442,7 +520,11 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       lWorkflow
     }
 
-    initialize_folder_state <- function(folder_name, reset_logs = FALSE, reset_yaml = TRUE) {
+    initialize_folder_state <- function(
+      folder_name,
+      reset_logs = FALSE,
+      reset_yaml = TRUE
+    ) {
       wf_names <- get_folder_workflows(folder_name)
       if (length(wf_names) == 0) {
         rv$lData <- init_lData
@@ -460,7 +542,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
       for (wf_name in wf_names) {
         if (isTRUE(reset_yaml)) {
-          rv$yaml_cache[[wf_name]] <- workflow_to_yaml_text(lWorkflows[[wf_name]])
+          rv$yaml_cache[[wf_name]] <- workflow_to_yaml_text(lWorkflows[[
+            wf_name
+          ]])
         }
         rv$step_state[[wf_name]] <- 0L
       }
@@ -474,10 +558,14 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     }
 
     # Initialize and react to folder selection.
-    shiny::observeEvent(input$folder_select, {
-      rv$current_folder <- input$folder_select
-      initialize_folder_state(rv$current_folder)
-    }, ignoreInit = FALSE)
+    shiny::observeEvent(
+      input$folder_select,
+      {
+        rv$current_folder <- input$folder_select
+        initialize_folder_state(rv$current_folder)
+      },
+      ignoreInit = FALSE
+    )
 
     # Helper to append to current workflow's log
     append_log <- function(text) {
@@ -516,7 +604,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
 
       # Determine which workflow should be expanded: first incomplete one
       # But only expand if at least one step has been run (collapse all initially)
-      any_started <- any(purrr::map_lgl(wf_names, function(wn) (rv$step_state[[wn]] %||% 0L) > 0L))
+      any_started <- any(purrr::map_lgl(wf_names, function(wn) {
+        (rv$step_state[[wn]] %||% 0L) > 0L
+      }))
       active_wf <- NULL
       if (any_started) {
         for (wn in wf_names) {
@@ -542,7 +632,11 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         n_steps <- if (is.null(lw)) 0L else length(lw$steps %||% list())
         is_complete <- steps_done >= n_steps && n_steps > 0
 
-        card_class <- if (is_complete) "yaml-workflow-card wf-complete" else "yaml-workflow-card"
+        card_class <- if (is_complete) {
+          "yaml-workflow-card wf-complete"
+        } else {
+          "yaml-workflow-card"
+        }
         is_open <- identical(wf_name, active_wf)
 
         body <- shiny::tags$div(
@@ -555,7 +649,8 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         summary_content <- shiny::tagList(
           shiny::tags$span(display_name),
           shiny::actionButton(
-            wf_edit_btn_id(wf_name), "Edit",
+            wf_edit_btn_id(wf_name),
+            "Edit",
             class = "btn-xs wf-edit-btn",
             onclick = "event.stopPropagation(); event.preventDefault();"
           ),
@@ -585,13 +680,22 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       for (wf_name in wf_names) {
         lWorkflow <- get_workflow_from_editor(wf_name)
         if (is.null(lWorkflow)) {
-          append_log(paste0("[ERROR] Failed to parse YAML for workflow `", wf_name, "`.\n"))
+          append_log(paste0(
+            "[ERROR] Failed to parse YAML for workflow `",
+            wf_name,
+            "`.\n"
+          ))
           break
         }
 
         append_log(paste0("--- Workflow: ", wf_name, " ---\n"))
         result <- capture_log({
-          RunWorkflow(lWorkflow, current_data, lConfig = lConfig, bReturnResult = FALSE)
+          RunWorkflow(
+            lWorkflow,
+            current_data,
+            lConfig = lConfig,
+            bReturnResult = FALSE
+          )
         })
 
         if (is.null(result) || is.null(result$lData)) {
@@ -611,7 +715,10 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     shiny::observeEvent(input$run_step, {
       wf_names <- get_folder_workflows(rv$current_folder)
       if (length(wf_names) == 0) {
-        shiny::showNotification("No workflows available in selected folder.", type = "message")
+        shiny::showNotification(
+          "No workflows available in selected folder.",
+          type = "message"
+        )
         return()
       }
 
@@ -635,12 +742,23 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
       }
 
       if (is.null(picked_wf)) {
-        shiny::showNotification("All steps already executed. Reset to run again.", type = "message")
+        shiny::showNotification(
+          "All steps already executed. Reset to run again.",
+          type = "message"
+        )
         return()
       }
 
       step <- picked_workflow$steps[[next_step]]
-      append_log(paste0("--- ", picked_wf, " | Run Step ", next_step, ": ", step$name, " ---\n"))
+      append_log(paste0(
+        "--- ",
+        picked_wf,
+        " | Run Step ",
+        next_step,
+        ": ",
+        step$name,
+        " ---\n"
+      ))
       result <- capture_log({
         RunStep(
           lStep = step,
@@ -672,24 +790,45 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
           (rv$step_state[[wf_name]] %||% 0L) >= n_steps
         }))
       }
-      session$sendCustomMessage("setButtonDisabled", list(id = "run_all", disabled = done))
-      session$sendCustomMessage("setButtonDisabled", list(id = "run_step", disabled = done))
+      session$sendCustomMessage(
+        "setButtonDisabled",
+        list(id = "run_all", disabled = done)
+      )
+      session$sendCustomMessage(
+        "setButtonDisabled",
+        list(id = "run_step", disabled = done)
+      )
     })
 
     # Compute workflow/step summary (shared by header and yaml label)
     wf_summary <- shiny::reactive({
       wf_names <- get_folder_workflows(rv$current_folder)
-      if (length(wf_names) == 0) return("No workflows")
+      if (length(wf_names) == 0) {
+        return("No workflows")
+      }
       totals <- purrr::map_int(wf_names, function(wf_name) {
         lWorkflow <- get_workflow_from_editor(wf_name)
         if (is.null(lWorkflow)) 0L else length(lWorkflow$steps %||% list())
       })
-      done <- purrr::map_int(wf_names, function(wf_name) rv$step_state[[wf_name]] %||% 0L)
+      done <- purrr::map_int(wf_names, function(wf_name) {
+        rv$step_state[[wf_name]] %||% 0L
+      })
       wf_complete <- sum(done >= totals & totals > 0L)
-      paste0("Workflow ", wf_complete, "/", length(wf_names), ". Step ", sum(done), "/", sum(totals))
+      paste0(
+        "Workflow ",
+        wf_complete,
+        "/",
+        length(wf_names),
+        ". Step ",
+        sum(done),
+        "/",
+        sum(totals)
+      )
     })
 
-    output$step_status <- shiny::renderText({ wf_summary() })
+    output$step_status <- shiny::renderText({
+      wf_summary()
+    })
 
     # Reset: clear log for current workflow, reset data and step counter
     shiny::observeEvent(input$reset, {
@@ -719,8 +858,13 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
         }
         shiny::tags$div(
           class = cls,
-          onclick = sprintf("Shiny.setInputValue('selected_key', '%s', {priority: 'event'})", k),
-          icon, " ", k
+          onclick = sprintf(
+            "Shiny.setInputValue('selected_key', '%s', {priority: 'event'})",
+            k
+          ),
+          icon,
+          " ",
+          k
         )
       })
     })
@@ -728,7 +872,9 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     # Render detail title
     output$detail_title <- shiny::renderText({
       key <- rv$selected_key
-      if (is.null(key) || !key %in% names(rv$lData)) return("Select an item")
+      if (is.null(key) || !key %in% names(rv$lData)) {
+        return("Select an item")
+      }
       obj <- rv$lData[[key]]
       if (is.data.frame(obj)) {
         paste0(key, " (", nrow(obj), " x ", ncol(obj), " data.frame)")
@@ -756,9 +902,13 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     # HTML renderer for file path values that point to .html files
     output$detail_html <- shiny::renderUI({
       key <- rv$selected_key
-      if (is.null(key) || !key %in% names(rv$lData)) return(NULL)
+      if (is.null(key) || !key %in% names(rv$lData)) {
+        return(NULL)
+      }
       obj <- rv$lData[[key]]
-      if (!is_html_file_path(obj)) return(NULL)
+      if (!is_html_file_path(obj)) {
+        return(NULL)
+      }
       src <- get_html_resource_src(obj)
       if (is.null(src)) {
         return(shiny::tags$em("Unable to load HTML file."))
@@ -773,20 +923,37 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     # Table renderer for data.frames
     output$detail_table <- shiny::renderTable({
       key <- rv$selected_key
-      if (is.null(key) || !key %in% names(rv$lData)) return(NULL)
+      if (is.null(key) || !key %in% names(rv$lData)) {
+        return(NULL)
+      }
       obj <- rv$lData[[key]]
-      if (!is.data.frame(obj)) return(NULL)
+      if (!is.data.frame(obj)) {
+        return(NULL)
+      }
 
       # renderTable() uses xtable internally, which cannot print list columns.
       has_list_cols <- vapply(obj, is.list, logical(1))
       if (any(has_list_cols)) {
         obj[has_list_cols] <- lapply(obj[has_list_cols], function(col) {
-          vapply(col, function(cell) {
-            if (is.null(cell)) return("NULL")
-            if (length(cell) == 0) return("[]")
-            if (is.atomic(cell) && length(cell) == 1) return(as.character(cell))
-            paste(capture.output(str(cell, give.attr = FALSE)), collapse = " ")
-          }, character(1))
+          vapply(
+            col,
+            function(cell) {
+              if (is.null(cell)) {
+                return("NULL")
+              }
+              if (length(cell) == 0) {
+                return("[]")
+              }
+              if (is.atomic(cell) && length(cell) == 1) {
+                return(as.character(cell))
+              }
+              paste(
+                capture.output(str(cell, give.attr = FALSE)),
+                collapse = " "
+              )
+            },
+            character(1)
+          )
         })
       }
 
@@ -796,10 +963,16 @@ DemoApp_Server <- function(lWorkflows, lData, lConfig = NULL) {
     # Print renderer for everything else
     output$detail_print <- shiny::renderPrint({
       key <- rv$selected_key
-      if (is.null(key) || !key %in% names(rv$lData)) return(invisible())
+      if (is.null(key) || !key %in% names(rv$lData)) {
+        return(invisible())
+      }
       obj <- rv$lData[[key]]
-      if (is.data.frame(obj)) return(invisible())
-      if (is_html_file_path(obj)) return(invisible())
+      if (is.data.frame(obj)) {
+        return(invisible())
+      }
+      if (is_html_file_path(obj)) {
+        return(invisible())
+      }
       str(obj)
     })
 

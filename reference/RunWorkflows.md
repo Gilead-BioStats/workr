@@ -19,7 +19,8 @@ RunWorkflows(
   lConfig = NULL,
   bKeepInputData = FALSE,
   bReturnResult = TRUE,
-  strResultNames = c("Type", "ID")
+  strResultNames = c("Type", "ID"),
+  bContinueOnError = FALSE
 )
 ```
 
@@ -36,13 +37,19 @@ RunWorkflows(
 
 - lConfig:
 
-  `list` A configuration object with two methods:
+  `list` Optional configuration object passed through to
+  [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md).
+  Supported hook fields:
 
-  - `LoadData`: A function that loads data specified in
-    `lWorkflow$spec`.
+  - `LoadData`: Optional function or registered provider name used
+    before spec validation. Functions must accept `lWorkflow`,
+    `lConfig`, and `lData` as named formals. workr includes a built-in
+    `"gsm.datasim"` provider that reads adapter settings from
+    `lConfig$gsm.datasim`.
 
-  - `SaveData`: A function that saves data returned by the last step in
-    `lWorkflow$steps`.
+  - `SaveData`: Optional function or registered provider name used
+    before returning results when `bReturnResult = TRUE`. Functions must
+    accept `lWorkflow` and `lConfig` as named formals.
 
 - bKeepInputData:
 
@@ -61,11 +68,18 @@ RunWorkflows(
   `string` vector of length two, which describes the meta fields used to
   name the output.
 
+- bContinueOnError:
+
+  `logical` If `TRUE`, failed workflows are recorded and later workflows
+  still run. Default `FALSE` retains the existing fail-fast behavior.
+
 ## Value
 
 A named list of results from
 [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md),
-where the names correspond to the names of the workflow ID
+where the names correspond to the workflow ID. When
+`bContinueOnError = TRUE`, returns a summary with `results`, `status`,
+and `failures`.
 
 ## Examples
 

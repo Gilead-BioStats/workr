@@ -10,12 +10,15 @@
 <url><loc>https://gilead-biostats.github.io/workr/articles/SDTM_example.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/articles/Visualizations.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/articles/index.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/articles/load-save-hooks.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/authors.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/news/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/DemoApp_Server.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/DemoApp_UI.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/DemoApp_init.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/ListWorkflowNames.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/ListWorkflows.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/RunProject.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/RunQuery.html</loc></url>
@@ -25,6 +28,7 @@
 <url><loc>https://gilead-biostats.github.io/workr/reference/gh_get_sha.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/gh_get_version.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/gh_list_contents.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/gsm_datasim_provider.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/index.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/loadExample.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/parse_github_ref.html</loc></url>
@@ -33,12 +37,12 @@
 <url><loc>https://gilead-biostats.github.io/workr/reference/pull_workflow_dir.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/pull_workflow_file.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/pull_workflows.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/register_load_provider.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/reference/register_save_provider.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/resolve_package.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/resolve_ref_by_date.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/resolve_tag_by_date.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/workr-package.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/reference/write_rproject_toml.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/slides/index.html</loc></url>
-<url><loc>https://gilead-biostats.github.io/workr/slides/index_files/libs/revealjs/plugin/notes/speaker-view.html</loc></url>
 </urlset>
 

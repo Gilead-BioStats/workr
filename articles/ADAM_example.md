@@ -3,6 +3,7 @@
 ## Prepare list of data of raw-data
 
 ``` r
+
 sdtm <- list(
   SDTM_DM = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_DM.parquet", package = "workr")),
   SDTM_VS = arrow::read_parquet(system.file("demo_gsmpharmaverse/data/SDTM/SDTM_VS.parquet", package = "workr"))
@@ -21,14 +22,14 @@ Show Raw DM preview (first 6 rows)
 
 Show Raw VS preview (first 6 rows)
 
-| oak_id | raw_source | patient_number | VSTESTCD | VSTEST                   | VSORRES | VSORRESU    | VSPOS | VSLOC  | VSLAT | VSDTC            | VSTPT   | VSTPTNUM | VISIT  | VISITNUM | STUDYID    | DOMAIN | VSCAT       | USUBJID        |
-|--------|------------|----------------|----------|--------------------------|---------|-------------|-------|--------|-------|------------------|---------|----------|--------|----------|------------|--------|-------------|----------------|
-| 1      | vitals     | 375            | SYSBP    | Systolic Blood Pressure  | 158.00  | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | DIABP    | Diastolic Blood Pressure | 92.00   | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | PULSE    | Pulse Rate               | 63.00   | beats/min   | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | RESP     | Respiratory Rate         | 17.00   | breaths/min | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | TEMP     | Temperature              | 40.48   | C           | NA    | SKIN   | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | OXYSAT   | Oxygen Saturation        | 98.00   | %           | NA    | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
+| oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC | VSTPT | VSTPTNUM | VISIT | VISITNUM | STUDYID | DOMAIN | VSCAT | USUBJID |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| 1 | vitals | 375 | SYSBP | Systolic Blood Pressure | 158.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | DIABP | Diastolic Blood Pressure | 92.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | PULSE | Pulse Rate | 63.00 | beats/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | RESP | Respiratory Rate | 17.00 | breaths/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | TEMP | Temperature | 40.48 | C | NA | SKIN | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | OXYSAT | Oxygen Saturation | 98.00 | % | NA | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
 
 ### Show YAML’s of admiral transformations
 
@@ -73,6 +74,7 @@ This workflow was inspired by portions of this `admiral`
 [vignette](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
 
 ``` r
+
 ADAM_workflows <- workr::MakeWorkflowList(
   strNames = "ADVS",
   strPath = "demo_gsmpharmaverse/workflows/2_SDTM_TO_ADAM/",
@@ -87,10 +89,10 @@ map2(ADAM, names(ADAM), function(x,y) arrow::write_parquet(x, paste0("demo_gsmph
 
 Show ADVS (first 6 rows)
 
-| oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC            | VSTPT    | VSTPTNUM | VISIT     | VISITNUM | STUDYID    | DOMAIN | VSCAT | USUBJID        | TRT01A | PARAMCD | AVAL      |
-|--------|------------|----------------|----------|--------|---------|----------|-------|-------|-------|------------------|----------|----------|-----------|----------|------------|--------|-------|----------------|--------|---------|-----------|
-| NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2015-05-16T07:25 | PREDOSE  | 1        | VISIT1    | VISIT1   | test_study | NA     | NA    | test_study-375 | DRUG X | MAP     | 114.00000 |
-| NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2015-05-16T10:25 | POSTDOSE | 2        | VISIT1    | VISIT1   | test_study | NA     | NA    | test_study-375 | DRUG X | MAP     | 83.33333  |
-| NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2018-05-06T02:01 |          |          | SCREENING | 1        | test_study | NA     | NA    | test_study-375 | DRUG X | MAP     | 80.33333  |
-| NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2008-10-23T01:19 | PREDOSE  | 1        | VISIT1    | VISIT1   | test_study | NA     | NA    | test_study-376 | DRUG X | MAP     | 73.66667  |
-| NA     | NA         | NA             | NA       | NA     | NA      | NA       | NA    | NA    | NA    | 2008-10-23T03:19 | POSTDOSE | 2        | VISIT1    | VISIT1   | test_study | NA     | NA    | test_study-376 | DRUG X | MAP     | 96.00000  |
+| oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC | VSTPT | VSTPTNUM | VISIT | VISITNUM | STUDYID | DOMAIN | VSCAT | USUBJID | TRT01A | PARAMCD | AVAL |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | NA | NA | test_study-375 | DRUG X | MAP | 114.00000 |
+| NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2015-05-16T10:25 | POSTDOSE | 2 | VISIT1 | VISIT1 | test_study | NA | NA | test_study-375 | DRUG X | MAP | 83.33333 |
+| NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2018-05-06T02:01 |  |  | SCREENING | 1 | test_study | NA | NA | test_study-375 | DRUG X | MAP | 80.33333 |
+| NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2008-10-23T01:19 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | NA | NA | test_study-376 | DRUG X | MAP | 73.66667 |
+| NA | NA | NA | NA | NA | NA | NA | NA | NA | NA | 2008-10-23T03:19 | POSTDOSE | 2 | VISIT1 | VISIT1 | test_study | NA | NA | test_study-376 | DRUG X | MAP | 96.00000 |

@@ -19,8 +19,12 @@ Useful links:
 
 Authors:
 
+- Jeremy Wildfire <jwildfire@gilead.com>
+
 - Zelos Zhu <zelos.zhu@atorus.com>
 
 Other contributors:
+
+- Jon Harmon <jon.harmon1@gilead.com> \[contributor\]
 
 - Gilead \[copyright holder\]

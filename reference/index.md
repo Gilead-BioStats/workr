@@ -15,14 +15,24 @@ Core functions for running workflows and individual steps.
 
 ## Project Management
 
-Utilities for managing workflow projects and loading examples.
+Project workflow helpers, phase configuration, and bundled examples.
 
-- [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
-  **\[experimental\]** : Run a multi-phase workflow project
-- [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.md)
-  **\[stable\]** : Load workflows from a package/directory.
 - [`loadExample()`](https://gilead-biostats.github.io/workr/reference/loadExample.md)
   **\[stable\]** : Load example data for workflow execution
+- [`gsm_datasim_provider`](https://gilead-biostats.github.io/workr/reference/gsm_datasim_provider.md)
+  **\[experimental\]** : Built-in gsm.datasim load provider
+- [`register_load_provider()`](https://gilead-biostats.github.io/workr/reference/register_load_provider.md)
+  **\[stable\]** : Register a load provider
+- [`register_save_provider()`](https://gilead-biostats.github.io/workr/reference/register_save_provider.md)
+  **\[stable\]** : Register a save provider
+- [`ListWorkflows()`](https://gilead-biostats.github.io/workr/reference/ListWorkflows.md)
+  **\[stable\]** : List workflow YAML files in a package/directory.
+- [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/reference/ListWorkflowNames.md)
+  **\[stable\]** : List workflow names in a package/directory.
+- [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/reference/MakeWorkflowList.md)
+  **\[stable\]** : Load workflows from a package/directory.
+- [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
+  **\[experimental\]** : Run a multi-phase workflow project
 
 ## Demo App
 

@@ -3,6 +3,7 @@
 ## Prepare list of data of raw-data
 
 ``` r
+
 lData <- list(
   dm_raw = read.csv(system.file("raw_data/dm.csv", package = "sdtm.oak")),
   vs_raw =  read.csv(system.file("raw_data/vitals_raw_data.csv", package = "sdtm.oak")),
@@ -12,35 +13,35 @@ lData <- list(
 
 Show Raw DM preview (first 6 rows)
 
-| STUDYID    | DOMAIN | USUBJID        | SUBJID         | RFSTDTC          | RFENDTC          | RFXSTDTC         | RFXENDTC         | RFICDTC    | RFPENDTC   | DTHDTC     | DTHFL | SITEID | INVID | INVNAM     | BRTHDTC          | AGE | AGEU  | SEX | RACE                      | ETHNIC                 | ARMCD | ARM | ACTARMCD | ACTARM | COUNTRY | DMDTC | DMDY | RACE1                                     | RACE2                            | RACE3   |
-|------------|--------|----------------|----------------|------------------|------------------|------------------|------------------|------------|------------|------------|-------|--------|-------|------------|------------------|-----|-------|-----|---------------------------|------------------------|-------|-----|----------|--------|---------|-------|------|-------------------------------------------|----------------------------------|---------|
-| test_study | DM     | test_study-375 | test_study-375 | 1999-04-14T08:36 | 2013-01-21       | 2023-04-14T08:36 | 2021-01-11T07:50 | 2007-01-15 | 2020-04-02 | 2020-04-02 | Y     | 111111 | 90009 | Dr doctor9 | NA               | NA  | NA    | F   | MULTIPLE                  | NA                     | NA    | NA  | NA       | NA     | US      | NA    | NA   | NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER | WHITE                            | NA      |
-| test_study | DM     | test_study-376 | test_study-376 | 2001-03-21       | 2007-05-21       | 2020-03-21       | 2017-09-14T18:49 | NA         | 2011-12-18 | 2011-12-18 | NA    | 111111 | 90009 | Dr doctor9 | 1981-02-26T18:07 | 42  | YEARS | M   | MULTIPLE                  | NOT HISPANIC OR LATINO | NA    | NA  | NA       | NA     | US      | NA    | NA   | BLACK OR AFRICAN AMERICAN                 | AMERICAN INDIAN OR ALASKA NATIVE | UNKNOWN |
-| test_study | DM     | test_study-377 | test_study-377 | 1999-03-14       | 2021-05-05       | 2020-03-14       | 2013-08-23T12:37 | 2015-10-07 | 2021-05-05 | 2019-06-29 | NA    | 111111 | 90009 | Dr doctor9 | 1968-03-19T04:36 | 56  | YEARS | NA  | MULTIPLE                  | NOT REPORTED           | NA    | NA  | NA       | NA     | US      | NA    | NA   | ASIAN                                     | AMERICAN INDIAN OR ALASKA NATIVE | UNKNOWN |
-| test_study | DM     | test_study-378 | test_study-378 | 2003-02-06T06:33 | 2021-04-24T09:06 | 2021-02-06T06:33 | 2021-04-24T09:06 | 2018-10-20 | 2017-04-11 | 2017-04-11 | NA    | 111111 | 90009 | Dr doctor9 | 1979-09-24       | 45  | YEARS | M   | BLACK OR AFRICAN AMERICAN | HISPANIC OR LATINO     | NA    | NA  | NA       | NA     | US      | NA    | NA   | NA                                        | NA                               | NA      |
-| test_study | DM     | test_study-379 | test_study-379 | 2003-02-06T06:33 | 2021-04-24T09:06 | 2022-02-06T06:33 | 2021-04-24T09:06 | 2018-10-20 | 2017-04-11 | 2017-04-11 | Y     | 111111 | 90009 | Dr doctor9 | 1963-09-24       | 61  | YEARS | M   | BLACK OR AFRICAN AMERICAN | HISPANIC OR LATINO     | NA    | NA  | NA       | NA     | US      | NA    | NA   | NA                                        | NA                               | NA      |
+| STUDYID | DOMAIN | USUBJID | SUBJID | RFSTDTC | RFENDTC | RFXSTDTC | RFXENDTC | RFICDTC | RFPENDTC | DTHDTC | DTHFL | SITEID | INVID | INVNAM | BRTHDTC | AGE | AGEU | SEX | RACE | ETHNIC | ARMCD | ARM | ACTARMCD | ACTARM | COUNTRY | DMDTC | DMDY | RACE1 | RACE2 | RACE3 |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| test_study | DM | test_study-375 | test_study-375 | 1999-04-14T08:36 | 2013-01-21 | 2023-04-14T08:36 | 2021-01-11T07:50 | 2007-01-15 | 2020-04-02 | 2020-04-02 | Y | 111111 | 90009 | Dr doctor9 | NA | NA | NA | F | MULTIPLE | NA | NA | NA | NA | NA | US | NA | NA | NATIVE HAWAIIAN OR OTHER PACIFIC ISLANDER | WHITE | NA |
+| test_study | DM | test_study-376 | test_study-376 | 2001-03-21 | 2007-05-21 | 2020-03-21 | 2017-09-14T18:49 | NA | 2011-12-18 | 2011-12-18 | NA | 111111 | 90009 | Dr doctor9 | 1981-02-26T18:07 | 42 | YEARS | M | MULTIPLE | NOT HISPANIC OR LATINO | NA | NA | NA | NA | US | NA | NA | BLACK OR AFRICAN AMERICAN | AMERICAN INDIAN OR ALASKA NATIVE | UNKNOWN |
+| test_study | DM | test_study-377 | test_study-377 | 1999-03-14 | 2021-05-05 | 2020-03-14 | 2013-08-23T12:37 | 2015-10-07 | 2021-05-05 | 2019-06-29 | NA | 111111 | 90009 | Dr doctor9 | 1968-03-19T04:36 | 56 | YEARS | NA | MULTIPLE | NOT REPORTED | NA | NA | NA | NA | US | NA | NA | ASIAN | AMERICAN INDIAN OR ALASKA NATIVE | UNKNOWN |
+| test_study | DM | test_study-378 | test_study-378 | 2003-02-06T06:33 | 2021-04-24T09:06 | 2021-02-06T06:33 | 2021-04-24T09:06 | 2018-10-20 | 2017-04-11 | 2017-04-11 | NA | 111111 | 90009 | Dr doctor9 | 1979-09-24 | 45 | YEARS | M | BLACK OR AFRICAN AMERICAN | HISPANIC OR LATINO | NA | NA | NA | NA | US | NA | NA | NA | NA | NA |
+| test_study | DM | test_study-379 | test_study-379 | 2003-02-06T06:33 | 2021-04-24T09:06 | 2022-02-06T06:33 | 2021-04-24T09:06 | 2018-10-20 | 2017-04-11 | 2017-04-11 | Y | 111111 | 90009 | Dr doctor9 | 1963-09-24 | 61 | YEARS | M | BLACK OR AFRICAN AMERICAN | HISPANIC OR LATINO | NA | NA | NA | NA | US | NA | NA | NA | NA | NA |
 
 Show Raw VS preview (first 6 rows)
 
-| STUDY      | PATNUM | SUBJSTAT   | SITENM     | INSTANCE  | FORM  | FORML       | DATAPGID | RECORDID | RECPOS | ASMNTDN | TMPTC     | VTLD      | VTLTM | SUBPOS         | SYS_BP | DIA_BP | PULSE | RESPRT | TEMP  | TEMPLOC           | OXY_SAT | LAT   | LOC    | VSO2SRC             | NEWS107           |
-|------------|--------|------------|------------|-----------|-------|-------------|----------|----------|--------|---------|-----------|-----------|-------|----------------|--------|--------|-------|--------|-------|-------------------|---------|-------|--------|---------------------|-------------------|
-| Test Study | 375    | Randomized | Test Study | VISIT1    | VTLS1 | Vital Signs | 1752329  | 5734754  | 0      | 0       | Pre-dose  | 16-May-15 | 7:25  | PRONE          | 158    | 92     | 63    | 17     | 40.48 | SKIN              | 98      | RIGHT | FINGER | MASK OXYGEN THERAPY | UNRESPONSIVE      |
-| Test Study | 375    | Randomized | Test Study | VISIT1    | VTLS1 | Vital Signs | 8153061  | 3712412  | 1      | 0       | Post-dose | 16-May-15 | 10:25 | SEMI-RECUMBENT | 94     | 78     | 76    | 20     | 36.75 | TYMPANIC MEMBRANE | 99      | LEFT  | FINGER | ROOM AIR            | NEW CONFUSION     |
-| Test Study | 375    | Randomized | Test Study | Screening | VTLS1 | Vital Signs | 3463516  | 1229594  | 0      | 0       |           | 6-May-18  | 2:01  | PRONE          | 117    | 62     | 66    | 15     | 29.45 | ORAL CAVITY       | 96      | LEFT  | FINGER | ROOM AIR            | VERBAL RESPONSIVE |
-| Test Study | 376    | Randomized | Test Study | Screening | VTLS1 | Vital Signs | 8423253  | 9767053  | 0      | 1       |           |           |       |                | NA     | NA     | NA    | NA     | NA    |                   | NA      |       |        |                     |                   |
-| Test Study | 376    | Randomized | Test Study | VISIT1    | VTLS1 | Vital Signs | 1211365  | 1567778  | 0      | 0       | Pre-dose  | 23-Oct-08 | 1:19  | PRONE          | 85     | 68     | 73    | 21     | 38.25 | AXILLA            | 93      | RIGHT | FINGER | ROOM AIR            | ALERT             |
-| Test Study | 376    | Randomized | Test Study | VISIT1    | VTLS1 | Vital Signs | 5880552  | 7060998  | 0      | 0       | Post-dose | 23-Oct-08 | 3:19  | PRONE          | 126    | 81     | 56    | 18     | 38.08 | TYMPANIC MEMBRANE | 93      | LEFT  | FINGER | MASK OXYGEN THERAPY | PAIN RESPONSIVE   |
+| STUDY | PATNUM | SUBJSTAT | SITENM | INSTANCE | FORM | FORML | DATAPGID | RECORDID | RECPOS | ASMNTDN | TMPTC | VTLD | VTLTM | SUBPOS | SYS_BP | DIA_BP | PULSE | RESPRT | TEMP | TEMPLOC | OXY_SAT | LAT | LOC | VSO2SRC | NEWS107 |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| Test Study | 375 | Randomized | Test Study | VISIT1 | VTLS1 | Vital Signs | 1752329 | 5734754 | 0 | 0 | Pre-dose | 16-May-15 | 7:25 | PRONE | 158 | 92 | 63 | 17 | 40.48 | SKIN | 98 | RIGHT | FINGER | MASK OXYGEN THERAPY | UNRESPONSIVE |
+| Test Study | 375 | Randomized | Test Study | VISIT1 | VTLS1 | Vital Signs | 8153061 | 3712412 | 1 | 0 | Post-dose | 16-May-15 | 10:25 | SEMI-RECUMBENT | 94 | 78 | 76 | 20 | 36.75 | TYMPANIC MEMBRANE | 99 | LEFT | FINGER | ROOM AIR | NEW CONFUSION |
+| Test Study | 375 | Randomized | Test Study | Screening | VTLS1 | Vital Signs | 3463516 | 1229594 | 0 | 0 |  | 6-May-18 | 2:01 | PRONE | 117 | 62 | 66 | 15 | 29.45 | ORAL CAVITY | 96 | LEFT | FINGER | ROOM AIR | VERBAL RESPONSIVE |
+| Test Study | 376 | Randomized | Test Study | Screening | VTLS1 | Vital Signs | 8423253 | 9767053 | 0 | 1 |  |  |  |  | NA | NA | NA | NA | NA |  | NA |  |  |  |  |
+| Test Study | 376 | Randomized | Test Study | VISIT1 | VTLS1 | Vital Signs | 1211365 | 1567778 | 0 | 0 | Pre-dose | 23-Oct-08 | 1:19 | PRONE | 85 | 68 | 73 | 21 | 38.25 | AXILLA | 93 | RIGHT | FINGER | ROOM AIR | ALERT |
+| Test Study | 376 | Randomized | Test Study | VISIT1 | VTLS1 | Vital Signs | 5880552 | 7060998 | 0 | 0 | Post-dose | 23-Oct-08 | 3:19 | PRONE | 126 | 81 | 56 | 18 | 38.08 | TYMPANIC MEMBRANE | 93 | LEFT | FINGER | MASK OXYGEN THERAPY | PAIN RESPONSIVE |
 
 Show Study CT preview (first 6 rows)
 
-| codelist_code | term_code | term_value | collected_value | term_preferred_term    | term_synonyms |
-|---------------|-----------|------------|-----------------|------------------------|---------------|
-| C66726        | C25158    | CAPSULE    | Capsule         | Capsule Dosage Form    | cap           |
-| C66726        | C25394    | PILL       | Pill            | Pill Dosage Form       |               |
-| C66726        | C29167    | LOTION     | Lotion          | Lotion Dosage Form     |               |
-| C66726        | C42887    | AEROSOL    | Aerosol         | Aerosol Dosage Form    | aer           |
-| C66726        | C42944    | INHALANT   | Inhalant        | Inhalant Dosage Form   |               |
-| C66726        | C42946    | INJECTION  | Injection       | Injectable Dosage Form |               |
+| codelist_code | term_code | term_value | collected_value | term_preferred_term | term_synonyms |
+|----|----|----|----|----|----|
+| C66726 | C25158 | CAPSULE | Capsule | Capsule Dosage Form | cap |
+| C66726 | C25394 | PILL | Pill | Pill Dosage Form |  |
+| C66726 | C29167 | LOTION | Lotion | Lotion Dosage Form |  |
+| C66726 | C42887 | AEROSOL | Aerosol | Aerosol Dosage Form | aer |
+| C66726 | C42944 | INHALANT | Inhalant | Inhalant Dosage Form |  |
+| C66726 | C42946 | INJECTION | Injection | Injectable Dosage Form |  |
 
 ### Show YAML’s of sdtm.oak transformations
 
@@ -489,6 +490,7 @@ This workflow was designed to mimic and follow this respective
 ## Run Respective Workflows to Arrive at SDTM datasets
 
 ``` r
+
 SDTM_workflows <- workr::MakeWorkflowList(
   strNames = c("VS", "DM"),
   strPath = "demo_gsmpharmaverse/workflows/1_RAW_TO_SDTM/",
@@ -498,6 +500,7 @@ SDTM <- workr::RunWorkflows(lWorkflows = SDTM_workflows, lData = lData)
 ```
 
 ``` r
+
 # Take Results and save them as parquets in a SDTM folder 
 # or wherever it needs to be saved, gsm has a load/save configuartion as well
 purrr::map2(
@@ -509,11 +512,11 @@ purrr::map2(
 
 Show SDTM VS (first 6 rows)
 
-| oak_id | raw_source | patient_number | VSTESTCD | VSTEST                   | VSORRES | VSORRESU    | VSPOS | VSLOC  | VSLAT | VSDTC            | VSTPT   | VSTPTNUM | VISIT  | VISITNUM | STUDYID    | DOMAIN | VSCAT       | USUBJID        |
-|--------|------------|----------------|----------|--------------------------|---------|-------------|-------|--------|-------|------------------|---------|----------|--------|----------|------------|--------|-------------|----------------|
-| 1      | vitals     | 375            | SYSBP    | Systolic Blood Pressure  | 158.00  | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | DIABP    | Diastolic Blood Pressure | 92.00   | mmHg        | PRONE | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | PULSE    | Pulse Rate               | 63.00   | beats/min   | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | RESP     | Respiratory Rate         | 17.00   | breaths/min | NA    | NA     | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | TEMP     | Temperature              | 40.48   | C           | NA    | SKIN   | NA    | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
-| 1      | vitals     | 375            | OXYSAT   | Oxygen Saturation        | 98.00   | %           | NA    | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1        | VISIT1 | VISIT1   | test_study | VS     | VITAL SIGNS | test_study-375 |
+| oak_id | raw_source | patient_number | VSTESTCD | VSTEST | VSORRES | VSORRESU | VSPOS | VSLOC | VSLAT | VSDTC | VSTPT | VSTPTNUM | VISIT | VISITNUM | STUDYID | DOMAIN | VSCAT | USUBJID |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| 1 | vitals | 375 | SYSBP | Systolic Blood Pressure | 158.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | DIABP | Diastolic Blood Pressure | 92.00 | mmHg | PRONE | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | PULSE | Pulse Rate | 63.00 | beats/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | RESP | Respiratory Rate | 17.00 | breaths/min | NA | NA | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | TEMP | Temperature | 40.48 | C | NA | SKIN | NA | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |
+| 1 | vitals | 375 | OXYSAT | Oxygen Saturation | 98.00 | % | NA | FINGER | RIGHT | 2015-05-16T07:25 | PREDOSE | 1 | VISIT1 | VISIT1 | test_study | VS | VITAL SIGNS | test_study-375 |

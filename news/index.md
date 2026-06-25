@@ -1,5 +1,46 @@
 # Changelog
 
+## workr (development version)
+
+- Added `bContinueOnError` to
+  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
+  and
+  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md),
+  so long runs can keep going after workflow failures and return
+  `results`, `status`, and `failures`. The default keeps the existing
+  fail-fast behavior.
+
+- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
+  now checks declared spec inputs before running steps.
+
+- [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
+  now supports project-level and phase-level load/save hooks
+  ([\#67](https://github.com/Gilead-BioStats/workr/issues/67)).
+
+- Added per-phase `_config.yaml` / `_config.yml` files for
+  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
+  ([\#64](https://github.com/Gilead-BioStats/workr/issues/64),
+  [\#65](https://github.com/Gilead-BioStats/workr/issues/65),
+  [\#66](https://github.com/Gilead-BioStats/workr/issues/66)). A phase
+  can choose which earlier outputs it receives and can wrap or transform
+  its own output. Projects without config files keep the existing flat
+  carry-forward behavior.
+
+- Internal breaking change: `stop_if()` now interpolates glue-style
+  values in the caller’s environment. This fixes messages like
+  `"directory does not exist: {strPath}"` so they show the actual path;
+  callers that need literal braces should escape them as `{{` / `}}`.
+
+- Made
+  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
+  behavior more predictable and easier to diagnose
+  ([\#63](https://github.com/Gilead-BioStats/workr/issues/63)):
+  `strPath` now reports distinct errors when the path is missing or is
+  not a directory, phase ordering is documented, and empty phase folders
+  are skipped with a workflow log message instead of stopping the run.
+  Added unit-test coverage for the updated ordering, validation, and
+  empty-phase behavior.
+
 ## workr 1.0.0
 
 ### Initial Release

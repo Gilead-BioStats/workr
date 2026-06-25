@@ -31,13 +31,17 @@ RunWorkflow(
 
 - lConfig:
 
-  `list` A configuration object with two methods:
+  `list` Optional configuration object. Supported hook fields:
 
-  - `LoadData`: A function that loads data specified in
-    `lWorkflow$spec`.
+  - `LoadData`: Optional function or registered provider name used
+    before spec validation. Functions must accept `lWorkflow`,
+    `lConfig`, and `lData` as named formals. workr includes a built-in
+    `"gsm.datasim"` provider that reads adapter settings from
+    `lConfig$gsm.datasim`.
 
-  - `SaveData`: A function that saves data returned by the last step in
-    `lWorkflow$steps`.
+  - `SaveData`: Optional function or registered provider name used
+    before returning results when `bReturnResult = TRUE`. Functions must
+    accept `lWorkflow` and `lConfig` as named formals.
 
 - bReturnResult:
 
@@ -64,7 +68,7 @@ Object containing the results of the workflow's last step (if
 if (FALSE) { # \dontrun{
 # Load a simple workflow from YAML
 wf <- yaml::read_yaml(
-  system.file("workflows", "cars.yaml", package = "workr")
+  system.file("example_workflows", "cars.yaml", package = "workr")
 )
 lData <- list(cars = cars)
 

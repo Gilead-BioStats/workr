@@ -6,6 +6,8 @@
   admiral](https://gilead-biostats.github.io/workr/articles/ADAM_example.md):
 - [Incorporating
   cards](https://gilead-biostats.github.io/workr/articles/ARS_example.md):
+- [Load and Save
+  Hooks](https://gilead-biostats.github.io/workr/articles/load-save-hooks.md):
 - [Overview](https://gilead-biostats.github.io/workr/articles/Overview.md):
 - [Pharamaverse Case
   Study](https://gilead-biostats.github.io/workr/articles/Pharmaverse.md):

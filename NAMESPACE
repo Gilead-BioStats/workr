@@ -2,6 +2,7 @@
 
 S3method(.filter_workflows_impl,character)
 S3method(.filter_workflows_impl,default)
+S3method(.filter_workflows_impl,integer)
 S3method(.filter_workflows_impl,logical)
 S3method(.filter_workflows_impl,numeric)
 export(DemoApp_Server)

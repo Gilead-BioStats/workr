@@ -20,8 +20,8 @@ matching behaviour:
 any element of \code{value} (case-insensitive).
 \item \code{logical}: keep workflows where \code{meta[[field]]} coerces to the given
 \code{TRUE}/\code{FALSE} value (coercion handles YAML string forms like \code{"true"}).
-\item \code{numeric}: keep workflows where \code{meta[[field]]} equals any element of
-\code{value} (equality only; no comparison operators).
+\item \code{numeric} or \code{integer}: keep workflows where \code{meta[[field]]} equals any
+element of \code{value} (equality only; no comparison operators).
 \item other types: an informative error is raised.
 }}
 }

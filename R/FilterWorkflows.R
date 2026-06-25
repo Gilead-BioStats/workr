@@ -18,8 +18,8 @@
 #'     any element of `value` (case-insensitive).
 #'   - `logical`: keep workflows where `meta[[field]]` coerces to the given
 #'     `TRUE`/`FALSE` value (coercion handles YAML string forms like `"true"`).
-#'   - `numeric`: keep workflows where `meta[[field]]` equals any element of
-#'     `value` (equality only; no comparison operators).
+#'   - `numeric` or `integer`: keep workflows where `meta[[field]]` equals any
+#'     element of `value` (equality only; no comparison operators).
 #'   - other types: an informative error is raised.
 #'
 #' @examples
@@ -36,6 +36,13 @@
 #' @export
 FilterWorkflows <- function(lWorkflows, ...) {
   dots <- rlang::list2(...)
+  if (!rlang::is_named2(dots)) {
+    stop(
+      "All filters in `...` must be named (e.g., `Category = \"kri\"`). ",
+      "Unnamed arguments are not supported.",
+      call. = FALSE
+    )
+  }
   n_total <- length(lWorkflows)
   result <- purrr::reduce2(
     names(dots),
@@ -90,9 +97,12 @@ FilterWorkflows <- function(lWorkflows, ...) {
     field,
     value,
     function(meta_val, value) {
-      # meta_val may be a string ("true"/"false") when quoted in YAML, so
-      # coerce the meta field value — not the dispatch value — to logical.
-      isTRUE(as.logical(meta_val)) == value
+      coerced <- as.logical(meta_val)
+      # Treat non-coercible values (NA) as non-matches rather than FALSE.
+      if (is.na(coerced)) {
+        return(FALSE)
+      }
+      coerced == value
     }
   )
   LogMessage(
@@ -103,13 +113,21 @@ FilterWorkflows <- function(lWorkflows, ...) {
 
 #' @export
 #' @noRd
+.filter_workflows_impl.integer <- function(lWorkflows, field, value, ...) {
+  .filter_workflows_impl.numeric(lWorkflows, field, as.numeric(value), ...)
+}
+
+#' @export
+#' @noRd
 .filter_workflows_impl.numeric <- function(lWorkflows, field, value, ...) {
   result <- .keep_workflows(
     lWorkflows,
     field,
     value,
     function(meta_val, value) {
-      suppressWarnings(as.numeric(meta_val)) %in% value
+      coerced <- suppressWarnings(as.numeric(unlist(meta_val)))
+      # Treat non-coercible values (NA) as non-matches.
+      isTRUE(any(!is.na(coerced) & coerced %in% value))
     }
   )
   value_fmt <- paste(value, collapse = ", ")
@@ -154,10 +172,20 @@ FilterWorkflows <- function(lWorkflows, ...) {
     if (!length(field_key)) {
       return(FALSE)
     }
+    if (length(field_key) > 1) {
+      LogMessage(
+        level = "warn",
+        message = paste0(
+          "Multiple meta keys match field {field} in workflow {wf$meta$ID}: ",
+          "{paste(field_key, collapse = ', ')}. Using the first: {field_key[[1]]}."
+        )
+      )
+      field_key <- field_key[[1]]
+    }
     meta_val <- wf$meta[[field_key]]
     if (is.null(meta_val)) {
       return(FALSE)
     }
-    predicate(meta_val, value)
+    isTRUE(predicate(meta_val, value))
   })
 }

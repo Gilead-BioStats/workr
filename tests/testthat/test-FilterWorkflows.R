@@ -149,3 +149,62 @@ test_that("FilterWorkflows.numeric filters by multiple values (#72)", {
     expect_message("Kept 3 of 5 workflows after applying 1 filter")
   expect_named(result, c("country_only", "kri_only", "multi_category"))
 })
+
+test_that("FilterWorkflows errors on unnamed ... argument (#72)", {
+  {
+    FilterWorkflows(lWFToFilter, "kri")
+  } |>
+    expect_error("All filters in `\\.\\.\\.` must be named")
+})
+
+test_that("FilterWorkflows.logical excludes workflows with non-coercible Active value (#72)", {
+  # Build a minimal workflow list with Active: yes (non-coercible to logical)
+  lWf <- list(
+    wf1 = list(
+      meta = list(Type = "metric", ID = "wf1", Active = "yes"),
+      steps = list()
+    ),
+    wf2 = list(
+      meta = list(Type = "metric", ID = "wf2", Active = TRUE),
+      steps = list()
+    )
+  )
+  {
+    result <- FilterWorkflows(lWf, Active = FALSE)
+  } |>
+    expect_message("Keeping 0 of 2") |>
+    expect_message("Kept 0 of 2")
+  # wf1 has non-coercible "yes" — excluded rather than kept as FALSE match
+  expect_length(result, 0)
+})
+
+test_that("FilterWorkflows.integer dispatches to numeric method (#72)", {
+  {
+    result <- FilterWorkflows(lWFToFilter, Version = 2L)
+  } |>
+    expect_message("Keeping 2 of 5 workflows where Version matches 2.") |>
+    expect_message("Kept 2 of 5 workflows after applying 1 filter")
+  expect_named(result, c("country_only", "kri_only"))
+})
+
+test_that(".keep_workflows warns and uses first key when meta has duplicate case-variant keys (#72)", {
+  # Duplicate keys aren't possible in YAML, so construct the list directly
+  lWf <- list(
+    wf1 = list(
+      meta = list(
+        Type = "metric",
+        ID = "wf1",
+        Category = "kri",
+        category = "other"
+      ),
+      steps = list()
+    )
+  )
+  {
+    result <- FilterWorkflows(lWf, Category = "kri")
+  } |>
+    expect_message("Multiple meta keys match field") |>
+    expect_message("Keeping 1 of 1") |>
+    expect_message("Kept 1 of 1")
+  expect_named(result, "wf1")
+})

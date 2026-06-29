@@ -11,7 +11,8 @@ MakeWorkflowList(
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
   bRecursive = TRUE,
-  bActiveOnly = TRUE
+  bActiveOnly = TRUE,
+  ...
 )
 }
 \arguments{
@@ -34,6 +35,11 @@ are located. If \code{NULL}, the package will use an absolute path.}
 \item{bActiveOnly}{\code{logical} Should workflows with \code{meta$Active: false}
 be excluded? Default \code{TRUE}. Set to \code{FALSE} to load all workflows
 regardless of their \code{Active} setting.}
+
+\item{...}{\code{name = value} pairs passed to \code{\link[=FilterWorkflows]{FilterWorkflows()}} to filter
+workflows by \code{meta} fields after loading. Field lookup is case-insensitive.
+Multiple filters are applied sequentially (AND logic). Workflows that lack
+the specified field entirely are removed.}
 }
 \value{
 \code{list} A list of workflows with workflow and parameter metadata.
@@ -55,6 +61,13 @@ workflow <- MakeWorkflowList(
   strNames = "cars",
   strPath = "example_workflows",
   strPackage = "workr"
+)
+
+# Filter by a meta field
+workflow <- MakeWorkflowList(
+  strPath = "example_workflows",
+  strPackage = "workr",
+  Type = "demo"
 )
 
 }

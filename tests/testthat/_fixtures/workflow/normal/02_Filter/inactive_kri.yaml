@@ -1,0 +1,10 @@
+meta:
+  Type: metric
+  ID: inactive_kri
+  Category: kri
+  Active: false
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

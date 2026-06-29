@@ -15,7 +15,7 @@
 #'   `RunWorkflow()`. Supported hook fields:
 #' - `LoadData`: Optional function or registered provider name used before
 #'   spec validation. Functions must accept `lWorkflow`, `lConfig`, and
-#'   `lData` as named formals. {workr} includes a built-in `"gsm.datasim"`
+#'   `lData` as named formals. `{workr}` includes a built-in `"gsm.datasim"`
 #'   provider that reads adapter settings from `lConfig$gsm.datasim`.
 #' - `SaveData`: Optional function or registered provider name used before
 #'   returning results when `bReturnResult = TRUE`. Functions must accept
@@ -58,7 +58,9 @@ RunWorkflows <- function(
   bContinueOnError = FALSE
 ) {
   stop_if(
-    !is.logical(bContinueOnError) || length(bContinueOnError) != 1 || is.na(bContinueOnError),
+    !is.logical(bContinueOnError) ||
+      length(bContinueOnError) != 1 ||
+      is.na(bContinueOnError),
     "[ bContinueOnError ] must be TRUE or FALSE."
   )
 
@@ -91,7 +93,12 @@ RunWorkflows <- function(
           level = "error",
           message = "Workflow '{resultName}' failed: {err_message}"
         )
-        status <- .append_workflow_status(status, resultName, "error", err_message)
+        status <- .append_workflow_status(
+          status,
+          resultName,
+          "error",
+          err_message
+        )
         next
       }
 
@@ -111,14 +118,18 @@ RunWorkflows <- function(
 }
 
 .workflow_result_name <- function(workflow, strResultNames) {
-  resultName <- vapply(strResultNames, function(name) {
-    value <- workflow$meta[[name]]
-    stop_if(
-      is.null(value) || length(value) != 1,
-      "[ strResultNames ] field '{name}' is missing or not scalar in workflow meta."
-    )
-    as.character(value)
-  }, character(1))
+  resultName <- vapply(
+    strResultNames,
+    function(name) {
+      value <- workflow$meta[[name]]
+      stop_if(
+        is.null(value) || length(value) != 1,
+        "[ strResultNames ] field '{name}' is missing or not scalar in workflow meta."
+      )
+      as.character(value)
+    },
+    character(1)
+  )
 
   paste0(resultName, collapse = "_")
 }
@@ -132,7 +143,12 @@ RunWorkflows <- function(
   )
 }
 
-.append_workflow_status <- function(status, workflow, state, message = NA_character_) {
+.append_workflow_status <- function(
+  status,
+  workflow,
+  state,
+  message = NA_character_
+) {
   rbind(
     status,
     data.frame(

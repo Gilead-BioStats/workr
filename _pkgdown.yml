@@ -53,6 +53,7 @@ reference:
       - gsm_datasim_provider
       - register_load_provider
       - register_save_provider
+      - FilterWorkflows
       - ListWorkflows
       - ListWorkflowNames
       - MakeWorkflowList
@@ -63,6 +64,7 @@ reference:
       - DemoApp_init
       - DemoApp_UI
       - DemoApp_Server
+      - sum_step
   - title: "Internal / Helpers"
     contents:
       - gh_get_sha

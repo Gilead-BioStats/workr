@@ -375,6 +375,8 @@ Project workflow helpers, phase configuration, and bundled examples.
   **\[stable\]** : Register a load provider
 - [`register_save_provider()`](https://gilead-biostats.github.io/workr/dev/reference/register_save_provider.md)
   **\[stable\]** : Register a save provider
+- [`FilterWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/FilterWorkflows.md)
+  **\[stable\]** : Filter a workflow list by metadata fields
 - [`ListWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflows.md)
   **\[stable\]** : List workflow YAML files in a package/directory.
 - [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)
@@ -394,6 +396,8 @@ Interactive Shiny application for exploring workflows.
   **\[stable\]** : Demo app UI
 - [`DemoApp_Server()`](https://gilead-biostats.github.io/workr/dev/reference/DemoApp_Server.md)
   **\[stable\]** : Demo app server
+- [`sum_step()`](https://gilead-biostats.github.io/workr/dev/reference/sum_step.md)
+  : Simple example function
 
 ## Internal / Helpers
 

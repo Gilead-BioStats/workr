@@ -14,7 +14,11 @@ workflow files. Active/inactive filtering happens inside
 ## Usage
 
 ``` r
-ListWorkflowNames(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
+ListWorkflowNames(
+  strPath = "example_workflows",
+  strPackage = NULL,
+  bRecursive = TRUE
+)
 ```
 
 ## Arguments

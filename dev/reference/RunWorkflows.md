@@ -43,8 +43,8 @@ RunWorkflows(
 
   - `LoadData`: Optional function or registered provider name used
     before spec validation. Functions must accept `lWorkflow`,
-    `lConfig`, and `lData` as named formals. workr includes a built-in
-    `"gsm.datasim"` provider that reads adapter settings from
+    `lConfig`, and `lData` as named formals. `{workr}` includes a
+    built-in `"gsm.datasim"` provider that reads adapter settings from
     `lConfig$gsm.datasim`.
 
   - `SaveData`: Optional function or registered provider name used
@@ -103,5 +103,5 @@ RunWorkflows(lWorkflows, lData)
 #> [INFO] x = value1: Passing lData$value1.
 #> [INFO] y = value2: Passing lData$value2.
 #> [INFO] Calling `sum_step`
-#> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.
+#> Error in (function (lData, y) {    lData$value + y})(x = 1, y = 2): unused argument (x = 1)
 ```

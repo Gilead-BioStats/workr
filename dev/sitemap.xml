@@ -16,6 +16,7 @@
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/DemoApp_Server.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/DemoApp_UI.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/DemoApp_init.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/reference/FilterWorkflows.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/ListWorkflows.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.html</loc></url>
@@ -41,6 +42,7 @@
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/resolve_package.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/resolve_ref_by_date.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/resolve_tag_by_date.html</loc></url>
+<url><loc>https://gilead-biostats.github.io/workr/dev/reference/sum_step.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/workr-package.html</loc></url>
 <url><loc>https://gilead-biostats.github.io/workr/dev/reference/write_rproject_toml.html</loc></url>
 </urlset>

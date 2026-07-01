@@ -25,6 +25,33 @@
   with a workflow log message instead of stopping the run. Added unit-test
   coverage for the updated ordering, validation, and empty-phase behavior.
 
+## Workflow discovery and execution
+
+* Added `ListWorkflows()` and `ListWorkflowNames()` helpers for discovering workflow YAML files from package or local workflow directories.
+* Extended `MakeWorkflowList()` with exact-name matching, recursive discovery controls, active/inactive workflow filtering via `meta$Active`, required-field validation, workflow ID naming, and `meta$Priority` ordering.
+* Added support for the singular `inst/workflow` package workflow directory while retaining compatibility with existing workflow-loading paths.
+* Improved `RunWorkflow()` and `RunWorkflows()` configuration handling by passing `lConfig` through workflow execution and supporting load/save hooks.
+* Fixed mixed Date/POSIXct timestamp parsing in `RunQuery()` when schema enforcement is enabled.
+
+## Load/save hooks and artifacts
+
+* Added `register_load_provider()` and `register_save_provider()` for named, reusable workflow data hooks.
+* Added built-in `github_artifact` load and save providers for persisting workflow data as manifest-described RDS payloads in GitHub Actions artifacts.
+* Added artifact restore policies for explicit or latest-successful workflow runs, configurable missing-artifact handling, include/exclude key filters, custom upload/fetch hooks, and path traversal validation for downloaded bundles.
+* Added a Load and Save Hooks vignette documenting inline hooks, registered providers, and multi-workflow usage.
+
+## GitHub, manifests, and automation
+
+* Migrated GitHub API helper calls to `gh::gh()` and hardened package/ref resolution, snapshot helpers, and manifest workflow installation behavior.
+* Simplified GitHub artifact helper internals and added mocked test coverage for snapshot and artifact provider workflows.
+* Updated GitHub Actions for R CMD check, manifest generation, pkgdown deployment, qcthat, test coverage, release automation, and workflow-template checks.
+
+## Examples, docs, and tests
+
+* Reorganized bundled example workflows and test fixtures under `workflow`/`_fixtures` directories, including active/inactive workflow examples and malformed workflow fixtures.
+* Updated README, pkgdown configuration, generated documentation, and lifecycle assets for the expanded workflow and hook APIs.
+* Added and expanded test coverage for workflow listing/loading, active workflow filtering, workflow execution, query schema parsing, load/save hook behavior, GitHub artifact providers, and snapshot helpers.
+
 # workr 1.0.0
 
 ## Initial Release

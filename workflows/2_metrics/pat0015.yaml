@@ -1,18 +1,17 @@
 meta:
-  Active: true
   Type: Analysis
-  ID: kri0015
-  GroupLevel: Site
+  ID: pat0015
+  GroupLevel: Subject
   Abbreviation: DTH90
-  Metric: Premature Death Rate
-  Numerator: Deaths in First 90 Days
-  Denominator: Enrolled Subjects
+  Metric: Premature Death (Subject)
+  Numerator: Premature Death in Window
+  Denominator: Enrolled Subject
   Model: Identity
   Score: Numerator
   AnalysisType: identity
-  Threshold: "1,2"
-  Flag: "0,1,2"
-  RiskScoreWeight: "0,8,16"
+  Threshold: "1"
+  Flag: "0,2"
+  RiskScoreWeight: "0,16"
   AccrualThreshold: 1
   AccrualMetric: Denominator
   WindowDays: 90
@@ -25,8 +24,6 @@ spec:
       type: numeric
   Mapped_SUBJ:
     subjid:
-      type: character
-    invid:
       type: character
 steps:
   - output: vThreshold
@@ -60,7 +57,7 @@ steps:
       dfNumerator: Temp_DeathWindow
       dfDenominator: Mapped_SUBJ
       strSubjectCol: subjid
-      strGroupCol: invid
+      strGroupCol: subjid
       strGroupLevel: GroupLevel
       strNumeratorMethod: Count
       strDenominatorMethod: Count

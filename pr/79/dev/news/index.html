@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">workr</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.0</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,7 +51,34 @@
 <li><p>Added per-phase <code>_config.yaml</code> / <code>_config.yml</code> files for <code><a href="../reference/RunProject.html">RunProject()</a></code> (<a href="https://github.com/Gilead-BioStats/workr/issues/64" class="external-link">#64</a>, <a href="https://github.com/Gilead-BioStats/workr/issues/65" class="external-link">#65</a>, <a href="https://github.com/Gilead-BioStats/workr/issues/66" class="external-link">#66</a>). A phase can choose which earlier outputs it receives and can wrap or transform its own output. Projects without config files keep the existing flat carry-forward behavior.</p></li>
 <li><p>Internal breaking change: <code>stop_if()</code> now interpolates glue-style values in the caller’s environment. This fixes messages like <code>"directory does not exist: {strPath}"</code> so they show the actual path; callers that need literal braces should escape them as <code>{{</code> / <code>}}</code>.</p></li>
 <li><p>Made <code><a href="../reference/RunProject.html">RunProject()</a></code> behavior more predictable and easier to diagnose (<a href="https://github.com/Gilead-BioStats/workr/issues/63" class="external-link">#63</a>): <code>strPath</code> now reports distinct errors when the path is missing or is not a directory, phase ordering is documented, and empty phase folders are skipped with a workflow log message instead of stopping the run. Added unit-test coverage for the updated ordering, validation, and empty-phase behavior.</p></li>
+</ul><div class="section level3">
+<h3 id="workflow-discovery-and-execution-development-version">Workflow discovery and execution<a class="anchor" aria-label="anchor" href="#workflow-discovery-and-execution-development-version"></a></h3>
+<ul><li>Added <code><a href="../reference/ListWorkflows.html">ListWorkflows()</a></code> and <code><a href="../reference/ListWorkflowNames.html">ListWorkflowNames()</a></code> helpers for discovering workflow YAML files from package or local workflow directories.</li>
+<li>Extended <code><a href="../reference/MakeWorkflowList.html">MakeWorkflowList()</a></code> with exact-name matching, recursive discovery controls, active/inactive workflow filtering via <code>meta$Active</code>, required-field validation, workflow ID naming, and <code>meta$Priority</code> ordering.</li>
+<li>Added support for the singular <code>inst/workflow</code> package workflow directory while retaining compatibility with existing workflow-loading paths.</li>
+<li>Improved <code><a href="../reference/RunWorkflow.html">RunWorkflow()</a></code> and <code><a href="../reference/RunWorkflows.html">RunWorkflows()</a></code> configuration handling by passing <code>lConfig</code> through workflow execution and supporting load/save hooks.</li>
+<li>Fixed mixed Date/POSIXct timestamp parsing in <code><a href="../reference/RunQuery.html">RunQuery()</a></code> when schema enforcement is enabled.</li>
 </ul></div>
+<div class="section level3">
+<h3 id="loadsave-hooks-and-artifacts-development-version">Load/save hooks and artifacts<a class="anchor" aria-label="anchor" href="#loadsave-hooks-and-artifacts-development-version"></a></h3>
+<ul><li>Added <code><a href="../reference/register_load_provider.html">register_load_provider()</a></code> and <code><a href="../reference/register_save_provider.html">register_save_provider()</a></code> for named, reusable workflow data hooks.</li>
+<li>Added built-in <code>github_artifact</code> load and save providers for persisting workflow data as manifest-described RDS payloads in GitHub Actions artifacts.</li>
+<li>Added artifact restore policies for explicit or latest-successful workflow runs, configurable missing-artifact handling, include/exclude key filters, custom upload/fetch hooks, and path traversal validation for downloaded bundles.</li>
+<li>Added a Load and Save Hooks vignette documenting inline hooks, registered providers, and multi-workflow usage.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="github-manifests-and-automation-development-version">GitHub, manifests, and automation<a class="anchor" aria-label="anchor" href="#github-manifests-and-automation-development-version"></a></h3>
+<ul><li>Migrated GitHub API helper calls to <code><a href="https://gh.r-lib.org/reference/gh.html" class="external-link">gh::gh()</a></code> and hardened package/ref resolution, snapshot helpers, and manifest workflow installation behavior.</li>
+<li>Simplified GitHub artifact helper internals and added mocked test coverage for snapshot and artifact provider workflows.</li>
+<li>Updated GitHub Actions for R CMD check, manifest generation, pkgdown deployment, qcthat, test coverage, release automation, and workflow-template checks.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="examples-docs-and-tests-development-version">Examples, docs, and tests<a class="anchor" aria-label="anchor" href="#examples-docs-and-tests-development-version"></a></h3>
+<ul><li>Reorganized bundled example workflows and test fixtures under <code>workflow</code>/<code>_fixtures</code> directories, including active/inactive workflow examples and malformed workflow fixtures.</li>
+<li>Updated README, pkgdown configuration, generated documentation, and lifecycle assets for the expanded workflow and hook APIs.</li>
+<li>Added and expanded test coverage for workflow listing/loading, active workflow filtering, workflow execution, query schema parsing, load/save hook behavior, GitHub artifact providers, and snapshot helpers.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="workr-100">workr 1.0.0<a class="anchor" aria-label="anchor" href="#workr-100"></a></h2>
 <div class="section level3">

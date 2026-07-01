@@ -1,7 +1,7 @@
 Type: Package
 Package: workr
 Title: Workflow Execution Helpers
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Jeremy", "Wildfire", , "jwildfire@gilead.com", role = c("aut", "cre")),
     person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),

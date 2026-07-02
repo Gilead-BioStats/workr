@@ -38,7 +38,7 @@ steps:
         - subjid
         - visit
   - output: Mapped_PK
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: PK_VISIT
       strQuery: |

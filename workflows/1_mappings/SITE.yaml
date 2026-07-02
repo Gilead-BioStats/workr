@@ -39,7 +39,7 @@ spec:
       type: character
 steps:
   - output: Temp_CTMSSiteWide
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Raw_SITE
       strQuery: "SELECT invid as GroupID, * FROM df"
@@ -49,7 +49,7 @@ steps:
       data: Temp_CTMSSiteWide
       strGroupLevel: 'Site'
   - output: Temp_SiteCountsWide
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Mapped_SUBJ
       strQuery: "SELECT invid as GroupID, COUNT(DISTINCT subjid) as ParticipantCount, COUNT(DISTINCT invid) as SiteCount FROM df GROUP BY invid"

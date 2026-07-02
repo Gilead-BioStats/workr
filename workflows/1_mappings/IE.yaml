@@ -22,7 +22,7 @@ spec:
 
 steps:
   - output: iecat_custom
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Raw_IE
       strQuery: "SELECT *,
@@ -32,7 +32,7 @@ steps:
         END as iecat_custom
       FROM df"
   - output: ie_violation
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: iecat_custom
       strQuery: "SELECT * ,
@@ -42,7 +42,7 @@ steps:
         END as ie_violation
        FROM df"
   - output: Mapped_IE
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: ie_violation
       strQuery: "SELECT * FROM df WHERE subjid IS NOT NULL AND ie_violation = 'Y'"

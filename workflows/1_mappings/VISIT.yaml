@@ -18,7 +18,7 @@ spec:
       type: character
 steps:
   - output: Mapped_VISIT
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Raw_VISIT
       strQuery: "SELECT studyid, subjid, visit_dt, visit, invid FROM df"

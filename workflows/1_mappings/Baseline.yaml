@@ -12,7 +12,7 @@ spec:
     scan_dt:
       type: Date
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Mapped_Baseline
     params:
       df: Raw_Baseline

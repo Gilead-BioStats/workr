@@ -18,7 +18,7 @@ spec:
     country:
       type: character
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Mapped_Randomization
     params:
       df: Raw_Randomization

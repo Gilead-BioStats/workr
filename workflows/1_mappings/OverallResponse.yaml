@@ -17,7 +17,7 @@ spec:
     rs_dt:
       type: Date
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Mapped_OverallResponse
     params:
       df: Raw_OverallResponse

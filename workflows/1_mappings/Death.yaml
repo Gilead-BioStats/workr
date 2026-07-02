@@ -43,7 +43,7 @@ spec:
     rgmn_dt:
       type: Date
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Temp_Death
     params:
       df: Raw_Death

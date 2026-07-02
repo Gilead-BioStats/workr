@@ -35,7 +35,7 @@ spec:
       type: timestamp
 steps:
   - output: Mapped_SUBJ
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Raw_SUBJ
       strQuery: "SELECT * FROM df WHERE enrollyn == 'Y'"

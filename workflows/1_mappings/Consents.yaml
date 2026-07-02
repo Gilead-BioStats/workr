@@ -29,7 +29,7 @@ spec:
     mincreated_dts:
       type: timestamp
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Temp_Consents
     params:
       df: Raw_Consents

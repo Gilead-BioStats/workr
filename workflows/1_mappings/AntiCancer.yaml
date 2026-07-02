@@ -14,7 +14,7 @@ spec:
     cmst_dt:
       type: Date
 steps:
-  - name: gsm.core::RunQuery
+  - name: workr::RunQuery
     output: Mapped_AntiCancer
     params:
       df: Raw_AntiCancer

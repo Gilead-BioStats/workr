@@ -11,6 +11,8 @@ spec:
       type: character
     death_dt:
       type: Date
+    deathcls:
+      type: character
   Mapped_STUDCOMP:
     studyid:
       type: character
@@ -47,7 +49,7 @@ steps:
     output: Temp_Death
     params:
       df: Raw_Death
-      strQuery: "SELECT studyid, subjid, death_dt FROM df
+      strQuery: "SELECT studyid, subjid, death_dt, deathcls FROM df
                 WHERE subjid IS NOT NULL AND death_dt IS NOT NULL"
   - name: gsm.mapping::complete_death
     output: Mapped_Death

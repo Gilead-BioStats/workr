@@ -7,8 +7,8 @@ repositories = [
 ]
 
 dependencies = [
-    { name = "gsm.core", git = "https://github.com/Gilead-BioStats/gsm.core.git", commit = "427ef87687d9ad8f9cc91faa9783e1ea3398249d" },
-    { name = "gsm.mapping", git = "https://github.com/Gilead-BioStats/gsm.mapping.git", commit = "9cbc811f9a0ff15d2eccfeeb301534ec4ce0735f" },
+    { name = "gsm.core", git = "https://github.com/Gilead-BioStats/gsm.core.git", commit = "29a7884475b3b7ae88af5eff6afe4eefef9d93d0" },
+    { name = "gsm.mapping", git = "https://github.com/Gilead-BioStats/gsm.mapping.git", commit = "10804d5274d891b8c794189817be6c9c6175a74a" },
     { name = "gsm.kri", git = "https://github.com/Gilead-BioStats/gsm.kri.git", commit = "e571989bec87108776082ef27f2adef498a56b06" },
     { name = "gsm.reporting", git = "https://github.com/Gilead-BioStats/gsm.reporting.git", commit = "828ee8e66e8526bc1aff59b1fe55530b7649f45f" }
 ]

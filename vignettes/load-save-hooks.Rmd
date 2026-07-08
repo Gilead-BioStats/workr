@@ -194,15 +194,18 @@ env_results$demo_height
 
 `workr` also includes a built-in registered `LoadData` provider named `"gsm.datasim"`. The provider uses the optional `gsm.datasim` package to generate input data, adds legacy `df*` aliases for generated `Raw_*` objects, and merges those generated objects with any caller-supplied `lData`.
 
-Install or update the optional dependency from the `dev` branch before running the example locally:
+Install or update the optional dependency before running the example locally:
 
 ```r
-pak::pak("Gilead-BioStats/gsm.datasim@dev")
+pak::pak("Gilead-BioStats/gsm.datasim@release/v2.0.0")
 ```
 
-The example is evaluated only when `gsm.datasim` is installed.
+The example below is shown for illustration and is not evaluated when the
+vignette is built, because it depends on the optional `gsm.datasim` package and
+its `gsm.mapping` workflow assets. Run it locally once those packages are
+installed.
 
-```{r gsm-datasim, eval = requireNamespace("gsm.datasim", quietly = TRUE)}
+```{r gsm-datasim, eval = FALSE}
 summarise_enrollment <- function(Raw_SUBJ) {
   aggregate(
     Raw_SUBJ$subjid,

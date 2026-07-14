@@ -4,7 +4,11 @@
 \alias{ListWorkflowNames}
 \title{List workflow names in a package/directory.}
 \usage{
-ListWorkflowNames(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
+ListWorkflowNames(
+  strPath = "example_workflows",
+  strPackage = NULL,
+  bRecursive = TRUE
+)
 }
 \arguments{
 \item{strPath}{\code{character} The location of workflow YAML files, relative to

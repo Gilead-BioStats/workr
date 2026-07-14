@@ -166,6 +166,37 @@ test_that("RunQuery parses invalid date/times correctly (#26)", {
   expect_true(all(is.na(result$Birthtime)))
 })
 
+test_that("RunQuery handles mixed valid and invalid timestamps", {
+  skip_if_not_installed("DBI")
+  skip_if_not_installed("duckdb")
+
+  df <- data.frame(
+    Name = c("John", "Jane"),
+    Birthtime = c("1990-01-01 06:47:00", "not a timestamp")
+  )
+  lColumnMapping <- list(
+    Name = list(type = "character"),
+    Birthtime = list(type = "timestamp")
+  )
+
+  query <- "SELECT * FROM df"
+
+  suppressWarnings(
+    suppressMessages(
+      result <- RunQuery(
+        query,
+        df,
+        bUseSchema = TRUE,
+        lColumnMapping = lColumnMapping
+      )
+    )
+  )
+
+  expect_equal(class(result$Birthtime), c("POSIXct", "POSIXt"))
+  expect_false(is.na(result$Birthtime[[1]]))
+  expect_true(is.na(result$Birthtime[[2]]))
+})
+
 test_that("RunQuery requires lColumnMapping when bUseSchema is TRUE (#26)", {
   df <- data.frame(x = 1:3)
   query <- "SELECT * FROM df"

@@ -1,0 +1,13 @@
+meta:
+  Type: metric
+  ID: multi_category
+  Category:
+    - kri
+    - site_risk_score
+  Active: true
+  Version: 1
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

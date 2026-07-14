@@ -127,7 +127,7 @@ RunQuery <- function(strQuery, df, bUseSchema = FALSE, lColumnMapping = NULL) {
             (mapping$type != "timestamp" && !inherits(raw_vals, mapping$type))) {
             parsed <- map(raw_vals, ~ tryCatch(
               as.POSIXct(.x, tz = "UTC"),
-              error = function(e) NA_real_
+              error = function(e) as.POSIXct(NA_real_, origin = "1970-01-01", tz = "UTC")
             ))
 
             parsed <- purrr::list_c(parsed) %>% as.POSIXct(origin = "1970-01-01", tz = "UTC")

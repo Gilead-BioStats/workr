@@ -1,0 +1,11 @@
+meta:
+  Type: metric
+  ID: country_only
+  Category: country
+  Active: true
+  Version: 2
+steps:
+  - name: base::identity
+    output: res
+    params:
+      x: cars

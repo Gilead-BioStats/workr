@@ -11,7 +11,7 @@ A list of generated workflow input objects to merge into \code{lData}.
 }
 \details{
 The built-in \code{"gsm.datasim"} \code{LoadData} provider generates workflow inputs
-with the optional {gsm.datasim} package. Configure it by setting
+with the optional \code{{gsm.datasim}} package. Configure it by setting
 \code{lConfig$LoadData = "gsm.datasim"} and passing provider options in
 \code{lConfig$gsm.datasim}.
 

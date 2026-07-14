@@ -18,6 +18,10 @@
 #' @param bActiveOnly `logical` Should workflows with `meta$Active: false`
 #'   be excluded? Default `TRUE`. Set to `FALSE` to load all workflows
 #'   regardless of their `Active` setting.
+#' @param ... `name = value` pairs passed to [FilterWorkflows()] to filter
+#'   workflows by `meta` fields after loading. Field lookup is case-insensitive.
+#'   Multiple filters are applied sequentially (AND logic). Workflows that lack
+#'   the specified field entirely are removed.
 #'
 #' @examples
 #' # Load all active workflows from a package
@@ -33,6 +37,13 @@
 #'   strPackage = "workr"
 #' )
 #'
+#' # Filter by a meta field
+#' workflow <- MakeWorkflowList(
+#'   strPath = "example_workflows",
+#'   strPackage = "workr",
+#'   Type = "demo"
+#' )
+#'
 #' @return `list` A list of workflows with workflow and parameter metadata.
 #'
 #' @export
@@ -46,17 +57,18 @@ MakeWorkflowList <- function(
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
   bRecursive = TRUE,
-  bActiveOnly = TRUE
+  bActiveOnly = TRUE,
+  ...
 ) {
-  ListWorkflows(strPath, strPackage, bRecursive) |>
+  lWorkflows <- ListWorkflows(strPath, strPackage, bRecursive) |>
     .filter_yaml_files(strNames, bExact) |>
     .load_workflows() |>
     .filter_active_workflows(bActiveOnly) |>
     .validate_workflows() |>
-    .sort_workflows() |>
+    .sort_workflows()
+  FilterWorkflows(lWorkflows, ...) |>
     .warn_if_empty("No workflows found.")
 }
-
 #' Subset a yaml_files vector to those matching strNames
 #'
 #' @keywords internal

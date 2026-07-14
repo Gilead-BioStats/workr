@@ -13,7 +13,11 @@ to load and validate the workflows.
 ## Usage
 
 ``` r
-ListWorkflows(strPath = "example_workflows", strPackage = NULL, bRecursive = TRUE)
+ListWorkflows(
+  strPath = "example_workflows",
+  strPackage = NULL,
+  bRecursive = TRUE
+)
 ```
 
 ## Arguments

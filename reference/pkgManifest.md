@@ -9,12 +9,7 @@ environments.
 ## Usage
 
 ``` r
-pkgManifest(
-  path = ".",
-  packageList = character(),
-  date = NULL,
-  branch = NULL
-)
+pkgManifest(path = ".", packageList = character(), date = NULL, branch = NULL)
 ```
 
 ## Arguments

@@ -1,5 +1,5 @@
 pandoc: 3.8.3
-pkgdown: 2.2.0
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   articles/ADAM_example: ADAM_example.html
@@ -9,7 +9,7 @@ articles:
   articles/Pharmaverse: Pharmaverse.html
   articles/SDTM_example: SDTM_example.html
   articles/Visualizations: Visualizations.html
-last_built: 2026-06-25T18:57Z
+last_built: 2026-07-14T18:25Z
 urls:
   reference: https://gilead-biostats.github.io/workr/reference
   article: https://gilead-biostats.github.io/workr/articles

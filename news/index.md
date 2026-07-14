@@ -1,45 +1,33 @@
 # Changelog
 
-## workr (development version)
+## workr 1.1.0
 
-- Added `bContinueOnError` to
-  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
-  and
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/reference/RunWorkflows.md),
-  so long runs can keep going after workflow failures and return
-  `results`, `status`, and `failures`. The default keeps the existing
-  fail-fast behavior.
+### Highlights
 
-- [`RunWorkflow()`](https://gilead-biostats.github.io/workr/reference/RunWorkflow.md)
-  now checks declared spec inputs before running steps.
+- Improved project orchestration with phase-level configuration files,
+  project/phase load-save hooks, optional continue-on-error behavior,
+  and clearer diagnostics for missing paths, empty phases, and workflow
+  failures.
 
-- [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
-  now supports project-level and phase-level load/save hooks
-  ([\#67](https://github.com/Gilead-BioStats/workr/issues/67)).
+- Added workflow discovery helpers and made workflow loading more
+  predictable, including active/inactive filtering, priority ordering,
+  exact-name matching, and support for the singular `inst/workflow`
+  directory.
 
-- Added per-phase `_config.yaml` / `_config.yml` files for
-  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
-  ([\#64](https://github.com/Gilead-BioStats/workr/issues/64),
-  [\#65](https://github.com/Gilead-BioStats/workr/issues/65),
-  [\#66](https://github.com/Gilead-BioStats/workr/issues/66)). A phase
-  can choose which earlier outputs it receives and can wrap or transform
-  its own output. Projects without config files keep the existing flat
-  carry-forward behavior.
+- Added reusable load/save hook registration plus built-in GitHub
+  Actions artifact providers for saving and restoring workflow data
+  between runs.
 
-- Internal breaking change: `stop_if()` now interpolates glue-style
-  values in the caller’s environment. This fixes messages like
-  `"directory does not exist: {strPath}"` so they show the actual path;
-  callers that need literal braces should escape them as `{{` / `}}`.
+- Hardened GitHub, manifest, snapshot, and CI automation, including
+  expanded mocked coverage for GitHub-backed workflows.
 
-- Made
-  [`RunProject()`](https://gilead-biostats.github.io/workr/reference/RunProject.md)
-  behavior more predictable and easier to diagnose
-  ([\#63](https://github.com/Gilead-BioStats/workr/issues/63)):
-  `strPath` now reports distinct errors when the path is missing or is
-  not a directory, phase ordering is documented, and empty phase folders
-  are skipped with a workflow log message instead of stopping the run.
-  Added unit-test coverage for the updated ordering, validation, and
-  empty-phase behavior.
+- Updated examples, documentation, pkgdown configuration, and tests for
+  the new workflow loading, hook, artifact, and project orchestration
+  behavior.
+
+- Fixed schema-enforced timestamp parsing in
+  [`RunQuery()`](https://gilead-biostats.github.io/workr/reference/RunQuery.md)
+  when inputs mix Date and POSIXct-like values.
 
 ## workr 1.0.0
 

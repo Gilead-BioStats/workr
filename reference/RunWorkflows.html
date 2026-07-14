@@ -15,7 +15,7 @@ as inputs (along with lData) for later workflows."><link href="pkgdown/extra.css
 
     <a class="navbar-brand me-2" href="../index.html">workr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -89,7 +89,7 @@ as inputs (along with <code>lData</code>) for later workflows.</p>
 <dd><p><code>list</code> Optional configuration object passed through to
 <code><a href="RunWorkflow.html">RunWorkflow()</a></code>. Supported hook fields:</p><ul><li><p><code>LoadData</code>: Optional function or registered provider name used before
 spec validation. Functions must accept <code>lWorkflow</code>, <code>lConfig</code>, and
-<code>lData</code> as named formals. workr includes a built-in <code>"gsm.datasim"</code>
+<code>lData</code> as named formals. <code>{workr}</code> includes a built-in <code>"gsm.datasim"</code>
 provider that reads adapter settings from <code>lConfig$gsm.datasim</code>.</p></li>
 <li><p><code>SaveData</code>: Optional function or registered provider name used before
 returning results when <code>bReturnResult = TRUE</code>. Functions must accept
@@ -145,7 +145,7 @@ summary with <code>results</code>, <code>status</code>, and <code>failures</code
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] x = value1: Passing lData$value1.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] y = value2: Passing lData$value2.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Calling `sum_step`</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in GetStrFunctionIfNamespaced(lStep$name):</span> Function 'sum_step' not found.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in (function (lData, y) {    lData$value + y})(x = 1, y = 2):</span> unused argument (x = 1)</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -158,7 +158,7 @@ summary with <code>results</code>, <code>status</code>, and <code>failures</code
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

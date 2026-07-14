@@ -235,15 +235,18 @@ generate input data, adds legacy `df*` aliases for generated `Raw_*`
 objects, and merges those generated objects with any caller-supplied
 `lData`.
 
-Install or update the optional dependency from the `dev` branch before
-running the example locally:
+Install or update the optional dependency before running the example
+locally:
 
 ``` r
 
-pak::pak("Gilead-BioStats/gsm.datasim@dev")
+pak::pak("Gilead-BioStats/gsm.datasim@release/v2.0.0")
 ```
 
-The example is evaluated only when `gsm.datasim` is installed.
+The example below is shown for illustration and is not evaluated when
+the vignette is built, because it depends on the optional `gsm.datasim`
+package and its `gsm.mapping` workflow assets. Run it locally once those
+packages are installed.
 
 ``` r
 
@@ -289,56 +292,9 @@ workr::RunWorkflow(
     )
   )
 )
-#> INFO [2026-06-25 18:57:15]  -- Adding snapshot 1...
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_SITE...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_SITE added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_SUBJ...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_SUBJ added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_ENROLL...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_ENROLL added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_VISIT...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_VISIT added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_STUDCOMP...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_STUDCOMP added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_AE...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_AE added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_IE...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_IE added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_LB...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_LB added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_OverallResponse...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_OverallResponse added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_PD...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_PD added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_Randomization...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_Randomization added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_SDRGCOMP...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_SDRGCOMP added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_DATACHG...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_DATACHG added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_DATAENT...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_DATAENT added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_Death...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_Death added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_PK...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_PK added successfully
-#> INFO [2026-06-25 18:57:15]  ---- Adding dataset Raw_QUERY...
-#> INFO [2026-06-25 18:57:15]  ---- Dataset Raw_QUERY added successfully
-#> INFO [2026-06-25 18:57:15]  -- Snapshot 1 added successfully
-#>   site_id enrolled_subjects
-#> 1  0X1980                 6
-#> 2  0X2614                 7
-#> 3  0X3371                 7
-#> 4  0X9089                 5
 
 head(datasim_results$enrollment_summary)
-#>   site_id enrolled_subjects
-#> 1  0X1980                 6
-#> 2  0X2614                 7
-#> 3  0X3371                 7
-#> 4  0X9089                 5
 head(datasim_results$loaded_names)
-#> [1] "dfAE"      "dfDATACHG" "dfDATAENT" "dfDeath"   "dfENROLL"  "dfIE"
 ```
 
 Use `lConfig$gsm.datasim` to tune the simulated study. Common fields

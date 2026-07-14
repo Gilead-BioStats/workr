@@ -9,7 +9,7 @@ Create a list of workflows for use in pipelines."><link href="pkgdown/extra.css"
 
     <a class="navbar-brand me-2" href="../index.html">workr</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Released version">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,8 @@ Create a list of workflows for use in pipelines."><link href="pkgdown/extra.css"
 <span>  strPackage <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  bExact <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">strNames</span>, <span class="st">"AsIs"</span><span class="op">)</span>,</span>
 <span>  bRecursive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  bActiveOnly <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  bActiveOnly <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,6 +100,13 @@ are located. If <code>NULL</code>, the package will use an absolute path.</p></d
 be excluded? Default <code>TRUE</code>. Set to <code>FALSE</code> to load all workflows
 regardless of their <code>Active</code> setting.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p><code>name = value</code> pairs passed to <code><a href="FilterWorkflows.html">FilterWorkflows()</a></code> to filter
+workflows by <code>meta</code> fields after loading. Field lookup is case-insensitive.
+Multiple filters are applied sequentially (AND logic). Workflows that lack
+the specified field entirely are removed.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -120,6 +128,16 @@ regardless of their <code>Active</code> setting.</p></dd>
 <span class="r-in"><span>  strPackage <span class="op">=</span> <span class="st">"workr"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Filter by a meta field</span></span></span>
+<span class="r-in"><span><span class="va">workflow</span> <span class="op">&lt;-</span> <span class="fu">MakeWorkflowList</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  strPath <span class="op">=</span> <span class="st">"example_workflows"</span>,</span></span>
+<span class="r-in"><span>  strPackage <span class="op">=</span> <span class="st">"workr"</span>,</span></span>
+<span class="r-in"><span>  Type <span class="op">=</span> <span class="st">"demo"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Keeping 0 of 11 workflows where Type matches demo.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [INFO] Kept 0 of 11 workflows after applying 1 filter(s).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [WARN] No workflows found.</span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
@@ -131,7 +149,7 @@ regardless of their <code>Active</code> setting.</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

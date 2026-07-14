@@ -14,7 +14,8 @@ MakeWorkflowList(
   strPackage = NULL,
   bExact = inherits(strNames, "AsIs"),
   bRecursive = TRUE,
-  bActiveOnly = TRUE
+  bActiveOnly = TRUE,
+  ...
 )
 ```
 
@@ -55,6 +56,14 @@ MakeWorkflowList(
   Default `TRUE`. Set to `FALSE` to load all workflows regardless of
   their `Active` setting.
 
+- ...:
+
+  `name = value` pairs passed to
+  [`FilterWorkflows()`](https://gilead-biostats.github.io/workr/reference/FilterWorkflows.md)
+  to filter workflows by `meta` fields after loading. Field lookup is
+  case-insensitive. Multiple filters are applied sequentially (AND
+  logic). Workflows that lack the specified field entirely are removed.
+
 ## Value
 
 `list` A list of workflows with workflow and parameter metadata.
@@ -74,4 +83,14 @@ workflow <- MakeWorkflowList(
   strPath = "example_workflows",
   strPackage = "workr"
 )
+
+# Filter by a meta field
+workflow <- MakeWorkflowList(
+  strPath = "example_workflows",
+  strPackage = "workr",
+  Type = "demo"
+)
+#> [INFO] Keeping 0 of 11 workflows where Type matches demo.
+#> [INFO] Kept 0 of 11 workflows after applying 1 filter(s).
+#> [WARN] No workflows found.
 ```

@@ -88,5 +88,5 @@ RunStep(lStep = lStep, lData = lData, lMeta = list())
 #> [INFO] x = value1: Passing lData$value1.
 #> [INFO] y = value2: Passing lData$value2.
 #> [INFO] Calling `sum_step`
-#> Error in GetStrFunctionIfNamespaced(lStep$name): Function 'sum_step' not found.
+#> Error in (function (lData, y) {    lData$value + y})(x = 1, y = 2): unused argument (x = 1)
 ```

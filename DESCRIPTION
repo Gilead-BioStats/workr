@@ -37,7 +37,7 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Remotes:
-    Gilead-BioStats/gsm.datasim@release/v2.0.0
+    Gilead-BioStats/gsm.datasim@main
 VignetteBuilder:
     knitr
 Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak

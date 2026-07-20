@@ -346,3 +346,42 @@
   text-align: center;
 }
 }
+
+/* ============================================================
+   Landing page (index.qmd, format: html)
+   ============================================================ */
+
+.deck-picker {
+  margin: 1.4rem 0 2rem;
+}
+
+.deck-picker select {
+  margin-left: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.deck-card {
+  margin: 1rem 0;
+  padding: 0.4rem 1.3rem 1.1rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 14px;
+  background: rgba(127, 127, 127, 0.08);
+}
+
+.deck-card h3 {
+  margin-top: 0.8rem;
+}
+
+.deck-card h3.latest-badge::after {
+  content: "LATEST";
+  margin-left: 0.6rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.55em;
+  vertical-align: middle;
+  background: #5fd08a;
+  color: #05210f;
+  letter-spacing: 0.05em;
+}

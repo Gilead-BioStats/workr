@@ -1,0 +1,341 @@
+---
+title: "{workr}: a very simple R data pipeline"
+subtitle: "PHUSE Single Day Event 2026 <!-- TODO: confirm SDE location + date -->"
+author: "Zelos Zhu + Jeremy Wildfire"
+date: "2026-07-20"
+editor_options:
+  chunk_output_type: console
+---
+
+## Agenda {.smaller}
+
+::: {.tocbox}
+1. What is {workr}?
+2. Why {workr}?
+3. {workr} ❤️ {pharmaverse}
+4. What's new + what's next
+:::
+
+::: {.notes}
+30-minute talk + 10-minute Q&A. Timing targets are in the speaker notes:
+~4 min setup, ~4 min why, ~10 min pharmaverse, ~2 min what's new/close.
+Leave the report gallery, enterprise gismo screenshots, and the full data
+model for the long-form deck / Q&A.
+:::
+
+# What is {workr}?
+
+A **very** simple R data pipeline
+
+::: {.notes}
+~0:00–4:00. One sentence: workr runs YAML-defined pipelines of R function
+calls. Everything else builds on that.
+:::
+
+## Workflows are YAML files <above>easily parsed to an R `list`</above>
+
+```{.yaml code-line-numbers="|2-4|5-14"}
+# hello_cars.yaml
+meta:
+  ID: hello_cars
+  col: speed
+steps:
+  - name: dplyr::pull
+    output: speed
+    params:
+      df: df
+      col: col
+  - name: mean
+    output: result
+    params:
+      lData: speed
+```
+
+::: {.notes}
+`meta` = metadata (highlighted first). `steps` = ordered function calls
+(highlighted second). Each step names a function, its `output`, and its
+`params`. `meta` values can be referenced by steps.
+:::
+
+## `workr::RunWorkflow()`
+
+### Inputs
+- workflow (YAML parsed to a `list`)
+- initial data (`lData`) — available to every step, updated as steps run
+
+### Output
+- Returns the result of the last step by default
+- `bReturnResult = FALSE` returns the full workflow object with all
+  intermediate outputs
+
+::: {.notes}
+`RunWorkflows()` (plural) chains multiple workflows, feeding each output into
+the next `lData`.
+:::
+
+## <above>`workr::demoApp()`</above> Hello Cars
+
+![](images/example1.png)
+
+::: {.notes}
+Quick live demo if time allows: change `col` in `meta` from `speed` to `dist`
+and the result updates without touching any step. Otherwise just narrate the
+screenshot and move on — this is not the heart of the SDE talk.
+:::
+
+## That's really about it
+
+- Minimal mental model
+- Easy to read / debug
+- Surprisingly scalable
+
+# Why {workr}?
+
+Scalable clinical-trial operations
+
+::: {.notes}
+~4:00–8:00. The origin story: this came out of a real scale problem, not an
+academic exercise.
+:::
+
+## From safety monitoring to risk-based quality monitoring
+
+- `{gsm}` (Good Statistical Monitoring) is a qualified set of R packages
+  providing a GxP framework for central monitoring in clinical trials
+- Repeatability and scale are the whole game:
+  - 30 studies × monthly snapshots × 15 metrics × 5 steps
+  - **~27,000 metrics / year**
+
+::: {.notes}
+The number is the point — hand-written per-study scripts do not survive this.
+:::
+
+## 🚫 Custom study scripts 🚫
+
+- We needed reusable pipelines, but existing tools felt heavy
+  (`targets`, `glue`, etc.)
+- Built `gsm::RunWorkflow()` in **April 2022**
+- Migrated to **`{workr}`** for modularity and extensibility
+- Now in use on **20+ studies**, qualified via
+  [{qcthat}](https://github.com/Gilead-BioStats/qcthat)
+
+::: {.notes}
+Science is hard: study designs vary, metrics need tweaks, study- and
+metric-level customization is required — workflows absorb that variance
+without forking a script per study.
+:::
+
+## Highly standardized metric workflows
+
+![](images/data_analysis.png)
+
+[Analysis Workflow Vignette](https://gilead-biostats.github.io/gsm.core/pr/129/dev/articles/DataAnalysis.html)
+
+::: {.notes}
+Same 5-step shape for every KRI; only params change per metric. This is what
+lets one framework cover thousands of metric runs a year.
+:::
+
+# {workr} ❤️ {pharmaverse}
+
+Not just for ClinOps!
+
+::: {.notes}
+~8:00–18:00 — the core of this talk. The same YAML-step idea maps cleanly onto
+the standard clinical data flow: RAW → SDTM → ADaM → TFL/ARD. Each stage is
+"just another R package's functions, expressed as steps."
+:::
+
+## From RAW to SDTM
+
+- `{sdtm.oak}` modularizes SDTM programming — EDC- and standards-agnostic
+- Its algorithms/sub-algorithms are reusable across SDTM domains
+- Goal: replicate this
+  [sdtm.oak vignette](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html)
+  ![](images/sdtm_vignette.png){width=130px} using workflows
+
+## RAW → VS: a step *is* a function call {.step1-compare}
+
+::: {.columns}
+::: {.column width="52%"}
+Workflow step
+```yaml
+steps:
+  - output: vs_raw2
+    name: sdtm.oak::generate_oak_id_vars
+    params:
+      raw_dat: vs_raw
+      pat_var: "PATNUM"
+      raw_src: "vitals"
+```
+:::
+::: {.column width="4%"}
+=
+:::
+::: {.column width="44%"}
+Plain R
+```R
+lData$vs_raw2 <-
+  generate_oak_id_vars(
+    raw_dat = lData$vs_raw,
+    pat_var = "PATNUM",
+    raw_src = "vitals"
+  )
+```
+:::
+:::
+
+Interim object naming (`vs_raw` vs `vs_raw2`) is a deliberate choice —
+preserve each step for traceability, or overwrite to save memory, exactly like
+`%>%` / `|>` pipelines.
+
+::: {.notes}
+The key message: adopting a package into workr is mostly about knowing that
+package, not about learning workr. One step ↔ one function call.
+:::
+
+## From SDTM to ADaM
+
+- `{admiral}` modularizes ADaM programming, with a rich extension ecosystem
+  for therapeutic-area needs
+- Its docs and user guides are among the best in the R ecosystem
+- Same pattern: each derivation becomes a step
+
+## SDTM → ADaM (ADVS + MAP) {.adam-map-notes}
+
+```yaml
+steps:
+  - output: advs
+    name: admiral::derive_vars_merged
+    params:
+      dataset: SDTM_VS
+      dataset_add: SDTM_DM
+      new_vars: !expr exprs(TRT01A)
+      by_vars: !expr exprs(STUDYID, USUBJID)
+  - output: advs
+    name: admiral::derive_param_map
+    params:
+      dataset: advs
+      by_vars: !expr exprs(STUDYID, USUBJID, TRT01A, VISIT, VISITNUM)
+      sysbp_code: 'SYSBP'
+      diabp_code: 'DIABP'
+      get_unit_expr: !expr rlang::expr(.data[["VSORRESU"]])
+```
+
+- `derive_param_map()` derives mean arterial pressure from SYSBP/DIABP
+- `!expr` lets steps carry quasiquotation (`exprs()`, `!!`) into params —
+  a natural area for future {admiral} + {workr} collaboration
+
+## From ADaM to TFL
+
+- Visualization/reporting is where teams diverge the most
+- One approach: a workflow step that renders parameterized R Markdown
+  templates (here `gtsummary` + `safetyCharts`)
+- Where to host the output (Shiny, static site, PDF over email) stays with
+  the user
+
+## ADaM → TFL: render a template as a step {.step1-compare}
+
+::: {.columns}
+::: {.column width="56%"}
+```yaml
+steps:
+  - output: lParams
+    name: list
+    params:
+      'dfADVS': ADVS
+  - output: table1
+    name: rmarkdown::render
+    params:
+      input: !expr here::here("report_templates", "WorkProduct1.Rmd")
+      output_file: !expr here::here("TFLS", "WorkProduct1.html")
+      envir: !expr new.env(parent = globalenv())
+      params: lParams
+```
+:::
+::: {.column width="44%"}
+![](images/report_picture.png)
+:::
+:::
+
+Small child .Rmd templates (company standard tables/figures) stitch into a
+larger "lego set" work product — pick-and-choose per delivery.
+
+## From ADaM to ARS/ARD
+
+- `{cards}` creates CDISC Analysis Results Data (ARD)
+- Built for automation, reproducibility, reusability, and traceability
+
+```yaml
+steps:
+  - output: predose_visit1_map
+    name: workr::RunQuery
+    params:
+      df: ADVS
+      strQuery: "SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"
+  - output: table_predose_visit1_map
+    name: cards::ard_summary
+    params:
+      data: predose_visit1_map
+      variables:
+        - AVAL
+```
+
+::: {.notes}
+`RunQuery()` gives you SQL-over-data-frames as a first-class step — handy for
+the filtering that usually precedes a summary.
+:::
+
+## The pattern, once, everywhere
+
+- RAW → SDTM → ADaM → TFL/ARD: **one mental model** across the whole flow
+- Integrating any package ≈ knowing that package, not learning {workr}
+- Persistence is intentionally decoupled — orchestrate transforms; save to
+  csv / parquet / json / a data lake as just another step
+
+::: {.notes}
+This is the slide to land the pharmaverse section on. ~18:00.
+:::
+
+# What's new + what's next
+
+::: {.notes}
+~18:00–20:00. Everything below shipped in workr 1.1.0, after the last time we
+gave this talk.
+:::
+
+## New in {workr} 1.1.0
+
+- **Project orchestration** — phase-level config files, project/phase
+  load-save hooks, optional continue-on-error, clearer diagnostics
+- **Reusable load/save hooks** — incl. built-in GitHub Actions artifact
+  providers to pass data between runs
+- **Smarter workflow discovery** — active/inactive filtering, priority
+  ordering, exact-name matching
+- **Hardened automation** — GitHub, manifest, snapshot & CI coverage
+
+::: {.notes}
+Tie back to the 27k-metrics/year problem: orchestration + hooks are what make
+scheduled, restartable, multi-phase runs practical.
+:::
+
+## {workr} ❤️ 🤖 — designed for agentic AI
+
+- Breaks complex tasks into modular, inspectable steps
+- Agents can **generate and execute** workflows
+- {gsm} and {workr} skills coming soon
+
+# {workr} 🙏 you!
+
+- Simple R workflows
+- Highly scalable and flexible
+- Designed for GxP use
+- Open source and extensible
+
+[gilead-biostats.github.io/workr](https://gilead-biostats.github.io/workr/)
+
+::: {.notes}
+Hand off to Q&A here (~20:00). Deep-dive material — full data model, gsm report
+gallery, enterprise gismo platform, open.gismo — is in the long-form Phuse
+Connect deck if questions go there.
+:::

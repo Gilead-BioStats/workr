@@ -1,8 +1,8 @@
 ---
 title: "{workr}: a very simple R data pipeline"
-subtitle: "PHUSE Single Day Event 2026 <!-- TODO: confirm SDE location + date -->"
+subtitle: "PHUSE Single Day Event — Foster City, CA"
 author: "Zelos Zhu + Jeremy Wildfire"
-date: "2026-07-20"
+date: "2026-08-06"
 editor_options:
   chunk_output_type: console
 ---

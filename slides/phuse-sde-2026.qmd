@@ -330,22 +330,94 @@ Modular, inspectable steps are what agents handle well. A benefit we noticed
 after the fact, not the original design goal.
 :::
 
-## New in {workr} 1.1.0
+## Seen this talk before? What changed in 1.1.0 {.smaller}
 
-- **Project orchestration** — phase configs, continue-on-error, clearer
-  diagnostics
-- **Load/save hooks** — including GitHub Actions artifact providers to pass
-  data between runs
-- **Smarter discovery** — active/inactive filtering, priority ordering,
-  exact-name matching
+::: {.columns}
+::: {.column width="50%"}
+**Then (1.0)**
 
-::: {style="font-size:0.72em; opacity:0.85; margin-top:0.4em;"}
-These turn a set of workflows into a scheduled, restartable, multi-phase run.
+- `RunWorkflow()` / `RunWorkflows()`
+- Point them at a folder of YAML
+- Storage wired into your own script
+:::
+::: {.column width="50%"}
+**New in 1.1.0**
+
+- `RunProject()` — multi-phase runs
+- Load/save **hooks** — storage decoupled
+- Workflow **discovery** — active/inactive, priority, exact-name
+:::
+:::
+
+::: {style="font-size:0.72em; opacity:0.85; margin-top:0.5em;"}
+The model is unchanged. What's new is running it as a real, scheduled,
+restartable production pipeline.
 :::
 
 ::: {.notes}
-Ties back to the 27k-metrics story: orchestration and hooks make that scale
-claim work in a regulated pipeline.
+This slide is for the returning audience. Nothing about the core idea changed;
+1.1.0 is about operating it at scale. The next two slides show the two headline
+additions.
+:::
+
+## New: `RunProject()` runs phases in order {.smaller}
+
+::: {.columns}
+::: {.column width="46%"}
+```r
+# project/
+#   01_mapping/
+#   02_analysis/
+#   03_reporting/
+workr::RunProject(
+  strPath = "project",
+  bContinueOnError = TRUE
+)
+```
+Each subfolder is a **phase**; outputs carry forward to the next.
+:::
+::: {.column width="54%"}
+```yaml
+# 03_reporting/_config.yaml
+input:
+  from_phases: [01_mapping]
+  from_results:
+    lAnalyzed: 02_analysis
+output:
+  wrap_as: lReports
+```
+A `_config.yaml` shapes exactly what each phase receives and exposes.
+:::
+:::
+
+::: {style="font-size:0.68em; opacity:0.85; margin-top:0.3em;"}
+`bContinueOnError` records failures and keeps going — restartable, multi-phase runs.
+:::
+
+::: {.notes}
+This is the 4-layer gsm pipeline (mapping → metrics → reporting → modules)
+expressed as one project. New in 1.1.0: phases, per-phase config, and
+continue-on-error. Verbatim from the README.
+:::
+
+## New: storage is a hook, not a rewrite {.smaller}
+
+```r
+workr::RunWorkflow(
+  lWorkflow = wf,
+  lConfig = list(LoadData = "gsm.datasim")   # a registered provider, by name
+)
+
+workr::register_save_provider("github_artifact", my_saver)  # or bring your own
+```
+
+- Built-in **GitHub Actions artifact** providers pass data between runs
+- Same workflow, different storage — no change to the steps
+
+::: {.notes}
+Previously load/save was left entirely to your script; now it's a first-class,
+swappable hook (`register_load_provider` / `register_save_provider`), referenced
+by name via `lConfig`. The `gsm.datasim` provider ships built in.
 :::
 
 # Thank you {.center}

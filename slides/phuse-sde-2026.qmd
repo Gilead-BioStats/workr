@@ -414,10 +414,16 @@ workr::register_save_provider("github_artifact", my_saver)  # or bring your own
 - Built-in **GitHub Actions artifact** providers pass data between runs
 - Same workflow, different storage — no change to the steps
 
+::: {style="font-size:0.6em; opacity:0.85; margin-top:0.3em;"}
+Runnable examples of all of this:
+[github.com/zdz2101/workr_demoapp](https://github.com/zdz2101/workr_demoapp)
+:::
+
 ::: {.notes}
 Previously load/save was left entirely to your script; now it's a first-class,
 swappable hook (`register_load_provider` / `register_save_provider`), referenced
-by name via `lConfig`. The `gsm.datasim` provider ships built in.
+by name via `lConfig`. The `gsm.datasim` provider ships built in. The demo repo
+has a two-job GitHub Actions workflow showing the artifact round-trip end to end.
 :::
 
 # Thank you {.center}

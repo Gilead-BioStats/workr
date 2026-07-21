@@ -415,8 +415,9 @@ workr::register_save_provider("github_artifact", my_saver)  # or bring your own
 - Same workflow, different storage — no change to the steps
 
 ::: {style="font-size:0.6em; opacity:0.85; margin-top:0.3em;"}
-Runnable examples of all of this:
-[github.com/zdz2101/workr_demoapp](https://github.com/zdz2101/workr_demoapp)
+Live walkthrough of all of this:
+[zeloszhu.com/workr_demoapp](https://zeloszhu.com/workr_demoapp/) ·
+[source](https://github.com/zdz2101/workr_demoapp)
 :::
 
 ::: {.notes}

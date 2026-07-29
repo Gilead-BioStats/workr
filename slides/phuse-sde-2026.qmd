@@ -435,6 +435,10 @@ Simple, scalable, GxP-ready, open source
 [gilead-biostats.github.io/workr](https://gilead-biostats.github.io/workr/)
 :::
 
+::: {style="font-size:0.72em; opacity:0.85; margin-top:0.8em;"}
+Try the live demo → [zeloszhu.com/workr_demoapp](https://zeloszhu.com/workr_demoapp/)
+:::
+
 ::: {.notes}
 Hand to Q&A. Deep-dive material — the full data model, the gsm report gallery,
 the enterprise platform, and open.gismo — is in the long-form Phuse Connect

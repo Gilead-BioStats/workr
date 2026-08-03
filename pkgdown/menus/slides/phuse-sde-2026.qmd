@@ -84,20 +84,25 @@ ordered list of function calls; each names a function, an `output`, and its
 Keep this brief — it's the contract.
 :::
 
-## Configuration, not code
+## Configuration, not code {.full-image-slide}
 
-![](images/example1.png)
+![](images/demoapp_pipeline.png){fig-alt="Live demo app: a three-phase workflow project after running, with real output tables in lData"}
 
-::: {style="font-size:0.6em; margin-top:0.2em;"}
-`workr::DemoApp_init()` · live at
-[jwildfire.shinyapps.io/workr-demoapp](https://jwildfire.shinyapps.io/workr-demoapp/)
-:::
+<p class="img-caption">Run the pipeline yourself — <a href="https://zeloszhu.com/workr_demoapp/">zeloszhu.com/workr_demoapp</a></p>
 
 ::: {.notes}
-If live: change `col` from `speed` to `dist` — the result updates and the steps
-stay put. The logic is data you can edit, diff, and review rather than a script
-you rewrite. Point: declarative definitions are easier for others to trust and
-audit.
+Live demo moment. Press **Run all**: each workflow card goes grey → running →
+green, and the real output tables stream into `lData` on the right (these are
+genuine workr results, not mock-ups). **Step** walks one workflow at a time.
+
+Things to point at while it runs:
+- the three phases — `RunProject()` carrying output forward
+- the **Storage hook** selector — foreshadows the load/save hooks slide
+- the **Discovery** and **Continue-on-error** tabs — we come back to both
+
+The point: the logic is data you can edit, diff, and review rather than a script
+you rewrite. Declarative definitions are easier for others to trust and audit.
+Runs entirely in the browser, so it can't fail on conference wifi.
 :::
 
 # Does this scale? {.center}

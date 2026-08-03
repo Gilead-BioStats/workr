@@ -275,7 +275,7 @@ Clinical trials are complex
 
 ![](images/gsmexplorer.png)
 
-[Run a {workr} pipeline like this in your browser →](https://zeloszhu.com/workr_demoapp/)
+[open.gismo — explore this workflow explorer live →](https://gilead-biostats.github.io/open.gismo/)
 
 ## {gsm} + {workr} Study Operations
 

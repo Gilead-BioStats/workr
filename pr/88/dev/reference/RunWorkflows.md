@@ -38,7 +38,7 @@ RunWorkflows(
 - lConfig:
 
   `list` Optional configuration object passed through to
-  [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md).
+  [`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md).
   Supported hook fields:
 
   - `LoadData`: Optional function or registered provider name used
@@ -76,7 +76,7 @@ RunWorkflows(
 ## Value
 
 A named list of results from
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md),
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md),
 where the names correspond to the workflow ID. When
 `bContinueOnError = TRUE`, returns a summary with `results`, `status`,
 and `failures`.

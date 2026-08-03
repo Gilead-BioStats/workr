@@ -61,4 +61,4 @@ workr::RunWorkflows(lWorkflows = TFL_workflows, lData = adam )
 ```
 
 An example report
-[here](https://gilead-biostats.github.io/workr/dev/examples/WorkProduct1.md)
+[here](https://gilead-public.github.io/workr/dev/examples/WorkProduct1.md)

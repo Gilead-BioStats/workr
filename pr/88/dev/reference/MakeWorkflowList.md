@@ -27,7 +27,7 @@ MakeWorkflowList(
   workflow names found at `strPath`/`strPackage`. Pass an
   [`I()`](https://rdrr.io/r/base/AsIs.html)-wrapped vector for exact
   matching (as returned by
-  [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)).
+  [`ListWorkflowNames()`](https://gilead-public.github.io/workr/dev/reference/ListWorkflowNames.md)).
 
 - strPath:
 
@@ -43,7 +43,7 @@ MakeWorkflowList(
 
   `logical` Should `strNames` matches be exact? Defaults to `TRUE` when
   `strNames` has class `"AsIs"` (as returned by
-  [`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)),
+  [`ListWorkflowNames()`](https://gilead-public.github.io/workr/dev/reference/ListWorkflowNames.md)),
   `FALSE` otherwise.
 
 - bRecursive:
@@ -59,7 +59,7 @@ MakeWorkflowList(
 - ...:
 
   `name = value` pairs passed to
-  [`FilterWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/FilterWorkflows.md)
+  [`FilterWorkflows()`](https://gilead-public.github.io/workr/dev/reference/FilterWorkflows.md)
   to filter workflows by `meta` fields after loading. Field lookup is
   case-insensitive. Multiple filters are applied sequentially (AND
   logic). Workflows that lack the specified field entirely are removed.

@@ -3,9 +3,9 @@
 **\[stable\]**
 
 `loadExample()` is a convenience `LoadData` hook for
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 and
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
 If an `initData.R` file exists in the same folder as the workflow YAML,
 it sources that script and calls `initData()` to get starter `lData`.
 
@@ -23,14 +23,14 @@ loadExample(lWorkflow, lConfig = NULL, lData = NULL)
 - lWorkflow:
 
   `list` Workflow object. Must include `path` (set by
-  [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md))
+  [`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md))
   to locate `initData.R`.
 
 - lConfig:
 
   `list` Unused. Included to match the `LoadData` hook interface
   expected by
-  [`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md).
+  [`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md).
 
 - lData:
 

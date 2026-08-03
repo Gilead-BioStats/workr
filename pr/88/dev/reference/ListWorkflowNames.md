@@ -5,11 +5,11 @@
 Returns the bare workflow names (without the `.yaml` extension) for all
 workflow YAML files discovered in the given location. This is suitable
 for passing directly to the `strNames` argument of
-[`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md).
+[`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md).
 
 Note: this function only inspects filenames — it does not read the
 workflow files. Active/inactive filtering happens inside
-[`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md).
+[`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md).
 
 ## Usage
 
@@ -41,7 +41,7 @@ ListWorkflowNames(
 
 `character` A character vector of workflow names (IDs), with class
 `"AsIs"` so that
-[`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+[`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md)
 treats them as exact matches.
 
 ## Examples

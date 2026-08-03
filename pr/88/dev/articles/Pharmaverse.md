@@ -66,12 +66,12 @@ trial reporting.
 Where, `output` represents the returned object, `name` identifies the
 function being executed, and `params` contains the function arguments.
 At runtime,
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 parses these step definitions and orchestrates their execution
 sequentially, effectively reproducing the behavior of a piped R command.
 
 - Raw → SDTM ([workr +
-  sdtm.oak](https://gilead-biostats.github.io/workr/dev/articles/SDTM_example)):
+  sdtm.oak](https://gilead-public.github.io/workr/dev/articles/SDTM_example)):
   Raw eCRF data were transformed into SDTM using {workr}-driven
   workflows aligned with established `sdtm.oak` implementation patterns.
   The workflow mirrors the VS domain example from the official vignette,
@@ -80,7 +80,7 @@ sequentially, effectively reproducing the behavior of a piped R command.
   [here](https://pharmaverse.github.io/sdtm.oak/articles/findings_domain.html).
 
 - SDTM → ADaM ([workr +
-  admiral](https://gilead-biostats.github.io/workr/dev/articles/ADAM_example)):
+  admiral](https://gilead-public.github.io/workr/dev/articles/ADAM_example)):
   SDTM domains were reintroduced into the workflow engine and processed
   through admiral derivations to construct ADaM datasets. Functions such
   as `derive_vars_merged()` and `derive_param_map()` generated ADVS
@@ -91,7 +91,7 @@ sequentially, effectively reproducing the behavior of a piped R command.
   [here](https://pharmaverse.github.io/admiral/cran-release/articles/bds_finding.html?q=advs#derive_param).
 
 - ADaM → TFLs ([workr + gtsummary +
-  safetyCharts](https://gilead-biostats.github.io/workr/dev/articles/visualizations)):
+  safetyCharts](https://gilead-public.github.io/workr/dev/articles/visualizations)):
   The resulting ADaM datasets fed directly into visualization steps,
   invoking `gtsummary` for tabular summaries and `safetyCharts` for
   graphical outputs. This enables generation of publication-ready TFLs
@@ -102,7 +102,7 @@ sequentially, effectively reproducing the behavior of a piped R command.
   exploratory analysis and safety review.
 
 - ADaM → ARS ([workr +
-  cards](https://gilead-biostats.github.io/workr/dev/articles/ARS_example)):
+  cards](https://gilead-public.github.io/workr/dev/articles/ARS_example)):
   In parallel, the derived ADaM datasets were extended using cards to
   prototype ARS-aligned datasets and outputs. Although the ARS standard
   is still evolving, this example illustrates how emerging libraries can

@@ -3,15 +3,15 @@
 ### All vignettes
 
 - [Incorporating
-  admiral](https://gilead-biostats.github.io/workr/dev/articles/ADAM_example.md):
+  admiral](https://gilead-public.github.io/workr/dev/articles/ADAM_example.md):
 - [Incorporating
-  cards](https://gilead-biostats.github.io/workr/dev/articles/ARS_example.md):
+  cards](https://gilead-public.github.io/workr/dev/articles/ARS_example.md):
 - [Load and Save
-  Hooks](https://gilead-biostats.github.io/workr/dev/articles/load-save-hooks.md):
-- [Overview](https://gilead-biostats.github.io/workr/dev/articles/Overview.md):
+  Hooks](https://gilead-public.github.io/workr/dev/articles/load-save-hooks.md):
+- [Overview](https://gilead-public.github.io/workr/dev/articles/Overview.md):
 - [Pharamaverse Case
-  Study](https://gilead-biostats.github.io/workr/dev/articles/Pharmaverse.md):
+  Study](https://gilead-public.github.io/workr/dev/articles/Pharmaverse.md):
 - [Incorporating
-  sdtm.oak](https://gilead-biostats.github.io/workr/dev/articles/SDTM_example.md):
+  sdtm.oak](https://gilead-public.github.io/workr/dev/articles/SDTM_example.md):
 - [Incorporating TFL libraries like
-  \`gtsummary\`](https://gilead-biostats.github.io/workr/dev/articles/Visualizations.md):
+  \`gtsummary\`](https://gilead-public.github.io/workr/dev/articles/Visualizations.md):

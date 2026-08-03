@@ -9,7 +9,7 @@ a few study-specific tweaks. Maintaining one-off scripts for each study
 does not scale, yet many pipeline frameworks impose heavy abstractions
 (or custom code) that are harder to audit in regulated settings.
 
-[{workr}](https://github.com/Gilead-BioStats/workr) is an open-source R
+[{workr}](https://github.com/Gilead-Public/workr) is an open-source R
 package that was created as a deliberately minimal alternative: a small
 set of functions for describing and running data workflows as ordered
 function calls. Workflows are defined in YAML with `meta` and `steps`.
@@ -45,9 +45,9 @@ Each step is written as an {output, name, params} block:
       params:
 
 At runtime,
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 and
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 resolve parameters from `meta`, the shared data list (`lData`), or
 literal values, then execute steps sequentially. The result of each step
 is stored in `lData` under `output`, making it available to downstream

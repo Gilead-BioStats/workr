@@ -3,9 +3,9 @@
 **\[stable\]**
 
 Register a named `SaveData` provider for use by
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 and
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
 Registered providers can be referenced from `lConfig$SaveData` with a
 single character string.
 

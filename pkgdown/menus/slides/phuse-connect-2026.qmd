@@ -1,9 +1,27 @@
 ---
-title: "{workr}: a very simple R data pipeline"
-subtitle: "Phuse Connect 2026"
+title: "{workr} — Phuse Connect 2026"
+subtitle: "A very simple R data pipeline · full-length deck"
 author: "Zelos Zhu + Jeremy Wildfire"
 date: "2026-03-26"
-editor_options: 
+index: 2
+format:
+  revealjs:
+    theme: black
+    css: styles.css
+    footer: "[gilead-biostats.github.io/workr/](https://gilead-biostats.github.io/workr/)"
+    slide-number: true
+    hash: true
+    transition: none
+    background-transition: none
+    controls-tutorial: false
+    navigation-mode: linear
+    link-external-newwindow: true
+    embed-resources: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor_options:
   chunk_output_type: console
 ---
 

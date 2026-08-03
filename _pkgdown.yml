@@ -34,9 +34,6 @@ navbar:
         href: articles/gsm_visualizations.html
       - text: "Cookbook: cards"
         href: articles/ARS_example.html
-    slides:
-      text: Slides
-      href: slides/
 
 reference:
   - title: "Workflow Execution"

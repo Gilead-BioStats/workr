@@ -60,5 +60,5 @@
 
 ### Documentation
 
-* pkgdown site at [gilead-biostats.github.io/workr](https://gilead-biostats.github.io/workr)
+* pkgdown site at [gilead-public.github.io/workr](https://gilead-public.github.io/workr)
 * Vignettes covering overview, Pharmaverse integration, ADaM/SDTM examples, and visualization

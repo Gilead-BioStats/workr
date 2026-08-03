@@ -8,7 +8,7 @@ format:
   revealjs:
     theme: black
     css: styles.css
-    footer: "[gilead-biostats.github.io/workr/](https://gilead-biostats.github.io/workr/)"
+    footer: "[gilead-public.github.io/workr/](https://gilead-public.github.io/workr/)"
     slide-number: true
     hash: true
     transition: none
@@ -187,7 +187,7 @@ evidence the idea generalized.
 ![](images/qcthat_qualification.png){width=62% fig-alt="qcthat qualification report: issues linked to tests"}
 
 ::: {style="font-size:0.62em; opacity:0.85; margin-top:0.2em;"}
-[{qcthat}](https://github.com/Gilead-BioStats/qcthat) links requirements to tests — qualify one framework, not 27,000 scripts.
+[{qcthat}](https://github.com/Gilead-Public/qcthat) links requirements to tests — qualify one framework, not 27,000 scripts.
 :::
 
 ::: {.notes}
@@ -455,7 +455,7 @@ has a two-job GitHub Actions workflow showing the artifact round-trip end to end
 ::: {style="font-size:0.8em; opacity:0.9; margin-top:0.6em;"}
 Simple, scalable, GxP-ready, open source
 
-[gilead-biostats.github.io/workr](https://gilead-biostats.github.io/workr/)
+[gilead-public.github.io/workr](https://gilead-public.github.io/workr/)
 :::
 
 ::: {style="font-size:0.72em; opacity:0.85; margin-top:0.8em;"}

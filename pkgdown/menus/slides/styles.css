@@ -154,11 +154,10 @@
 }
 
 /* On a full-image slide the QR is taken out of flow and floated over the
-   screenshot's empty area, so it can never push the caption off the slide. */
-.reveal .slides section.has-qr {
-  position: relative;
-}
-
+   screenshot's empty area, so it can never push the caption off the slide.
+   Do NOT add `position: relative` to the section: reveal.js positions every
+   slide `absolute` for its stack layout, so overriding that breaks the layout
+   of following slides. The section is already a positioning context. */
 .reveal .slides section.has-qr img.qr-code {
   position: absolute;
   left: 17%;

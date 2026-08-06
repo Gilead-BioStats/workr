@@ -287,7 +287,11 @@ steps:
     name: workr::RunQuery        # SQL over a data.frame
     params:
       df: ADVS
-      strQuery: "SELECT * FROM df WHERE PARAMCD = 'MAP' AND VISIT = 'VISIT1' AND VSTPT = 'PREDOSE'"
+      strQuery: >
+        SELECT * FROM df
+        WHERE PARAMCD = 'MAP'
+          AND VISIT = 'VISIT1'
+          AND VSTPT = 'PREDOSE'
   - output: table_predose_visit1_map
     name: cards::ard_summary     # CDISC Analysis Results Data
     params:

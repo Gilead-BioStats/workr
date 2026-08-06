@@ -1440,6 +1440,29 @@ overflow: hidden!important;
 display:block!important;
 }</style></aside>
 </section>
+<section id="the-model" class="slide level2">
+<h2>The model</h2>
+<div class="tocbox">
+<ul>
+<li>A <strong>workflow</strong> is a YAML list of function calls</li>
+<li><strong><code>lData</code></strong> flows through every step and is updated as it goes</li>
+<li><strong><code>workr::RunWorkflow()</code></strong> runs the list and returns the last result</li>
+</ul>
+</div>
+<aside class="notes">
+<p>The contract, before any syntax: a workflow is an ordered list of function calls; <code>lData</code> is the shared bag of data that each step reads from and writes back to; <code>RunWorkflow()</code> executes the list. <code>RunWorkflows()</code> (plural) chains workflows, feeding each output into the next <code>lData</code>. Keep it brief — the next slide makes it concrete.</p>
+<style type="text/css">
+span.MJX_Assistive_MathML {
+position:absolute!important;
+clip: rect(1px, 1px, 1px, 1px);
+padding: 1px 0 0 0!important;
+border: 0!important;
+height: 1px!important;
+width: 1px!important;
+overflow: hidden!important;
+display:block!important;
+}</style></aside>
+</section>
 <section id="a-complete-pipeline" class="slide level2">
 <h2>A complete pipeline</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" data-code-line-numbers="|2-4|5-19|"><pre class="sourceCode numberSource yaml number-lines code-with-copy"><code class="sourceCode yaml"><span id="cb1-1"><a href aria-label="1"></a><span class="co"># hello_cars.yaml</span></span>
@@ -1461,30 +1484,7 @@ display:block!important;
 <span id="cb1-17"><a href aria-label="17"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
 <span id="cb1-18"><a href aria-label="18"></a><span class="at">      </span><span class="fu">x</span><span class="kw">:</span><span class="at"> speed</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <aside class="notes">
-<p>This is the real bundled example (inst/example_workflows/01_RunWorkflow). Reveal 1: the whole file. Reveal 2: <code>meta</code> is metadata. Reveal 3: <code>steps</code> is an ordered list of function calls; each names a function, an <code>output</code>, and its <code>params</code>. <code>lData</code> accumulates the outputs. That’s the entire model.</p>
-<style type="text/css">
-span.MJX_Assistive_MathML {
-position:absolute!important;
-clip: rect(1px, 1px, 1px, 1px);
-padding: 1px 0 0 0!important;
-border: 0!important;
-height: 1px!important;
-width: 1px!important;
-overflow: hidden!important;
-display:block!important;
-}</style></aside>
-</section>
-<section id="the-model" class="slide level2">
-<h2>The model</h2>
-<div class="tocbox">
-<ul>
-<li>A <strong>workflow</strong> is a YAML list of function calls</li>
-<li><strong><code>lData</code></strong> flows through every step and is updated as it goes</li>
-<li><strong><code>workr::RunWorkflow()</code></strong> runs the list and returns the last result</li>
-</ul>
-</div>
-<aside class="notes">
-<p><code>RunWorkflows()</code> (plural) chains workflows; each output feeds the next <code>lData</code>. Keep this brief — it’s the contract.</p>
+<p>Now the same contract as a real file — the bundled example from inst/example_workflows/01_RunWorkflow. Reveal 1: the whole file. Reveal 2: <code>meta</code> is the metadata you just described. Reveal 3: <code>steps</code> is the ordered list of calls, each with an <code>output</code> that lands in <code>lData</code>. Nothing here that wasn’t on the previous slide.</p>
 <style type="text/css">
 span.MJX_Assistive_MathML {
 position:absolute!important;

@@ -692,9 +692,6 @@ object-fit: contain;
 margin: 0;
 }
 
-.reveal .slides section.has-qr {
-position: relative;
-}
 .reveal .slides section.has-qr img.qr-code {
 position: absolute;
 left: 17%;
@@ -1782,13 +1779,17 @@ display:block!important;
 <span id="cb5-3"><a href aria-label="3"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> workr::RunQuery</span><span class="co">        # SQL over a data.frame</span></span>
 <span id="cb5-4"><a href aria-label="4"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
 <span id="cb5-5"><a href aria-label="5"></a><span class="at">      </span><span class="fu">df</span><span class="kw">:</span><span class="at"> ADVS</span></span>
-<span id="cb5-6"><a href aria-label="6"></a><span class="at">      </span><span class="fu">strQuery</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;SELECT * FROM df WHERE PARAMCD = &#39;MAP&#39; AND VISIT = &#39;VISIT1&#39; AND VSTPT = &#39;PREDOSE&#39;&quot;</span></span>
-<span id="cb5-7"><a href aria-label="7"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table_predose_visit1_map</span></span>
-<span id="cb5-8"><a href aria-label="8"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cards::ard_summary</span><span class="co">     # CDISC Analysis Results Data</span></span>
-<span id="cb5-9"><a href aria-label="9"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
-<span id="cb5-10"><a href aria-label="10"></a><span class="at">      </span><span class="fu">data</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
-<span id="cb5-11"><a href aria-label="11"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
-<span id="cb5-12"><a href aria-label="12"></a><span class="at">        </span><span class="kw">-</span><span class="at"> AVAL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-6"><a href aria-label="6"></a><span class="fu">      strQuery</span><span class="kw">: </span><span class="ch">&gt;</span></span>
+<span id="cb5-7"><a href aria-label="7"></a>        SELECT * FROM df</span>
+<span id="cb5-8"><a href aria-label="8"></a>        WHERE PARAMCD = &#39;MAP&#39;</span>
+<span id="cb5-9"><a href aria-label="9"></a>          AND VISIT = &#39;VISIT1&#39;</span>
+<span id="cb5-10"><a href aria-label="10"></a>          AND VSTPT = &#39;PREDOSE&#39;</span>
+<span id="cb5-11"><a href aria-label="11"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">output</span><span class="kw">:</span><span class="at"> table_predose_visit1_map</span></span>
+<span id="cb5-12"><a href aria-label="12"></a><span class="at">    </span><span class="fu">name</span><span class="kw">:</span><span class="at"> cards::ard_summary</span><span class="co">     # CDISC Analysis Results Data</span></span>
+<span id="cb5-13"><a href aria-label="13"></a><span class="at">    </span><span class="fu">params</span><span class="kw">:</span></span>
+<span id="cb5-14"><a href aria-label="14"></a><span class="at">      </span><span class="fu">data</span><span class="kw">:</span><span class="at"> predose_visit1_map</span></span>
+<span id="cb5-15"><a href aria-label="15"></a><span class="at">      </span><span class="fu">variables</span><span class="kw">:</span></span>
+<span id="cb5-16"><a href aria-label="16"></a><span class="at">        </span><span class="kw">-</span><span class="at"> AVAL</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div style="font-size:0.6em; opacity:0.85;">
 <p>Verbatim from <code>demo_gsmpharmaverse/workflows/3_ADAM_TO_ARS/table_mean_arterial_pressure.yaml</code>.</p>
 </div>

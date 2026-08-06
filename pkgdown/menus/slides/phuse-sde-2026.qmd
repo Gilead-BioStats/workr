@@ -84,11 +84,11 @@ ordered list of function calls; each names a function, an `output`, and its
 Keep this brief — it's the contract.
 :::
 
-## Configuration, not code {.full-image-slide}
+## Configuration, not code {.full-image-slide .has-qr}
 
 ![](images/demoapp_pipeline.png){fig-alt="Live demo app: a three-phase workflow project after running, with real output tables in lData"}
 
-<p class="img-caption">Run the pipeline yourself — <a href="https://zeloszhu.com/workr_demoapp/">zeloszhu.com/workr_demoapp</a></p>
+<p class="img-caption"><img src="images/qr_demoapp.svg" class="qr-code" alt="QR code linking to zeloszhu.com/workr_demoapp"><span>Scan to run the pipeline yourself — <a href="https://zeloszhu.com/workr_demoapp/">zeloszhu.com/workr_demoapp</a></span></p>
 
 ::: {.notes}
 Live demo moment. Press **Run all**: each workflow card goes grey → running →
@@ -460,6 +460,8 @@ Simple, scalable, GxP-ready, open source
 
 ::: {style="font-size:0.72em; opacity:0.85; margin-top:0.8em;"}
 Try the live demo → [zeloszhu.com/workr_demoapp](https://zeloszhu.com/workr_demoapp/)
+
+<img src="images/qr_demoapp.svg" class="qr-code qr-center" alt="QR code linking to zeloszhu.com/workr_demoapp">
 :::
 
 ::: {.notes}

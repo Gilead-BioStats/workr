@@ -142,6 +142,44 @@
   text-align: left;
 }
 
+/* --- QR code (scan-to-open call to action) --- */
+/* White padding around the symbol extends the quiet zone beyond the 3 modules
+   the generator embeds, so scanners lock on even against a dark slide. */
+.reveal .slides section img.qr-code {
+  background: #fff;
+  padding: 7px;
+  border-radius: 6px;
+  object-fit: contain;
+  margin: 0;
+}
+
+/* On a full-image slide the QR is taken out of flow and floated over the
+   screenshot's empty area, so it can never push the caption off the slide. */
+.reveal .slides section.has-qr {
+  position: relative;
+}
+
+.reveal .slides section.has-qr img.qr-code {
+  position: absolute;
+  left: 17%;
+  bottom: 14%;
+  width: 138px;
+  height: 138px;
+  z-index: 6;
+}
+
+.reveal .slides section.has-qr > p:not(:first-of-type) {
+  font-size: 0.46em;
+}
+
+/* Centered, in-flow QR for the closing slide, where there is room to go big. */
+.reveal .slides section img.qr-code.qr-center {
+  display: block;
+  width: 176px;
+  height: 176px;
+  margin: 0.7rem auto 0;
+}
+
 /* --- Chat-message bubble --- */
 .reveal .slides section .chat-message {
   position: relative;

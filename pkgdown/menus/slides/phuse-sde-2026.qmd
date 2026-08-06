@@ -41,6 +41,22 @@ and the whole pharmaverse stack. Timing: intro ~3, scale ~7, pharmaverse ~7,
 AI + what's new ~2, close ~1.
 :::
 
+## The model
+
+::: {.tocbox}
+- A **workflow** is a YAML list of function calls
+- **`lData`** flows through every step and is updated as it goes
+- **`workr::RunWorkflow()`** runs the list and returns the last result
+:::
+
+::: {.notes}
+The contract, before any syntax: a workflow is an ordered list of function
+calls; `lData` is the shared bag of data that each step reads from and writes
+back to; `RunWorkflow()` executes the list. `RunWorkflows()` (plural) chains
+workflows, feeding each output into the next `lData`. Keep it brief — the next
+slide makes it concrete.
+:::
+
 ## A complete pipeline
 
 ```{.yaml code-line-numbers="|2-4|5-19|"}
@@ -65,23 +81,11 @@ steps:
 ```
 
 ::: {.notes}
-This is the real bundled example (inst/example_workflows/01_RunWorkflow).
-Reveal 1: the whole file. Reveal 2: `meta` is metadata. Reveal 3: `steps` is an
-ordered list of function calls; each names a function, an `output`, and its
-`params`. `lData` accumulates the outputs. That's the entire model.
-:::
-
-## The model
-
-::: {.tocbox}
-- A **workflow** is a YAML list of function calls
-- **`lData`** flows through every step and is updated as it goes
-- **`workr::RunWorkflow()`** runs the list and returns the last result
-:::
-
-::: {.notes}
-`RunWorkflows()` (plural) chains workflows; each output feeds the next `lData`.
-Keep this brief — it's the contract.
+Now the same contract as a real file — the bundled example from
+inst/example_workflows/01_RunWorkflow. Reveal 1: the whole file. Reveal 2:
+`meta` is the metadata you just described. Reveal 3: `steps` is the ordered list
+of calls, each with an `output` that lands in `lData`. Nothing here that wasn't
+on the previous slide.
 :::
 
 ## Configuration, not code {.full-image-slide .has-qr}

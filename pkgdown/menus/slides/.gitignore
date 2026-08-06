@@ -1,0 +1,4 @@
+# Local render byproducts (CI renders these into pkgdown/assets/slides/)
+*.html
+*_files/
+.quarto/

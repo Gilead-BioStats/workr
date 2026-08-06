@@ -5,3 +5,4 @@ workr.Rcheck/
 .DS_Store
 docs
 .posit
+pkgdown/assets/

@@ -4,17 +4,17 @@
 
 <div class="pkgdown-release">
 
-[![R-CMD-check](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml)
-[![pkgdown-all](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=main)](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml)
+[![R-CMD-check](https://github.com/Gilead-Public/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/Gilead-Public/workr/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/Gilead-Public/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=main)](https://github.com/Gilead-Public/workr/actions/workflows/test-coverage.yaml)
+[![pkgdown-all](https://github.com/Gilead-Public/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=main)](https://github.com/Gilead-Public/workr/actions/workflows/pkgdown-all.yaml)
 
 </div>
 
 <div class="pkgdown-devel">
 
-[![R-CMD-check](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/test-coverage.yaml)
-[![pkgdown-all](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=dev)](https://github.com/Gilead-BioStats/workr/actions/workflows/pkgdown-all.yaml)
+[![R-CMD-check](https://github.com/Gilead-Public/workr/actions/workflows/R-CMD-check.yaml/badge.svg?branch=dev)](https://github.com/Gilead-Public/workr/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/Gilead-Public/workr/actions/workflows/test-coverage.yaml/badge.svg?branch=dev)](https://github.com/Gilead-Public/workr/actions/workflows/test-coverage.yaml)
+[![pkgdown-all](https://github.com/Gilead-Public/workr/actions/workflows/pkgdown-all.yaml/badge.svg?branch=dev)](https://github.com/Gilead-Public/workr/actions/workflows/pkgdown-all.yaml)
 
 </div>
 
@@ -227,7 +227,7 @@ One nice thing about {workr} workflows is that they can be combined across packa
 
 Package manifests are stored on orphan branches (prefixed `ss-*` for "snapshot-source") and updated nightly via GitHub Actions. These branches serve as the source of truth for reproducible package environments.
 
-📦 [Demo snapshot (`ss-demo`)](https://github.com/Gilead-BioStats/workr/tree/ss-demo) — gsm.core, gsm.mapping, gsm.kri, gsm.reporting
+📦 [Demo snapshot (`ss-demo`)](https://github.com/Gilead-Public/workr/tree/ss-demo) — gsm.core, gsm.mapping, gsm.kri, gsm.reporting
 
 ## Visualizing Workflows
 

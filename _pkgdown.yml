@@ -1,4 +1,4 @@
-url: https://gilead-biostats.github.io/workr
+url: https://gilead-public.github.io/workr
 
 template:
   bootstrap: 5
@@ -16,7 +16,7 @@ navbar:
   components:
     github:
       icon: fab fa-github
-      href: https://github.com/gilead-biostats/workr
+      href: https://github.com/Gilead-Public/workr
     articles:
       text: Vignettes
       menu:
@@ -34,9 +34,6 @@ navbar:
         href: articles/gsm_visualizations.html
       - text: "Cookbook: cards"
         href: articles/ARS_example.html
-    slides:
-      text: Slides
-      href: slides/
 
 reference:
   - title: "Workflow Execution"

@@ -142,6 +142,43 @@
   text-align: left;
 }
 
+/* --- QR code (scan-to-open call to action) --- */
+/* White padding around the symbol extends the quiet zone beyond the 3 modules
+   the generator embeds, so scanners lock on even against a dark slide. */
+.reveal .slides section img.qr-code {
+  background: #fff;
+  padding: 7px;
+  border-radius: 6px;
+  object-fit: contain;
+  margin: 0;
+}
+
+/* On a full-image slide the QR is taken out of flow and floated over the
+   screenshot's empty area, so it can never push the caption off the slide.
+   Do NOT add `position: relative` to the section: reveal.js positions every
+   slide `absolute` for its stack layout, so overriding that breaks the layout
+   of following slides. The section is already a positioning context. */
+.reveal .slides section.has-qr img.qr-code {
+  position: absolute;
+  left: 17%;
+  bottom: 14%;
+  width: 138px;
+  height: 138px;
+  z-index: 6;
+}
+
+.reveal .slides section.has-qr > p:not(:first-of-type) {
+  font-size: 0.46em;
+}
+
+/* Centered, in-flow QR for the closing slide, where there is room to go big. */
+.reveal .slides section img.qr-code.qr-center {
+  display: block;
+  width: 176px;
+  height: 176px;
+  margin: 0.7rem auto 0;
+}
+
 /* --- Chat-message bubble --- */
 .reveal .slides section .chat-message {
   position: relative;
@@ -345,4 +382,43 @@
   font-size: 1.15em;
   text-align: center;
 }
+}
+
+/* ============================================================
+   Landing page (index.qmd, format: html)
+   ============================================================ */
+
+.deck-picker {
+  margin: 1.4rem 0 2rem;
+}
+
+.deck-picker select {
+  margin-left: 0.6rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.deck-card {
+  margin: 1rem 0;
+  padding: 0.4rem 1.3rem 1.1rem;
+  border: 1px solid rgba(127, 127, 127, 0.35);
+  border-radius: 14px;
+  background: rgba(127, 127, 127, 0.08);
+}
+
+.deck-card h3 {
+  margin-top: 0.8rem;
+}
+
+.deck-card h3.latest-badge::after {
+  content: "LATEST";
+  margin-left: 0.6rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.55em;
+  vertical-align: middle;
+  background: #5fd08a;
+  color: #05210f;
+  letter-spacing: 0.05em;
 }

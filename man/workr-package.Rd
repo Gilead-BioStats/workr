@@ -11,8 +11,8 @@ Standalone helpers for running assessment workflows and steps. This package extr
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://gilead-biostats.github.io/workr}
-  \item \url{https://github.com/Gilead-BioStats/workr}
+  \item \url{https://gilead-public.github.io/workr}
+  \item \url{https://github.com/Gilead-Public/workr}
 }
 
 }

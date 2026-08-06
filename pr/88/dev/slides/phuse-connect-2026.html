@@ -683,6 +683,37 @@ line-height: 1.2;
 text-align: left;
 }
 
+
+.reveal .slides section img.qr-code {
+background: #fff;
+padding: 7px;
+border-radius: 6px;
+object-fit: contain;
+margin: 0;
+}
+
+.reveal .slides section.has-qr {
+position: relative;
+}
+.reveal .slides section.has-qr img.qr-code {
+position: absolute;
+left: 17%;
+bottom: 14%;
+width: 138px;
+height: 138px;
+z-index: 6;
+}
+.reveal .slides section.has-qr > p:not(:first-of-type) {
+font-size: 0.46em;
+}
+
+.reveal .slides section img.qr-code.qr-center {
+display: block;
+width: 176px;
+height: 176px;
+margin: 0.7rem auto 0;
+}
+
 .reveal .slides section .chat-message {
 position: relative;
 margin-top: 0.8rem;

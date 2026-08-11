@@ -13,8 +13,8 @@ Description: Standalone helpers for running assessment workflows and
     gsm.core, providing RunWorkflows, RunWorkflow, and RunStep as a
     lightweight runtime.
 License: MIT + file LICENSE
-URL: https://gilead-biostats.github.io/workr,
-    https://github.com/Gilead-BioStats/workr
+URL: https://gilead-public.github.io/workr,
+    https://github.com/Gilead-Public/workr
 Depends:
     R (>= 4.1.0)
 Imports:
@@ -37,7 +37,7 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Remotes:
-    Gilead-BioStats/gsm.datasim@main
+    Gilead-Public/gsm.datasim@main
 VignetteBuilder:
     knitr
 Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak

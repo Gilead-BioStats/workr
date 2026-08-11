@@ -95,7 +95,7 @@ test_that("hook providers round-trip data across runs (#62)", {
     lConfig = list(
       LoadData = "github_artifact",
       github_artifact = list(
-        repo = "Gilead-BioStats/workr",
+        repo = "Gilead-Public/workr",
         artifact_name = "workr-hook-roundtrip",
         policy = "latest_success",
         run_resolver = function(...) "run-001",

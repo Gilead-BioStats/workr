@@ -5,9 +5,9 @@
 Returns a named character vector of paths to workflow YAML files,
 similar to [`fs::dir_ls()`](https://fs.r-lib.org/reference/dir_ls.html).
 Use
-[`ListWorkflowNames()`](https://gilead-biostats.github.io/workr/dev/reference/ListWorkflowNames.md)
+[`ListWorkflowNames()`](https://gilead-public.github.io/workr/dev/reference/ListWorkflowNames.md)
 to get just the bare workflow names, or
-[`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+[`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md)
 to load and validate the workflows.
 
 ## Usage

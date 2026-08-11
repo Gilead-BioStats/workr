@@ -9,17 +9,15 @@ runtime.
 
 Useful links:
 
-- <https://gilead-biostats.github.io/workr>
+- <https://gilead-public.github.io/workr>
 
-- <https://github.com/Gilead-BioStats/workr>
+- <https://github.com/Gilead-Public/workr>
 
 ## Author
 
 **Maintainer**: Jeremy Wildfire <jwildfire@gilead.com>
 
 Authors:
-
-- Jeremy Wildfire <jwildfire@gilead.com>
 
 - Zelos Zhu <zelos.zhu@atorus.com>
 

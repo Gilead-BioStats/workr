@@ -2,9 +2,9 @@
 
 ## Overview
 
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 and
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 accept an optional `lConfig` object with two data hooks:
 
 - `LoadData`, called before workflow spec validation and before the
@@ -67,7 +67,7 @@ directly in `lConfig`.
 
 `LoadData` must accept `lWorkflow`, `lConfig`, and `lData`. It returns
 the data list that
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 should use.
 
 `SaveData` must accept `lWorkflow` and `lConfig`. It can read the
@@ -159,7 +159,7 @@ providers must include named formals `lWorkflow`, `lConfig`, and
 
 ## Using hooks with multiple workflows
 
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 passes the same `lConfig` through to each workflow. This lets a project
 use one loading and saving strategy while each workflow selects the data
 it needs from `meta`.
@@ -240,7 +240,7 @@ locally:
 
 ``` r
 
-pak::pak("Gilead-BioStats/gsm.datasim@release/v2.0.0")
+pak::pak("Gilead-Public/gsm.datasim@release/v2.0.0")
 ```
 
 The example below is shown for illustration and is not evaluated when
@@ -333,7 +333,7 @@ The save provider writes a local bundle containing `manifest.yaml` and
 one `.rds` payload file per selected `lData` entry. If the bundle should
 be available to later GitHub Actions jobs, upload the bundle directory
 after
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 completes, for example with `actions/upload-artifact`.
 
 ``` r

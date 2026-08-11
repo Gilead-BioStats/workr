@@ -21,7 +21,7 @@ DemoApp_init(
 - lWorkflows:
 
   `list` A named list of workflows as returned by
-  [`MakeWorkflowList`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md).
+  [`MakeWorkflowList`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md).
   Defaults to all example workflows shipped with workr.
 
 - lData:
@@ -33,11 +33,11 @@ DemoApp_init(
 
   `list` Optional configuration hooks passed to workflow runners.
   Defaults to using
-  [`loadExample()`](https://gilead-biostats.github.io/workr/dev/reference/loadExample.md)
+  [`loadExample()`](https://gilead-public.github.io/workr/dev/reference/loadExample.md)
   for `LoadData`. `LoadData` and `SaveData` may be functions or
   registered provider names; function hooks must follow the same
   named-formal contract documented in
-  [`RunWorkflow`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md).
+  [`RunWorkflow`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md).
 
 ## Value
 

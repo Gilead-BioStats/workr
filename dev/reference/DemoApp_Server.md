@@ -23,7 +23,7 @@ DemoApp_Server(lWorkflows, lData, lConfig = NULL)
 
   `list` Optional configuration hooks passed to workflow runners.
   `LoadData` may be a function or registered provider name matching the
-  [`RunWorkflow`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+  [`RunWorkflow`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
   hook contract.
 
 ## Value

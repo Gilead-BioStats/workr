@@ -6,9 +6,9 @@
 one `lData` object across phases. Each subdirectory of `strPath` is
 treated as a phase. Phases are executed in sorted order (or in the order
 specified by `strPhases`). Within each phase, workflows are loaded via
-[`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md)
+[`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md)
 and run via
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
 
 ## Usage
 
@@ -41,7 +41,7 @@ RunProject(
 
   `list` Runtime configuration hooks. Top-level `LoadData` and
   `SaveData` hooks are passed through to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
   for each phase and run for each workflow in that phase. Use
   `lConfig$phases` for phase-specific workflow hooks and
   `lConfig$project` for hooks that run once for the whole project. Phase
@@ -56,41 +56,41 @@ RunProject(
 - bRecursive:
 
   `logical` Passed to
-  [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md).
+  [`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md).
   Default `FALSE`.
 
 - bReturnResult:
 
   `logical` Passed to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
   Default `TRUE`.
 
 - bKeepInputData:
 
   `logical` Passed to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
   Default `FALSE`.
 
 - strResultNames:
 
   `character` Vector of length two passed to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
   Default `c("Type", "ID")`.
 
 - bContinueOnError:
 
   `logical` Passed to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
   If `TRUE`, failed workflows are recorded and later workflows/phases
   still run. Default `FALSE` retains the existing fail-fast behavior
   from
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md).
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md).
 
 ## Value
 
 A named list with one element per phase. Each element contains the
 result returned by
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 for that phase. When `bContinueOnError = TRUE`, returns a summary with
 `results`, `status`, and `failures`.
 
@@ -124,7 +124,7 @@ to store a phase result under one name or `output.transform` to apply a
 function before later phases use the result.
 `lConfig$phases[[phase_name]]` is workflow runtime config: it is merged
 into the `lConfig` passed to
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 for that phase, so use it for phase-specific hooks such as `LoadData`
 and `SaveData`.
 
@@ -132,9 +132,9 @@ Load/save hooks:
 
 - Put `LoadData` or `SaveData` at the top level of `lConfig` to pass
   those hooks to
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
   for each phase.
-  [`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+  [`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
   then applies them to each workflow in that phase.
 
 - Put hooks under `lConfig$phases[[phase_name]]` to use them only for

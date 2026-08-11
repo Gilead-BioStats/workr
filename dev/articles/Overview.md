@@ -9,7 +9,7 @@ a few study-specific tweaks. Maintaining one-off scripts for each study
 does not scale, yet many pipeline frameworks impose heavy abstractions
 (or custom code) that are harder to audit in regulated settings.
 
-[{workr}](https://github.com/Gilead-BioStats/workr) is an open-source R
+[{workr}](https://github.com/Gilead-Public/workr) is an open-source R
 package that was created as a deliberately minimal alternative: a small
 set of functions for describing and running data workflows as ordered
 function calls. Workflows are defined in YAML with `meta` and `steps`.
@@ -45,9 +45,9 @@ Each step is written as an {output, name, params} block:
       params:
 
 At runtime,
-[`RunWorkflow()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflow.md)
+[`RunWorkflow()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflow.md)
 and
-[`RunWorkflows()`](https://gilead-biostats.github.io/workr/dev/reference/RunWorkflows.md)
+[`RunWorkflows()`](https://gilead-public.github.io/workr/dev/reference/RunWorkflows.md)
 resolve parameters from `meta`, the shared data list (`lData`), or
 literal values, then execute steps sequentially. The result of each step
 is stored in `lData` under `output`, making it available to downstream
@@ -90,9 +90,9 @@ workr::RunWorkflow(
 
 {gsm} is a standardized RBQM framework that pairs a flexible data
 pipeline with robust reporting. {gsm.core}
-(<https://gilead-biostats.github.io/gsm.core/>) provides the analytics
+(<https://gilead-public.github.io/gsm.core/>) provides the analytics
 foundation and workflow utilities, while {gsm.kri}
-(<https://gilead-biostats.github.io/gsm.kri/>) focuses on metric
+(<https://gilead-public.github.io/gsm.kri/>) focuses on metric
 visualizations and reporting outputs. A broader RBQM overview is
 available [here](https://pubmed.ncbi.nlm.nih.gov/38722529/). {workr}
 functions were originally developed and released as part of the core
@@ -114,13 +114,13 @@ structure makes metric logic auditable and consistent across domains.
 Example resources and implementations:
 
 - Adverse Event workflow example:
-  <https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_AdverseEventWorkflow.html>
+  <https://gilead-public.github.io/gsm.kri/examples/Cookbook_AdverseEventWorkflow.html>
 - Reporting workflow example:
-  <https://gilead-biostats.github.io/gsm.kri/examples/Cookbook_ReportingWorkflow.html>
+  <https://gilead-public.github.io/gsm.kri/examples/Cookbook_ReportingWorkflow.html>
 - Extensions vignette:
-  <https://gilead-biostats.github.io/gsm.core/articles/gsmExtensions.html>
+  <https://gilead-public.github.io/gsm.core/articles/gsmExtensions.html>
 - Data model and pipeline overview:
-  <https://gilead-biostats.github.io/gsm.core/articles/DataModel.html>
+  <https://gilead-public.github.io/gsm.core/articles/DataModel.html>
 
 ### {Pharmaverse} case study
 

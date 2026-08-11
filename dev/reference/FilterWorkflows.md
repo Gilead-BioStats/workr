@@ -18,7 +18,7 @@ FilterWorkflows(lWorkflows, ...)
 - lWorkflows:
 
   `list` A named list of workflows, as returned by
-  [`MakeWorkflowList()`](https://gilead-biostats.github.io/workr/dev/reference/MakeWorkflowList.md).
+  [`MakeWorkflowList()`](https://gilead-public.github.io/workr/dev/reference/MakeWorkflowList.md).
 
 - ...:
 

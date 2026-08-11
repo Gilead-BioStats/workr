@@ -33,7 +33,7 @@ at a given point in time, enabling reproducible package environments.
 pkgManifest(
   path = "2025-q4-release",
   packageList = c(
-    "Gilead-BioStats/gsm@v1.8.4",
+    "Gilead-Public/gsm@v1.8.4",
     "Gilead-BioStats/grail"
   ),
   branch = "dev"

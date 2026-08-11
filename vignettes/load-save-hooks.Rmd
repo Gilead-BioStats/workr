@@ -197,7 +197,7 @@ env_results$demo_height
 Install or update the optional dependency before running the example locally:
 
 ```r
-pak::pak("Gilead-BioStats/gsm.datasim@release/v2.0.0")
+pak::pak("Gilead-Public/gsm.datasim@release/v2.0.0")
 ```
 
 The example below is shown for illustration and is not evaluated when the

@@ -83,7 +83,7 @@ gsm_datasim_api <- function() {
     !requireNamespace("gsm.datasim", quietly = TRUE),
     paste(
       "The `gsm.datasim` load provider requires the optional `gsm.datasim` package.",
-      "Install it first, for example with `pak::pkg_install(\"Gilead-BioStats/gsm.datasim@dev\")`."
+      "Install it first, for example with `pak::pkg_install(\"Gilead-Public/gsm.datasim@dev\")`."
     )
   )
 

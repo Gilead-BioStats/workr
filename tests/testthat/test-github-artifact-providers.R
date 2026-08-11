@@ -190,7 +190,7 @@ test_that("github_artifact load provider resolves latest_success policy (#61)", 
     lConfig = list(
       LoadData = "github_artifact",
       github_artifact = list(
-        repo = "Gilead-BioStats/workr",
+        repo = "Gilead-Public/workr",
         policy = "latest_success",
         run_resolver = function(...) {
           resolved_policy <<- list(...)$policy
@@ -212,7 +212,7 @@ test_that("github_artifact load provider ignores GITHUB_RUN_ID and honors latest
   # the provider targets.
   withr::local_envvar(c(
     GITHUB_RUN_ID = "99999",
-    GITHUB_REPOSITORY = "Gilead-BioStats/workr"
+    GITHUB_REPOSITORY = "Gilead-Public/workr"
   ))
 
   assign("identity_step", function(x) x, envir = .GlobalEnv)
@@ -290,7 +290,7 @@ test_that("github_artifact load provider reports required Actions scope on auth 
       lWorkflow = list(meta = list(Type = "demo", ID = "artifact_auth"), steps = list()),
       lConfig = list(
         github_artifact = list(
-          repo = "Gilead-BioStats/workr",
+          repo = "Gilead-Public/workr",
           policy = "latest_success"
         )
       ),
@@ -313,7 +313,7 @@ test_that("github_artifact load provider errors with run-id and policy on missin
       lWorkflow = lWorkflow,
       lConfig = list(
         github_artifact = list(
-          repo = "Gilead-BioStats/workr",
+          repo = "Gilead-Public/workr",
           policy = "latest_success",
           run_resolver = function(...) "13579",
           artifact_fetcher = function(...) {
@@ -463,7 +463,7 @@ test_that("gh_actions_download_artifact_bundle clears stale extracted contents (
   )
 
   restored_dir <- workr:::gh_actions_download_artifact_bundle(
-    repo = "Gilead-BioStats/workr",
+    repo = "Gilead-Public/workr",
     run_id = "24680",
     artifact_name = "workr-artifact",
     download_dir = download_dir

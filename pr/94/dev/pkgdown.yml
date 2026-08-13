@@ -1,0 +1,16 @@
+pandoc: 3.8.3
+pkgdown: 2.2.1
+pkgdown_sha: ~
+articles:
+  articles/ADAM_example: ADAM_example.html
+  articles/ARS_example: ARS_example.html
+  load-save-hooks: load-save-hooks.html
+  Overview: Overview.html
+  articles/Pharmaverse: Pharmaverse.html
+  articles/SDTM_example: SDTM_example.html
+  validating-workflow-inputs: validating-workflow-inputs.html
+  articles/Visualizations: Visualizations.html
+last_built: 2026-08-13T21:36Z
+urls:
+  reference: https://gilead-public.github.io/workr/reference
+  article: https://gilead-public.github.io/workr/articles

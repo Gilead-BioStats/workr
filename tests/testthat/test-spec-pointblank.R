@@ -551,6 +551,9 @@ test_that("spec failure messages are not buried by iteration context (#91)", {
 })
 
 test_that("all 03_KRI workflows use the pointblank dialect (#91)", {
+  skip_if_not_installed("pointblank")
+  skip_if_not_installed("arrow")
+
   # Guards against a legacy block creeping back in during future edits.
   for (file in c("SUBJ.yaml", "AE.yaml", "kri0001.yaml")) {
     spec <- yaml::read_yaml(kri_path(file))$spec

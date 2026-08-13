@@ -4,9 +4,7 @@ meta:
   Description: Create Basic Work Product/Report which can modularize the tables included
   Priority: 1
 spec:
-  ADVS:
-    _all:
-      required: true
+  ADVS: WorkProduct1_ADVS_spec.yaml
 steps:
   - output: lParams
     name: list

@@ -1,0 +1,19 @@
+# Validation spec for the raw DM domain.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+tbl_name: dm_raw
+label: Raw DM ingestion spec
+thresholds:
+  warning: 0.01
+  error: 0.05
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID]
+  - col_is_character:
+      columns: [STUDYID, USUBJID]
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID]
+  - rows_distinct:
+      columns: [USUBJID]

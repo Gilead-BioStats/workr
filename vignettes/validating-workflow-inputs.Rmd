@@ -1,0 +1,223 @@
+---
+title: "Validating Workflow Inputs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Validating Workflow Inputs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE
+)
+```
+
+```{r setup, include = FALSE}
+library(workr)
+```
+
+# Overview
+
+A workflow YAML file has three sections. `meta` and `steps` describe *what to run*; the optional `spec` section describes *what must be true of the data before running it*.
+
+```yaml
+meta:
+  ID: demographics
+spec:
+  adsl: adsl_spec.yaml
+steps:
+  - output: summary
+    name: summarise_subjects
+    params:
+      df: adsl
+```
+
+`spec` is a mapping from input names to their validation rules. The names must match entries in the workflow's data list (`lData`), and validation runs once, before the first step. Catching a missing column here produces a clear message about the input, rather than an obscure error from deep inside a step.
+
+Validation is entirely optional. A workflow with no `spec` section runs exactly as before.
+
+# Two ways to write a spec
+
+Each input's spec is written in one of two forms.
+
+## The `_all` wildcard
+
+Use `_all` to say an input is needed without describing its shape:
+
+```yaml
+spec:
+  adsl:
+    _all:
+      required: true
+```
+
+This asserts only that the input is present and non-empty — at least one row and at least one column. It names no columns, so it deliberately claims nothing about them, including their types or whether they contain missing values.
+
+`_all` is a placeholder for inputs you are not picky about. It documents that a workflow depends on an input and catches the case where that input arrives empty, which is a common symptom of an upstream query returning nothing. When you want real column-level guarantees, use a spec file instead.
+
+## Spec files
+
+For anything more specific, point the input at a YAML file:
+
+```yaml
+spec:
+  adsl: adsl_spec.yaml
+```
+
+The path is resolved relative to the workflow file, so specs usually live beside the workflows that use them. Keeping them in separate files means several workflows can share one spec, and a spec can be reviewed on its own.
+
+These files use the YAML dialect of [pointblank](https://rstudio.github.io/pointblank/), which is what {workr} uses to run the validation. `pointblank` is an optional dependency: install it only if you use spec files.
+
+# Writing a spec file
+
+A spec file names the table, sets severity thresholds, and lists validation steps:
+
+```yaml
+# adsl_spec.yaml
+tbl_name: adsl
+label: Subject-level analysis dataset
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [USUBJID, SITEID, AGE]
+  - col_is_character:
+      columns: [USUBJID, SITEID]
+  - col_vals_not_null:
+      columns: [USUBJID]
+  - rows_distinct:
+      columns: [USUBJID]
+```
+
+Each entry under `steps` is a pointblank validation function and its arguments. Listing several columns applies the check to each one independently. A step that takes no arguments can be written as a bare string:
+
+```yaml
+steps:
+  - rows_distinct
+```
+
+Do not include a `tbl:` key. {workr} supplies the data frame from the workflow's data list, and any `tbl:` in the file is ignored.
+
+## Common validation steps
+
+| Step | Asserts |
+|---|---|
+| `col_exists` | The column is present |
+| `col_vals_not_null` | No missing values |
+| `col_vals_in_set` | Values fall within an allowed set |
+| `col_vals_between` | Numeric values fall in a range |
+| `col_vals_regex` | Values match a pattern |
+| `rows_distinct` | No duplicate rows across the given columns |
+| `rows_complete` | No missing values across the given columns |
+| `col_is_character`, `col_is_numeric`, `col_is_integer`, `col_is_date`, `col_is_posix`, `col_is_logical`, `col_is_factor` | The column has the given type |
+
+Two notes on type checks that surprise people:
+
+- `col_is_numeric` tests for *double* and will fail on an integer column. Use `col_is_integer` for counts and other whole-number columns.
+- A column can carry a class attribute that does not match its storage. Date-like strings read from Parquet, for example, may arrive as character storage with a non-character class, satisfying neither `col_is_character` nor `col_is_date`. When no type check fits, assert `col_exists` and leave the type alone.
+
+# Thresholds and failure behavior
+
+`thresholds` sets how much failure is tolerated before each severity level triggers. A value below 1 is a *fraction* of failing rows; a whole number is a *count*.
+
+```yaml
+thresholds:
+  warning: 0.01   # more than 1% of rows failing raises a warning
+  error: 0.05     # more than 5% failing is an error
+```
+
+The three levels behave differently:
+
+| Level | Effect |
+|---|---|
+| `warning` | Logged; the workflow continues |
+| `error` | Aborts the workflow |
+| `critical` | Aborts the workflow |
+
+This distinction is the main reason to set thresholds deliberately. A `warning` lets a pipeline proceed on data that is imperfect but usable, while `error` stops it before a downstream step produces something misleading.
+
+A step can override the thresholds for itself:
+
+```yaml
+steps:
+  - col_vals_not_null:
+      columns: [AGE]
+      thresholds:
+        warning: 0.10
+```
+
+If an input has no `thresholds` at all, pointblank records failures but nothing escalates, so the workflow proceeds. Set thresholds on any spec whose failures should actually stop a run.
+
+# A worked example
+
+Consider this dataset and spec:
+
+```{r}
+adsl <- data.frame(
+  USUBJID = c("S001", "S002", "S003"),
+  SITEID  = c("01", "01", "02"),
+  AGE     = c(54L, 61L, 47L),
+  stringsAsFactors = FALSE
+)
+
+spec <- list(
+  tbl_name = "adsl",
+  thresholds = list(error = 0.01),
+  steps = list(
+    list(col_exists = list(columns = c("USUBJID", "SITEID", "AGE"))),
+    list(col_vals_not_null = list(columns = "USUBJID")),
+    list(rows_distinct = list(columns = "USUBJID"))
+  )
+)
+```
+
+Validation runs as part of the workflow, so the check happens through `RunWorkflow()`:
+
+```{r}
+lWorkflow <- list(
+  meta = list(ID = "demographics"),
+  spec = list(adsl = spec),
+  steps = list(
+    list(name = "nrow", output = "n", params = list(x = "adsl"))
+  )
+)
+
+RunWorkflow(lWorkflow = lWorkflow, lData = list(adsl = adsl))
+```
+
+Introduce a missing subject identifier and the run stops before any step executes:
+
+```{r, error = TRUE}
+adsl$USUBJID[2] <- NA
+
+RunWorkflow(lWorkflow = lWorkflow, lData = list(adsl = adsl))
+```
+
+The message names the input, the severity, and which checks failed. Had the spec used `warning: 0.01` instead of `error: 0.01`, the same failure would have been logged and the workflow would have continued.
+
+# Portability
+
+Spec files use pointblank's cross-language YAML dialect, so the same file can be read by both the R and Python implementations of pointblank. This matters when a validation contract is shared between teams working in different languages: the spec is data, not code, and neither side owns it.
+
+Two things to keep in mind if you want a spec to remain portable:
+
+- Omit `tbl:`. It is a formula in R and a lambda in Python, and it is the one field that cannot round-trip. {workr} ignores it regardless.
+- Prefer widely available validation steps. {workr} warns when a spec uses a step outside the portable subset, since it may not behave identically in Python.
+
+The `_all` wildcard is specific to {workr} and has no pointblank equivalent, so an input using `_all` is not portable. That is usually fine: `_all` is for inputs you are not making promises about anyway.
+
+# Where to look next
+
+The bundled examples show both styles in place:
+
+```{r}
+list.files(
+  system.file("example_workflows", "03_KRI", package = "workr"),
+  pattern = "\\.yaml$"
+)
+```
+
+Workflows `03_KRI` through `07_Example_ADAM_TO_ARS` pair each workflow with its spec files, and `04_Example_RAW_TO_SDTM/VS.yaml` shows `_all` used for inputs whose shape does not need pinning down.

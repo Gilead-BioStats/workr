@@ -1,0 +1,20 @@
+# Validation spec for the raw AE domain.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+tbl_name: Raw_AE
+label: Raw AE mapping spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [studyid, subjid, aeser, aest_dt, aeen_dt, mdrpt_nsv,
+                mdrsoc_nsv, aetoxgr, aeongo, aerel, mincreated_dts]
+  - col_is_character:
+      columns: [studyid, subjid, aeser, mdrpt_nsv, mdrsoc_nsv, aetoxgr,
+                aeongo, aerel]
+  - col_is_date:
+      columns: [aest_dt, aeen_dt]
+  - col_is_posix:
+      columns: [mincreated_dts]

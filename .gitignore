@@ -5,3 +5,5 @@ workr.Rcheck/
 .DS_Store
 docs
 .posit
+/doc/
+/Meta/

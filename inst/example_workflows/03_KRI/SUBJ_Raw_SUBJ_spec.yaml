@@ -1,0 +1,27 @@
+# Validation spec for the raw SUBJ domain.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+tbl_name: Raw_SUBJ
+label: Raw SUBJ mapping spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [studyid, invid, country, subjid, subject_nsv, enrollyn,
+                timeonstudy, firstparticipantdate, firstdosedate,
+                timeontreatment, agerep, sex, race, mincreated_dts]
+  - col_is_character:
+      columns: [studyid, invid, country, subjid, subject_nsv, enrollyn,
+                agerep, sex, race]
+  # Use col_is_integer, not col_is_numeric: in R, col_is_numeric tests for
+  # double and rejects integer columns.
+  - col_is_integer:
+      columns: [timeonstudy]
+  - col_is_numeric:
+      columns: [timeontreatment]
+  - col_is_date:
+      columns: [firstparticipantdate, firstdosedate]
+  - col_is_posix:
+      columns: [mincreated_dts]

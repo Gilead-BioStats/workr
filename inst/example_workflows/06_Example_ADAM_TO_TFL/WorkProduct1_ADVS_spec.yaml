@@ -1,0 +1,23 @@
+# Validation spec for the ADaM ADVS dataset used by the work product report.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+#
+# The full data frame is passed to the report template, so this asserts the
+# analysis columns a vital-signs table depends on.
+tbl_name: ADVS
+label: ADaM ADVS reporting input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID, TRT01A, PARAMCD, AVAL, VISIT, VSTPT]
+  - col_is_character:
+      columns: [STUDYID, USUBJID, TRT01A, PARAMCD, VISIT, VSTPT]
+  - col_is_numeric:
+      columns: [AVAL]
+  # AVAL is legitimately missing for some records, so only the identifiers are
+  # asserted non-null.
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID, PARAMCD]

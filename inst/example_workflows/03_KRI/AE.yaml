@@ -4,29 +4,7 @@ meta:
   Description: Adverse Event Data Mapping
   Priority: 1
 spec:
- Raw_AE:
-    studyid:
-      type: character
-    subjid:
-      type: character
-    aeser:
-      type: character
-    aest_dt:
-      type: Date
-    aeen_dt:
-      type: Date
-    mdrpt_nsv:
-      type: character
-    mdrsoc_nsv:
-      type: character
-    aetoxgr:
-      type: character
-    aeongo:
-      type: character
-    aerel:
-      type: character
-    mincreated_dts:
-      type: timestamp
+  Raw_AE: AE_Raw_AE_spec.yaml
 steps:
   - output: Mapped_AE
     name: =

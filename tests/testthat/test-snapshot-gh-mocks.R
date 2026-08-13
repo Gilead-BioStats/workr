@@ -225,13 +225,25 @@ test_that("pkgManifest writes manifest outputs with mocked GitHub resolution (#4
     }
   )
 
-  out <- pkgManifest(
-    path = tmp,
-    packageList = c(
-      "Gilead-BioStats/gsm.core@v1.2.3",
-      "Gilead-BioStats/gsm.mapping"
+  # expect_message() returns the matched condition, not the value, so assign
+  # inside it and nest to consume each of the three [INFO]-style records.
+  out <- NULL
+  expect_message(
+    expect_message(
+      expect_message(
+        out <- pkgManifest(
+          path = tmp,
+          packageList = c(
+            "Gilead-BioStats/gsm.core@v1.2.3",
+            "Gilead-BioStats/gsm.mapping"
+          ),
+          branch = "dev"
+        ),
+        "Wrote manifest\\.csv"
+      ),
+      "Wrote rproject\\.toml"
     ),
-    branch = "dev"
+    "Pulled workflows"
   )
 
   expect_true(file.exists(file.path(tmp, "manifest.csv")))
@@ -387,6 +399,8 @@ test_that("pull_workflows dispatches file and directory entries (#43)", {
     repo = "gsm.core",
     sha = "abc123"
   ))
+  # No message assertion here: both pull_workflow_dir() and pull_workflow_file()
+  # are mocked out, so nothing reaches the real "Pulled ..." emitter.
   pull_workflows(resolved, tmp)
 
   expect_length(dir_calls, 1)
@@ -438,7 +452,9 @@ test_that("pull_workflow_file writes decoded file when content is available (#43
     sha = "abc123",
     api_path = "inst/workflow/root.yaml",
     local_path = tmp
-  )
+  ) |>
+    # The filename is a random tempfile, so match only the stable suffix.
+    expect_message("from Gilead-BioStats/gsm\\.core")
 
   expect_true(file.exists(tmp))
   expect_identical(readLines(tmp)[1], "name: workflow")
@@ -488,7 +504,8 @@ test_that("pull_workflows does not register missing files as collisions (#46)", 
     list(org = "Gilead-BioStats", repo = "pkg.two", sha = "sha2")
   )
 
-  workr:::pull_workflows(resolved, tmp)
+  workr:::pull_workflows(resolved, tmp) |>
+    expect_message("Pulled root\\.yaml from Gilead-BioStats/pkg\\.two")
 
   expect_identical(
     readLines(file.path(tmp, "workflows", "root.yaml"))[1],
@@ -543,7 +560,9 @@ test_that("pull_workflows warns on destination collisions by default (#46)", {
   expect_warning(
     workr:::pull_workflows(resolved, tmp),
     "Workflow destination collision.*pkg\\.one.*pkg\\.two"
-  )
+  ) |>
+    expect_message("Pulled root\\.yaml from Gilead-BioStats/pkg\\.one") |>
+    expect_message("Pulled root\\.yaml from Gilead-BioStats/pkg\\.two")
   expect_identical(
     readLines(file.path(tmp, "workflows", "root.yaml"))[1],
     "name: pkg.two"
@@ -604,7 +623,9 @@ test_that("pull_workflows warns on nested destination collisions in directories 
   expect_warning(
     workr:::pull_workflows(resolved, tmp),
     "Workflow destination collision.*pkg\\.one.*pkg\\.two"
-  )
+  ) |>
+    expect_message("Pulled nested\\.yaml from Gilead-BioStats/pkg\\.one") |>
+    expect_message("Pulled nested\\.yaml from Gilead-BioStats/pkg\\.two")
   expect_identical(
     readLines(file.path(tmp, "workflows", "shared", "nested.yaml"))[1],
     "name: pkg.two.nested"
@@ -668,7 +689,8 @@ test_that("pull_workflows warns and skips file-vs-directory structural collision
   expect_warning(
     workr:::pull_workflows(resolved, tmp),
     "Cannot create workflow directory"
-  )
+  ) |>
+    expect_message("Pulled foo from Gilead-BioStats/pkg\\.one")
   expect_true(file.exists(file.path(tmp, "workflows", "foo")))
   expect_false(file.exists(file.path(tmp, "workflows", "foo", "bar.yaml")))
   expect_equal(

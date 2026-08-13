@@ -4,9 +4,7 @@ meta:
   Description: Create table 1 ARS
   Priority: 1
 spec:
-  ADVS:
-    _all:
-      required: true
+  ADVS: table_mean_arterial_pressure_ADVS_spec.yaml
 steps:
   - output: predose_visit1_map
     name: workr::RunQuery

@@ -12,16 +12,8 @@ meta:
   Threshold: -2,-1,2,3
   Priority: 2
 spec:
-  Mapped_AE:
-    subjid:
-      type: character
-  Mapped_SUBJ:
-    subjid:
-      type: character
-    invid:
-      type: character
-    timeonstudy:
-      type: integer
+  Mapped_AE: kri0001_Mapped_AE_spec.yaml
+  Mapped_SUBJ: kri0001_Mapped_SUBJ_spec.yaml
 steps:
   - output: vThreshold
     name: gsm.core::ParseThreshold
@@ -63,7 +55,7 @@ steps:
     params:
       dfFlagged: Analysis_Flagged
   - output: Flag_Distribution
-    name: gsm.core::RunQuery
+    name: workr::RunQuery
     params:
       df: Analysis_Summary
       strQuery: >

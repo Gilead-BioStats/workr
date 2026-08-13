@@ -1,0 +1,17 @@
+# Validation spec for the mapped AE domain used by the kri0001 analysis.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+#
+# This validates the output of the AE mapping workflow, so it asserts only the
+# columns the analysis reads.
+tbl_name: Mapped_AE
+label: Mapped AE analysis input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [subjid]
+  - col_is_character:
+      columns: [subjid]

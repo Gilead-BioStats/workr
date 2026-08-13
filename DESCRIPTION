@@ -1,7 +1,7 @@
 Type: Package
 Package: workr
 Title: Workflow Execution Helpers
-Version: 1.1.0
+Version: 1.1.0.9000
 Authors@R: c(
     person("Jeremy", "Wildfire", , "jwildfire@gilead.com", role = c("aut", "cre")),
     person("Zelos", "Zhu", , "zelos.zhu@atorus.com", role = "aut"),
@@ -32,6 +32,7 @@ Imports:
 Suggests:
     gsm.datasim,
     knitr,
+    pointblank,
     rmarkdown,
     shiny,
     testthat (>= 3.0.0),
@@ -41,7 +42,7 @@ Remotes:
 VignetteBuilder:
     knitr
 Config/Needs/website: admiral, arrow, cards, gt, gtsummary, sdtm.oak
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

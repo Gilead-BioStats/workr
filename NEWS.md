@@ -1,3 +1,8 @@
+# workr (development version)
+
+* Workflows can now validate their input data before running any steps, via an
+  optional `spec` section in the workflow YAML (#91).
+
 # workr 1.1.0
 
 ## Highlights

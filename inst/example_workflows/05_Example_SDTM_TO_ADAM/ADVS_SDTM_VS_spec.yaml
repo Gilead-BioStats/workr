@@ -1,0 +1,31 @@
+# Validation spec for the SDTM VS domain.
+#
+# Written in the portable pointblank YAML dialect, so the same file can be read
+# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
+# the data frame, and this file only describes what must be true of it.
+#
+# Scoped to the columns the ADVS derivation reads: the merge keys, the
+# parameter/result pair, and the grouping variables.
+tbl_name: SDTM_VS
+label: SDTM VS source spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID, VSTESTCD, VSORRES, VSORRESU, VSDTC,
+                VISIT, VISITNUM, VSTPT, VSTPTNUM]
+  - col_is_character:
+      columns: [STUDYID, USUBJID, VSTESTCD, VSORRESU, VISIT, VISITNUM,
+                VSTPT, VSTPTNUM]
+  - col_is_numeric:
+      columns: [VSORRES]
+  # VSDTC gets an existence check but no type check. It holds ISO 8601 date
+  # strings, and when read from Parquet it arrives as character storage
+  # carrying an `iso8601` class attribute -- which satisfies neither
+  # col_is_character nor col_is_date, since both test the class.
+  - col_exists:
+      columns: [VSDTC]
+  # Measurement columns are legitimately missing for some records, so only the
+  # identifiers are asserted non-null.
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID, VSTESTCD]

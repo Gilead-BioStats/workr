@@ -21,7 +21,7 @@ We introduce {workr} as a simple, auditable workflow engine for R, and demonstra
 
 ## Workflow model
 
-{workr} workflows are YAML files with two sections:
+{workr} workflows are YAML files with two required sections:
 
 1. Meta: workflow metadata and configuration
 2. Steps: an ordered list of function calls

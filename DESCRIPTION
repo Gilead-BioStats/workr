@@ -30,6 +30,7 @@ Imports:
     rlang,
     yaml
 Suggests:
+    arrow,
     gsm.datasim,
     knitr,
     pointblank,

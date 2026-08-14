@@ -133,6 +133,13 @@ test_that(".SpecDialect errors rather than degrading to legacy (#91)", {
   expect_error(.SpecDialect(c("a", "b"), "d"), "Unrecognized spec format")
 })
 
+test_that(".SpecDialect rejects a pointblank spec missing `steps` (#91)", {
+  expect_error(
+    .SpecDialect(list(tbl_name = "AE", thresholds = list(error = 1)), "AE"),
+    "no `steps`"
+  )
+})
+
 # --- .ResolveSpecPath -----------------------------------------------------
 
 test_that(".ResolveSpecPath resolves relative to the workflow file (#91)", {
@@ -279,7 +286,11 @@ test_that("`_all` is counted as a validation step", {
   expect_identical(.CheckSpecLegacy(data.frame(a = 1), spec, "d")$n_steps, 1L)
 
   expect_identical(
-    .CheckSpecLegacy(data.frame(a = 1), list(a = list(type = "numeric")), "d")$n_steps,
+    .CheckSpecLegacy(
+      data.frame(a = 1),
+      list(a = list(type = "numeric")),
+      "d"
+    )$n_steps,
     0L
   )
 })

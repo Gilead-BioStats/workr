@@ -142,12 +142,23 @@
   if (is.character(step) && length(step) == 1L) {
     method <- step
     args <- list()
-  } else if (is.list(step) && length(step) >= 1L && !is.null(names(step))) {
+  } else if (is.list(step) && length(step) == 1L && !is.null(names(step))) {
     method <- names(step)[[1L]]
     args <- step[[1L]] %||% list()
     if (!is.list(args)) {
       args <- as.list(args)
     }
+  } else if (is.list(step) && length(step) > 1L && !is.null(names(step))) {
+    # Silently using only the first key here would drop the remaining
+    # validations without any signal.
+    stop(
+      "Each entry of `steps` must be a single-key mapping; got ",
+      length(step),
+      " keys: ",
+      paste(names(step), collapse = ", "),
+      ". Split these into separate `steps` entries.",
+      call. = FALSE
+    )
   } else {
     stop(
       "Each entry of `steps` must be a validation method name or a single-key mapping.",

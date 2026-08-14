@@ -403,7 +403,13 @@ test_that(".PbTranslateStep rejects malformed steps (#91)", {
   msg <- "Each entry of `steps` must be a validation method name or a single-key mapping"
   expect_error(.PbTranslateStep(list("col_exists")), msg)
   expect_error(.PbTranslateStep(42), msg)
-  expect_error(.PbTranslateStep(c("a", "b")), msg)
+})
+
+test_that(".PbTranslateStep rejects multi-key steps rather than dropping them (#91)", {
+  expect_error(
+    .PbTranslateStep(list(col_exists = "A", rows_distinct = NULL)),
+    "single-key mapping; got 2 keys"
+  )
 })
 
 test_that(".PbTranslateStep warns on methods outside the portable subset (#91)", {

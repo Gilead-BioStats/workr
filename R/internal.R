@@ -83,6 +83,23 @@ GetStrFunctionIfNamespaced <- function(strName) {
     if ("steps" %in% names(spec)) {
       return("pointblank_inline")
     }
+    # A mapping carrying pointblank-only top-level keys but no `steps` is a
+    # malformed pointblank spec, not a legacy one. Falling through to legacy
+    # here would validate nothing at all.
+    pb_markers <- intersect(
+      names(spec),
+      c("tbl", "tbl_name", "label", "lang", "locale", "thresholds", "actions")
+    )
+    if (length(pb_markers) > 0L) {
+      stop(
+        glue::glue(
+          "Spec for domain '{domain}' looks like a pointblank spec \\
+          ({paste(pb_markers, collapse = ', ')}) but has no `steps`. \\
+          Add a `steps:` list, or remove these keys to use a legacy spec."
+        ),
+        call. = FALSE
+      )
+    }
     # A legacy spec is a named list; the historical `required_cols` / `required`
     # / `columns` keys are also legacy.
     if (length(spec) == 0L || !is.null(names(spec))) {

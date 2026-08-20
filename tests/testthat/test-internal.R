@@ -161,6 +161,32 @@ test_that(".ResolveSpecPath resolves relative to the workflow file (#91)", {
   )
 })
 
+test_that(".ResolveSpecPath resolves multi-segment relative paths (#91)", {
+  dir <- withr::local_tempdir()
+  dir.create(file.path(dir, "workflows"))
+  dir.create(file.path(dir, "specs"))
+  nested_spec <- file.path(dir, "specs", "DM_spec.yaml")
+  parent_spec <- file.path(dir, "DM_spec.yaml")
+  writeLines("steps: []", nested_spec)
+  writeLines("steps: []", parent_spec)
+  str_path <- file.path(dir, "workflows", "DM.yaml")
+
+  expect_identical(
+    normalizePath(
+      .ResolveSpecPath("../specs/DM_spec.yaml", "DM", str_path),
+      winslash = "/"
+    ),
+    normalizePath(nested_spec, winslash = "/")
+  )
+  expect_identical(
+    normalizePath(
+      .ResolveSpecPath("../DM_spec.yaml", "DM", str_path),
+      winslash = "/"
+    ),
+    normalizePath(parent_spec, winslash = "/")
+  )
+})
+
 test_that(".ResolveSpecPath errors on a missing spec file (#91)", {
   expect_error(
     .ResolveSpecPath("nope.yaml", "DM", NULL),

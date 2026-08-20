@@ -209,11 +209,31 @@
   list(method = method, args = args)
 }
 
+#' The table name declared by a pointblank spec
+#'
+#' `tbl:` names an object in the execution environment -- for workr, an element
+#' of `lData`. A leading `~` is accepted so that specs written in R pointblank's
+#' formula form (`tbl: ~ Raw_AE`) still resolve.
+#'
+#' Uses `[[ exact = TRUE ]]` because `spec$tbl` would partial-match `tbl_name`.
+#'
+#' @keywords internal
+#' @noRd
+.SpecTbl <- function(spec, domain = NULL) {
+  tbl <- spec[["tbl", exact = TRUE]]
+  if (is.null(tbl) || !is.character(tbl) || length(tbl) != 1L) {
+    return(domain %||% "data")
+  }
+  trimws(sub("^\\s*~", "", tbl))
+}
+
 #' Interrogate a data frame against a generic pointblank spec
 #'
-#' Ignores any `tbl:` field in the spec and injects `data` directly. `tbl:` is an
-#' R formula in R pointblank and a lambda in Python, so it is the one field that
-#' provably cannot round-trip between the two languages.
+#' `data` has already been resolved from the spec's `tbl:` name by
+#' `.CheckSpecDomain()`; this function only labels and runs the steps. The
+#' agent's `tbl_name` is display metadata, taken from the spec's optional
+#' `tbl_name:` field and falling back to the domain -- without it pointblank
+#' would label the report "data", after this function's own argument name.
 #'
 #' @return A pointblank agent that has been interrogated.
 #' @keywords internal
@@ -235,21 +255,13 @@
     )
   }
 
-  # Use [[ ]] with exact = TRUE throughout: `spec$tbl` partial-matches `tbl_name`.
-  if (!is.null(spec[["tbl", exact = TRUE]])) {
-    LogMessage(
-      level = "info",
-      message = "Ignoring `tbl` in spec; validating data supplied by the workflow."
-    )
-  }
-
   global_thresholds <- .PbThresholdArgs(
     spec[["thresholds", exact = TRUE]] %||% spec[["actions", exact = TRUE]]
   )
 
   agent <- pointblank::create_agent(
     tbl = data,
-    tbl_name = spec[["tbl_name", exact = TRUE]] %||% domain %||% "data",
+    tbl_name = spec[["tbl_name", exact = TRUE]] %||% domain,
     label = spec[["label", exact = TRUE]],
     actions = .PbActionLevels(global_thresholds)
   )

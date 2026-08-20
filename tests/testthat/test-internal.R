@@ -135,7 +135,7 @@ test_that(".SpecDialect errors rather than degrading to legacy (#91)", {
 
 test_that(".SpecDialect rejects a pointblank spec missing `steps` (#91)", {
   expect_error(
-    .SpecDialect(list(tbl_name = "AE", thresholds = list(error = 1)), "AE"),
+    .SpecDialect(list(tbl = "AE", thresholds = list(error = 1)), "AE"),
     "no `steps`"
   )
 })
@@ -173,11 +173,11 @@ test_that(".ResolveSpecPath errors on a missing spec file (#91)", {
 test_that(".LoadSpec reads files and passes inline specs through (#91)", {
   dir <- withr::local_tempdir()
   spec_path <- file.path(dir, "DM_spec.yaml")
-  writeLines(c("tbl_name: dm", "steps:", "  - rows_distinct"), spec_path)
+  writeLines(c("tbl: dm", "steps:", "  - rows_distinct"), spec_path)
 
   expect_identical(
     .LoadSpec(spec_path, "pointblank_file", "DM"),
-    list(tbl_name = "dm", steps = "rows_distinct")
+    list(tbl = "dm", steps = "rows_distinct")
   )
 
   inline <- list(steps = list("rows_distinct"))

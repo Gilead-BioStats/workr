@@ -248,17 +248,63 @@ test_that("spec file paths resolve relative to the workflow file (#91)", {
   expect_true(res$dm_raw$passed)
 })
 
-test_that("`tbl_name` is not partial-matched as `tbl` (#91)", {
+test_that("`tbl` names the table to validate, `tbl_name` labels the agent (#91)", {
   skip_if_not_installed("pointblank")
-  # `spec$tbl` partial-matches `tbl_name`, which would wrongly trigger the
-  # "ignoring tbl" path for every spec that names its table.
-  expect_no_message(
+  agent <- .PbInterrogate(
+    make_df(),
+    list(tbl = "Raw_AE", tbl_name = "Raw AE", steps = list("rows_distinct")),
+    "d"
+  )
+  expect_equal(agent$tbl_name, "Raw AE")
+
+  # `tbl:` must not stand in for an absent `tbl_name:`; the domain does.
+  expect_equal(
+    .PbInterrogate(
+      make_df(),
+      list(tbl = "Raw_AE", steps = list("rows_distinct")),
+      "d"
+    )$tbl_name,
+    "d"
+  )
+})
+
+test_that("`tbl` written in R formula form resolves to the bare name (#91)", {
+  expect_equal(.SpecTbl(list(tbl = "~ Raw_AE"), "d"), "Raw_AE")
+  expect_equal(.SpecTbl(list(tbl = "Raw_AE"), "d"), "Raw_AE")
+  expect_equal(.SpecTbl(list(steps = list()), "d"), "d")
+})
+
+test_that("`tbl_name` is accepted but does not stand in for `tbl` (#91)", {
+  skip_if_not_installed("pointblank")
+  # `tbl_name` is part of the pointblank YAML spec and harmless, but `spec$tbl`
+  # would partial-match it, so it must not be read as the table to validate.
+  expect_equal(.SpecTbl(list(tbl_name = "other"), "d"), "d")
+  expect_no_warning(
     .PbInterrogate(
       make_df(),
       list(tbl_name = "d", steps = list("rows_distinct")),
       "d"
     )
   )
+})
+test_that("a spec naming a table absent from lData errors clearly (#91)", {
+  skip_if_not_installed("pointblank")
+  expect_error(
+    CheckSpec(
+      list(d = make_df()),
+      list(d = list(tbl = "other", steps = list("rows_distinct")))
+    ),
+    "names table 'other'"
+  )
+})
+
+test_that("`tbl` may point at a different element of lData (#91)", {
+  skip_if_not_installed("pointblank")
+  res <- suppressMessages(CheckSpec(
+    list(d = make_df(), source = make_df()),
+    list(d = list(tbl = "source", steps = list("rows_distinct")))
+  ))
+  expect_true(res$d$passed)
 })
 
 test_that("a missing spec file errors clearly (#91)", {
@@ -336,11 +382,19 @@ test_that(".EnforceSpecResult applies the failure contract (#91)", {
 test_that(".CheckSpecDomain dispatches on dialect (#91)", {
   skip_if_not_installed("pointblank")
 
-  legacy <- .CheckSpecDomain(make_df(), list(required_cols = "STUDYID"), "d")
+  legacy <- .CheckSpecDomain(
+    list(d = make_df()),
+    list(required_cols = "STUDYID"),
+    "d"
+  )
   expect_equal(legacy$dialect, "legacy")
 
   pb <- suppressMessages(
-    .CheckSpecDomain(make_df(), list(steps = list("rows_distinct")), "d")
+    .CheckSpecDomain(
+      list(d = make_df()),
+      list(steps = list("rows_distinct")),
+      "d"
+    )
   )
   expect_equal(pb$dialect, "pointblank")
 })
@@ -419,21 +473,6 @@ test_that(".PbTranslateStep warns on methods outside the portable subset (#91)",
     "outside the cross-language portable subset"
   )
   expect_identical(step$method, "col_vals_expr")
-})
-
-test_that(".PbInterrogate logs that a spec-supplied `tbl` is ignored (#91)", {
-  skip_if_not_installed("pointblank")
-
-  # `tbl:` is an R formula in R and a lambda in Python -- the one field that
-  # provably cannot round-trip -- so workflow-supplied data always wins.
-  expect_message(
-    .PbInterrogate(
-      make_df(),
-      list(tbl = "~ some_other_data", steps = list("rows_distinct")),
-      "d"
-    ),
-    "Ignoring `tbl` in spec"
-  )
 })
 
 test_that(".PbInterrogate errors on an unknown validation method (#91)", {

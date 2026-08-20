@@ -88,7 +88,15 @@ GetStrFunctionIfNamespaced <- function(strName) {
     # here would validate nothing at all.
     pb_markers <- intersect(
       names(spec),
-      c("tbl", "tbl_name", "label", "lang", "locale", "thresholds", "actions")
+      c(
+        "tbl",
+        "tbl_name",
+        "label",
+        "lang",
+        "locale",
+        "thresholds",
+        "actions"
+      )
     )
     if (length(pb_markers) > 0L) {
       stop(
@@ -249,19 +257,28 @@ GetStrFunctionIfNamespaced <- function(strName) {
 
 #' Validate a single domain against its spec
 #'
-#' Dispatches on dialect, then enforces the failure contract.
+#' Dispatches on dialect, then enforces the failure contract. For pointblank
+#' specs the spec's `tbl:` key names the object to validate; it is resolved in
+#' `lData`, which is the execution environment for a workflow's specs.
 #'
 #' @keywords internal
 #' @noRd
-.CheckSpecDomain <- function(data, spec, domain, strPath = NULL) {
+.CheckSpecDomain <- function(lData, spec, domain, strPath = NULL) {
   dialect <- .SpecDialect(spec, domain)
 
   if (identical(dialect, "legacy")) {
-    return(.CheckSpecLegacy(data, spec, domain))
+    return(.CheckSpecLegacy(lData[[domain]], spec, domain))
   }
 
   spec <- .LoadSpec(spec, dialect, domain, strPath)
-  result <- .PbSummarize(.PbInterrogate(data, spec, domain), domain)
+
+  tbl <- .SpecTbl(spec, domain)
+  stop_if(
+    !tbl %in% names(lData),
+    "Spec for domain '{domain}' names table '{tbl}', which is not in lData."
+  )
+
+  result <- .PbSummarize(.PbInterrogate(lData[[tbl]], spec, domain), domain)
   .EnforceSpecResult(result)
 
   result
@@ -304,7 +321,7 @@ CheckSpec <- function(lData, lSpec, strPath = NULL) {
   results <- lapply(
     domains,
     function(domain) {
-      .CheckSpecDomain(lData[[domain]], lSpec[[domain]], domain, strPath)
+      .CheckSpecDomain(lData, lSpec[[domain]], domain, strPath)
     }
   )
   names(results) <- domains

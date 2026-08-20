@@ -1,12 +1,4 @@
-# Validation spec for the ADaM ADVS dataset used by the ARS summary table.
-#
-# Written in the portable pointblank YAML dialect, so the same file can be read
-# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
-# the data frame, and this file only describes what must be true of it.
-#
-# Scoped to the columns the mean arterial pressure summary reads: the three
-# filter keys and the summarized value.
-tbl_name: ADVS
+tbl: ADVS
 label: ADaM ADVS ARS table input spec
 thresholds:
   error: 0.01

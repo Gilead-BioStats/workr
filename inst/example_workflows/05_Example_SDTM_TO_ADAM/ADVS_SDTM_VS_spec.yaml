@@ -1,12 +1,4 @@
-# Validation spec for the SDTM VS domain.
-#
-# Written in the portable pointblank YAML dialect, so the same file can be read
-# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
-# the data frame, and this file only describes what must be true of it.
-#
-# Scoped to the columns the ADVS derivation reads: the merge keys, the
-# parameter/result pair, and the grouping variables.
-tbl_name: SDTM_VS
+tbl: SDTM_VS
 label: SDTM VS source spec
 thresholds:
   error: 0.01

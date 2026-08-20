@@ -1,9 +1,4 @@
-# Validation spec for the raw SUBJ domain.
-#
-# Written in the portable pointblank YAML dialect, so the same file can be read
-# by both R and Python pointblank. There is no `tbl:` key: the workflow supplies
-# the data frame, and this file only describes what must be true of it.
-tbl_name: Raw_SUBJ
+tbl: Raw_SUBJ
 label: Raw SUBJ mapping spec
 thresholds:
   error: 0.01

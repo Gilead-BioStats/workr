@@ -4,11 +4,7 @@ meta:
   Description: Transform Raw DM to SDTM DM
   Priority: 1
 spec:
-  dm_raw:
-    STUDYID:
-      type: character
-    USUBJID:
-      type: character
+  dm_raw: DM_dm_raw_spec.yaml
 steps:
   - output: dm
     name: workr::RunQuery

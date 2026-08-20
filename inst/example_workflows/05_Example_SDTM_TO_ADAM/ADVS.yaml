@@ -4,12 +4,8 @@ meta:
   Description: Create Basic ADVS
   Priority: 1
 spec:
-  SDTM_DM:
-    _all:
-      required: true
-  SDTM_VS:
-    _all:
-      required: true
+  SDTM_DM: ADVS_SDTM_DM_spec.yaml
+  SDTM_VS: ADVS_SDTM_VS_spec.yaml
 steps:
   - output: initial_advs
     name: admiral::derive_vars_merged

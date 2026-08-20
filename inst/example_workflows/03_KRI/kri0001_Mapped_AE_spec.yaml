@@ -1,0 +1,9 @@
+tbl: Mapped_AE
+label: Mapped AE analysis input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [subjid]
+  - col_is_character:
+      columns: [subjid]

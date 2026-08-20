@@ -99,8 +99,7 @@ RunWorkflow <- function(
       message = "Checking data against spec",
       cli_detail = "h3"
     )
-    # TODO: verify domain names in [ lData ] exist in [ lWorkflow$spec ]
-    CheckSpec(lData, lWorkflow$spec)
+    CheckSpec(lData, lWorkflow$spec, strPath = lWorkflow$path)
   } else {
     lWorkflow$spec <- NULL
     LogMessage(

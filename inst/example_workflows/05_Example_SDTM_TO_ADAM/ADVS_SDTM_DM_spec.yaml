@@ -1,0 +1,15 @@
+tbl: SDTM_DM
+label: SDTM DM source spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID, TRT01A]
+  - col_is_character:
+      columns: [STUDYID, USUBJID, TRT01A]
+  # STUDYID and USUBJID are the join keys used to merge treatment onto vitals.
+  # A null or duplicate key would silently drop or fan out rows.
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID]
+  - rows_distinct:
+      columns: [STUDYID, USUBJID]

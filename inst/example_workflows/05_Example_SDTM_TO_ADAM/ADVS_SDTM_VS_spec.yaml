@@ -1,0 +1,23 @@
+tbl: SDTM_VS
+label: SDTM VS source spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID, VSTESTCD, VSORRES, VSORRESU, VSDTC,
+                VISIT, VISITNUM, VSTPT, VSTPTNUM]
+  - col_is_character:
+      columns: [STUDYID, USUBJID, VSTESTCD, VSORRESU, VISIT, VISITNUM,
+                VSTPT, VSTPTNUM]
+  - col_is_numeric:
+      columns: [VSORRES]
+  # VSDTC gets an existence check but no type check. It holds ISO 8601 date
+  # strings, and when read from Parquet it arrives as character storage
+  # carrying an `iso8601` class attribute -- which satisfies neither
+  # col_is_character nor col_is_date, since both test the class.
+  - col_exists:
+      columns: [VSDTC]
+  # Measurement columns are legitimately missing for some records, so only the
+  # identifiers are asserted non-null.
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID, VSTESTCD]

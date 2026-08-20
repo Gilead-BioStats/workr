@@ -84,7 +84,11 @@ ListWorkflowNames <- function(
     full.names = TRUE,
     recursive = bRecursive
   )
-  yaml_files <- yaml_files[!basename(yaml_files) %in% c("_config.yaml", "_config.yml")]
+  yaml_files <- yaml_files[
+    !basename(yaml_files) %in% c("_config.yaml", "_config.yml")
+  ]
+  # `*_spec.yaml` files are pointblank data specs, not workflows (#91).
+  yaml_files <- yaml_files[!grepl("_spec\\.(yaml|yml)$", basename(yaml_files))]
   names(yaml_files) <- basename(yaml_files)
   yaml_files
 }

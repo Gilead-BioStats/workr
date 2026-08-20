@@ -1,0 +1,13 @@
+tbl: Mapped_SUBJ
+label: Mapped SUBJ analysis input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [subjid, invid, timeonstudy]
+  - col_is_character:
+      columns: [subjid, invid]
+  # timeonstudy is the rate denominator and stays integer through the mapping
+  # query. Use col_is_integer: in R, col_is_numeric rejects integer columns.
+  - col_is_integer:
+      columns: [timeonstudy]

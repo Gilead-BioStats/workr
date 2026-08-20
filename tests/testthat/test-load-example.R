@@ -1,3 +1,5 @@
+local_quiet_log("info")
+
 test_that("loadExample returns input data when initData.R is missing (#9, #26)", {
   wf <- list(path = tempfile(fileext = ".yaml"))
   lData <- list(x = 1)

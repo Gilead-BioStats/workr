@@ -1,0 +1,15 @@
+tbl: ADVS
+label: ADaM ADVS reporting input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [STUDYID, USUBJID, TRT01A, PARAMCD, AVAL, VISIT, VSTPT]
+  - col_is_character:
+      columns: [STUDYID, USUBJID, TRT01A, PARAMCD, VISIT, VSTPT]
+  - col_is_numeric:
+      columns: [AVAL]
+  # AVAL is legitimately missing for some records, so only the identifiers are
+  # asserted non-null.
+  - col_vals_not_null:
+      columns: [STUDYID, USUBJID, PARAMCD]

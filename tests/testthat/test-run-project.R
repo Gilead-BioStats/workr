@@ -1,3 +1,8 @@
+# `RunProject()` emits ~25 [INFO] records per call. Silence that level for the
+# whole file via the `appender()` seam; `warn`/`error`/`fatal` still surface, so
+# tests asserting on them (e.g. "has no workflows") keep working.
+local_quiet_log("info")
+
 test_that("RunProject runs all phases in sorted order (#26)", {
   sum_step <- function(lData, y) lData$value + y
   assign("sum_step", sum_step, envir = globalenv())
@@ -150,11 +155,15 @@ test_that("RunProject warns on empty phase folder and proceeds (#63)", {
     file.path(proj, "1_populated", "y_step.yaml")
   )
 
-  # Assign inside expect_message(): it returns the matched condition, not the
-  # value of the expression, so capture RunProject()'s result via assignment.
+  # Two [WARN] records are emitted here: MakeWorkflowList() reports the empty
+  # folder first, then RunProject() reports skipping the phase. Assert both --
+  # expect_message() consumes only one matching condition each.
   result <- NULL
   expect_message(
-    result <- RunProject(strPath = proj, lData = list(value = 5)),
+    expect_message(
+      result <- RunProject(strPath = proj, lData = list(value = 5)),
+      "No workflows found"
+    ),
     "no workflows"
   )
 
@@ -420,7 +429,9 @@ test_that("RunProject supports a four-phase configured project scenario (#67)", 
     )
   }
   coerce_group_id <- function(phase_result) {
-    phase_result$phase_metrics$GroupID <- as.character(phase_result$phase_metrics$GroupID)
+    phase_result$phase_metrics$GroupID <- as.character(
+      phase_result$phase_metrics$GroupID
+    )
     phase_result
   }
   assign("make_mapped", make_mapped, envir = globalenv())
@@ -569,10 +580,17 @@ test_that("RunProject continue-on-error returns project failure summary (#11)", 
     params = list(lData = "lData")
   )
 
-  result <- RunProject(
-    project_path,
-    lData = list(seed = "initial"),
-    bContinueOnError = TRUE
+  # Assign inside expect_message(): it returns the matched condition, not the
+  # value. The [ERROR] record is the observable signal that continue-on-error
+  # caught the failure and kept going.
+  result <- NULL
+  expect_message(
+    result <- RunProject(
+      project_path,
+      lData = list(seed = "initial"),
+      bContinueOnError = TRUE
+    ),
+    "Workflow 'phase_bad' failed: phase boom"
   )
 
   expect_s3_class(result, "workr_project_summary")
@@ -622,12 +640,10 @@ test_that("RunProject retains fail-fast behavior by default (#67)", {
     params = list(lData = "lData")
   )
 
-  suppressMessages({
-    expect_error(
-      RunProject(project_path, lData = list(seed = "initial")),
-      "phase boom"
-    )
-  })
+  expect_error(
+    RunProject(project_path, lData = list(seed = "initial")),
+    "phase boom"
+  )
   expect_false(capture_ran)
 })
 
@@ -686,7 +702,11 @@ test_that("RunProject supports phase-scoped and project-scoped hooks (#17)", {
     )
   )
 
-  result <- RunProject(project_path, lData = list(seed = "initial"), lConfig = lConfig)
+  result <- RunProject(
+    project_path,
+    lData = list(seed = "initial"),
+    lConfig = lConfig
+  )
 
   expect_equal(project_load_count, 1)
   expect_equal(project_save_count, 1)

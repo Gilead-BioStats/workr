@@ -1,0 +1,15 @@
+tbl: ADVS
+label: ADaM ADVS ARS table input spec
+thresholds:
+  error: 0.01
+steps:
+  - col_exists:
+      columns: [PARAMCD, VISIT, VSTPT, AVAL]
+  - col_is_character:
+      columns: [PARAMCD, VISIT, VSTPT]
+  - col_is_numeric:
+      columns: [AVAL]
+  # The workflow filters on PARAMCD == 'MAP'. A null here would quietly drop a
+  # record from the summary rather than raising anything.
+  - col_vals_not_null:
+      columns: [PARAMCD]

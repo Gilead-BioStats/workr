@@ -79,7 +79,7 @@ validation steps:
 
 ``` yaml
 # adsl_spec.yaml
-tbl_name: adsl
+tbl: adsl
 label: Subject-level analysis dataset
 thresholds:
   error: 0.01
@@ -104,8 +104,10 @@ steps:
   - rows_distinct
 ```
 
-Do not include a `tbl:` key. {workr} supplies the data frame from the
-workflow’s data list, and any `tbl:` in the file is ignored.
+`tbl:` names the table to validate. {workr} resolves that name in the
+workflow’s data list, so it matches how pointblank resolves `tbl:`
+against objects in its execution environment. If `tbl:` is omitted, the
+input’s name under `spec:` is used.
 
 ### Common validation steps
 
@@ -184,7 +186,7 @@ adsl <- data.frame(
 )
 
 spec <- list(
-  tbl_name = "adsl",
+  tbl = "adsl",
   thresholds = list(error = 0.01),
   steps = list(
     list(col_exists = list(columns = c("USUBJID", "SITEID", "AGE"))),
@@ -237,8 +239,9 @@ owns it.
 
 Two things to keep in mind if you want a spec to remain portable:
 
-- Omit `tbl:`. It is a formula in R and a lambda in Python, and it is
-  the one field that cannot round-trip. {workr} ignores it regardless.
+- Write `tbl:` as a plain name (`tbl: adsl`). R pointblank’s own
+  examples use formula form (`tbl: ~ adsl`), which {workr} also accepts,
+  but the bare name reads identically in both languages.
 - Prefer widely available validation steps. {workr} warns when a spec
   uses a step outside the portable subset, since it may not behave
   identically in Python.

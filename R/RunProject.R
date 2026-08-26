@@ -271,9 +271,15 @@ RunProject <- function(
     message = "Loading data with `lConfig$project$LoadData`.",
     cli_detail = "h3"
   )
-  loaded_data <- project_config$LoadData(
-    lConfig = project_config,
-    lData = lData
+  loaded_data <- with_hook_trace(
+    scope = "project",
+    action = "load",
+    workflow = NA_character_,
+    provider = hook_provider_label(project_config, "LoadData"),
+    project_config$LoadData(
+      lConfig = project_config,
+      lData = lData
+    )
   )
   stop_if(
     !is.list(loaded_data),
@@ -301,7 +307,13 @@ RunProject <- function(
     message = "Saving project data with `lConfig$project$SaveData`.",
     cli_detail = "h3"
   )
-  project_config$SaveData(lProject = lProject, lConfig = project_config)
+  with_hook_trace(
+    scope = "project",
+    action = "save",
+    workflow = NA_character_,
+    provider = hook_provider_label(project_config, "SaveData"),
+    project_config$SaveData(lProject = lProject, lConfig = project_config)
+  )
   invisible(TRUE)
 }
 
@@ -321,6 +333,11 @@ RunProject <- function(
   phase_config <- lConfig$phases[[strPhase]]
   if (!is.null(phase_config)) {
     workflow_config <- utils::modifyList(workflow_config, phase_config)
+    # Tag the merged config so the hook trace can tell a phase-scoped override
+    # apart from the top-level hook it replaced.
+    if (any(c("LoadData", "SaveData") %in% names(phase_config))) {
+      workflow_config$HookScope <- "phase"
+    }
   }
 
   if (

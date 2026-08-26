@@ -83,10 +83,16 @@ RunWorkflow <- function(
       cli_detail = "h3"
     )
 
-    lData <- fnLoadData(
-      lWorkflow = lWorkflow,
-      lConfig = lConfig,
-      lData = lData
+    lData <- with_hook_trace(
+      scope = hook_scope(lConfig),
+      action = "load",
+      workflow = uid,
+      provider = hook_provider_label(lConfig, "LoadData"),
+      fnLoadData(
+        lWorkflow = lWorkflow,
+        lConfig = lConfig,
+        lData = lData
+      )
     )
   }
 
@@ -183,9 +189,15 @@ RunWorkflow <- function(
         cli_detail = "h3"
       )
 
-      fnSaveData(
-        lWorkflow = lWorkflow,
-        lConfig = lConfig
+      with_hook_trace(
+        scope = hook_scope(lConfig),
+        action = "save",
+        workflow = uid,
+        provider = hook_provider_label(lConfig, "SaveData"),
+        fnSaveData(
+          lWorkflow = lWorkflow,
+          lConfig = lConfig
+        )
       )
     }
 

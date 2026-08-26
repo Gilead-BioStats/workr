@@ -40,7 +40,7 @@ evidence is written.
 It exists so a study repository holds configuration rather than scripts. A
 cron job, an AWS batch job or an \verb{rv run} invocation needs one line:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{rv run -- Rscript -e 'workr::RunStudy(strStage = Sys.getenv("STAGE", "all"))'
+\if{html}{\out{<div class="sourceCode">}}\preformatted{rv run -e 'workr::RunStudy(strStage = Sys.getenv("STAGE", "all"))'
 }\if{html}{\out{</div>}}
 
 Any string in the configuration may interpolate the environment as
@@ -66,9 +66,9 @@ packages:
 hooks:
   LoadData: gsm.template.load           # registered provider name
   SaveData: gsm.template.save
-  phases:
+  phases:                     # optional: override a hook for one phase
     4_modules:
-      SaveData: gsm.template.save.module
+      SaveData: my.report.save
   project:
     LoadData: gsm.template::ProjectLoad # project scope takes pkg::fn
     SaveData: gsm.template::ProjectSave

@@ -12,7 +12,7 @@
 #' cron job, an AWS batch job or an `rv run` invocation needs one line:
 #'
 #' ```
-#' rv run -- Rscript -e 'workr::RunStudy(strStage = Sys.getenv("STAGE", "all"))'
+#' rv run -e 'workr::RunStudy(strStage = Sys.getenv("STAGE", "all"))'
 #' ```
 #'
 #' Any string in the configuration may interpolate the environment as
@@ -41,9 +41,9 @@
 #' hooks:
 #'   LoadData: gsm.template.load           # registered provider name
 #'   SaveData: gsm.template.save
-#'   phases:
+#'   phases:                     # optional: override a hook for one phase
 #'     4_modules:
-#'       SaveData: gsm.template.save.module
+#'       SaveData: my.report.save
 #'   project:
 #'     LoadData: gsm.template::ProjectLoad # project scope takes pkg::fn
 #'     SaveData: gsm.template::ProjectSave
@@ -337,8 +337,8 @@ StudyConfig <- function(strConfigPath = "study.yaml", bLoadPackages = TRUE) {
 
 # `${VAR}` and `${VAR:-default}` in any string value, resolved from the
 # environment. A scheduled run differs from an interactive one by its
-# environment, not by its configuration file: `SNAPSHOT_DATE=2026-01-31 rv run
-# -- Rscript -e 'workr::RunStudy()'`.
+# environment, not by its configuration file:
+# `SNAPSHOT_DATE=2026-01-31 rv run -e 'workr::RunStudy()'`.
 study_expand_env <- function(value) {
   if (is.list(value)) {
     return(lapply(value, study_expand_env))

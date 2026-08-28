@@ -8,7 +8,8 @@ RunStudy(
   strConfigPath = "study.yaml",
   strStage = "all",
   lParams = NULL,
-  strOutputDir = NULL
+  strOutputDir = NULL,
+  lFilters = NULL
 )
 }
 \arguments{
@@ -24,9 +25,14 @@ e.g. a snapshot date resolved by the caller. Default \code{NULL}.}
 \item{strOutputDir}{\code{character} Override the evidence directory. Default
 \code{NULL}, i.e. \code{output$dir} from the configuration (with a \verb{stages/<stage>}
 subdirectory for a single-stage run).}
+
+\item{lFilters}{\code{list} Named \code{meta} filters restricting which workflows run,
+passed to \code{\link[=RunProject]{RunProject()}}. Merged over \code{project$filters} from the
+configuration, so a study declares its default cadence and a caller
+overrides it. Default \code{NULL}.}
 }
 \value{
-Invisibly, a list with \code{stage}, \code{phases}, \code{summary} (the
+Invisibly, a list with \code{stage}, \code{phases}, \code{filters}, \code{summary} (the
 \code{\link[=RunProject]{RunProject()}} result), \code{trace} and \code{checks}.
 }
 \description{
@@ -55,6 +61,8 @@ environment rather than by editing the study.
     1_mappings: [AE.yaml]
   overlay: workflow-patches   # optional: study-owned workflow overrides
   phases: [1_mappings, 2_metrics, 3_reporting]
+  filters:                    # optional: run a subset by workflow metadata
+    Cadence: ${CADENCE:-cadence1}
   stages:                     # optional named phase subsets
     mapping: [1_mappings]
     analysis: [2_metrics, 3_reporting]
@@ -109,6 +117,9 @@ That is the difference between "the 2am job failed" and "the save hook for
 \dontrun{
 RunStudy("study.yaml")
 RunStudy("study.yaml", strStage = "analysis")
+
+# Run one cadence out of a catalog that serves several.
+RunStudy("study.yaml", lFilters = list(Cadence = "cadence2"))
 }
 
 }

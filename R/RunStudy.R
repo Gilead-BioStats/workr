@@ -30,6 +30,8 @@
 #'     1_mappings: [AE.yaml]
 #'   overlay: workflow-patches   # optional: study-owned workflow overrides
 #'   phases: [1_mappings, 2_metrics, 3_reporting]
+#'   filters:                    # optional: run a subset by workflow metadata
+#'     Cadence: ${CADENCE:-cadence1}
 #'   stages:                     # optional named phase subsets
 #'     mapping: [1_mappings]
 #'     analysis: [2_metrics, 3_reporting]
@@ -87,14 +89,21 @@
 #' @param strOutputDir `character` Override the evidence directory. Default
 #'   `NULL`, i.e. `output$dir` from the configuration (with a `stages/<stage>`
 #'   subdirectory for a single-stage run).
+#' @param lFilters `list` Named `meta` filters restricting which workflows run,
+#'   passed to [RunProject()]. Merged over `project$filters` from the
+#'   configuration, so a study declares its default cadence and a caller
+#'   overrides it. Default `NULL`.
 #'
-#' @return Invisibly, a list with `stage`, `phases`, `summary` (the
+#' @return Invisibly, a list with `stage`, `phases`, `filters`, `summary` (the
 #'   [RunProject()] result), `trace` and `checks`.
 #'
 #' @examples
 #' \dontrun{
 #' RunStudy("study.yaml")
 #' RunStudy("study.yaml", strStage = "analysis")
+#'
+#' # Run one cadence out of a catalog that serves several.
+#' RunStudy("study.yaml", lFilters = list(Cadence = "cadence2"))
 #' }
 #'
 #' @export
@@ -102,7 +111,8 @@ RunStudy <- function(
   strConfigPath = "study.yaml",
   strStage = "all",
   lParams = NULL,
-  strOutputDir = NULL
+  strOutputDir = NULL,
+  lFilters = NULL
 ) {
   stop_if(
     !is.character(strConfigPath) || length(strConfigPath) != 1,
@@ -121,6 +131,10 @@ RunStudy <- function(
   )
 
   strPhases <- study_stage_phases(lProject, strStage)
+  # A study declares its default cadence; a caller overrides one field of it
+  # without restating the rest. Values arrive from YAML as lists, and
+  # FilterWorkflows dispatches on class, so flatten them to vectors first.
+  lFilters <- study_filters(lProject$filters, lFilters)
   strOutputDir <- strOutputDir %||% study_output_dir(lStudy, strStage)
   dir.create(strOutputDir, recursive = TRUE, showWarnings = FALSE)
   unlink(file.path(strOutputDir, "failure-context.yaml"), force = TRUE)
@@ -139,6 +153,13 @@ RunStudy <- function(
     message = "Running stage '{strStage}': {paste(strPhases, collapse = ', ')}",
     cli_detail = "h1"
   )
+
+  if (length(lFilters) > 0) {
+    LogMessage(
+      level = "info",
+      message = "Workflow filters: {study_filters_label(lFilters)}"
+    )
+  }
 
   # Anything the run needs done before it starts -- validating the workflow
   # projection, clearing a snapshot's storage, restoring a prior stage's state
@@ -166,6 +187,7 @@ RunStudy <- function(
       lData = lData,
       lConfig = lConfig,
       strPhases = strPhases,
+      lFilters = lFilters,
       bRecursive = isTRUE(lProject$recursive),
       bReturnResult = TRUE,
       bContinueOnError = isTRUE(bContinueOnError)
@@ -186,7 +208,8 @@ RunStudy <- function(
     strPhases = strPhases,
     dfTrace = dfTrace,
     dfChecks = dfChecks,
-    dfFailures = dfFailures
+    dfFailures = dfFailures,
+    lFilters = lFilters
   )
 
   study_run_callbacks(lStudy$run$after, lConfig, strStage, strOutputDir)
@@ -221,10 +244,61 @@ RunStudy <- function(
   invisible(list(
     stage = strStage,
     phases = strPhases,
+    filters = lFilters,
     summary = lSummary,
     trace = dfTrace,
     checks = dfChecks
   ))
+}
+
+# Resolve the meta filters a run applies: the study's declared defaults, with
+# any caller-supplied field replacing -- not appending to -- its counterpart.
+#
+# YAML gives a multi-valued field as a list, and FilterWorkflows dispatches on
+# the value's class, so a list would reach `.filter_workflows_impl.list()` and
+# error. Flattening to an atomic vector is what makes `Cadence: [a, b]` in a
+# configuration mean the same thing as `Cadence = c("a", "b")` in a call.
+study_filters <- function(lDeclared = NULL, lOverrides = NULL) {
+  lFilters <- utils::modifyList(
+    as.list(lDeclared %||% list()),
+    as.list(lOverrides %||% list())
+  )
+
+  if (length(lFilters) == 0) {
+    return(NULL)
+  }
+
+  stop_if(
+    is.null(names(lFilters)) || any(!nzchar(names(lFilters))),
+    "Workflow filters must all be named, e.g. `Cadence = \"cadence2\"`."
+  )
+
+  lFilters <- lapply(lFilters, function(value) {
+    if (is.list(value)) unlist(value, use.names = FALSE) else value
+  })
+
+  # A filter naming nothing would silently keep every workflow.
+  lFilters <- lFilters[lengths(lFilters) > 0]
+
+  if (length(lFilters) == 0) NULL else lFilters
+}
+
+# One-line rendering for the run log and run-status.yaml.
+study_filters_label <- function(lFilters) {
+  paste(
+    vapply(
+      names(lFilters),
+      function(strField) {
+        sprintf(
+          "%s=%s",
+          strField,
+          paste(as.character(lFilters[[strField]]), collapse = "|")
+        )
+      },
+      character(1)
+    ),
+    collapse = ", "
+  )
 }
 
 # Phases a stage runs. Stages are named subsets of `project$phases`, so a cron
@@ -458,7 +532,7 @@ resolve_function_reference <- function(value, strSource) {
   fn
 }
 
-study_write_evidence <- function(strOutputDir, strStage, strPhases, dfTrace, dfChecks, dfFailures) {
+study_write_evidence <- function(strOutputDir, strStage, strPhases, dfTrace, dfChecks, dfFailures, lFilters = NULL) {
   utils::write.csv(dfTrace, file.path(strOutputDir, "hook-trace.csv"), row.names = FALSE)
   utils::write.csv(dfChecks, file.path(strOutputDir, "hook-checks.csv"), row.names = FALSE)
 
@@ -473,6 +547,10 @@ study_write_evidence <- function(strOutputDir, strStage, strPhases, dfTrace, dfC
       },
       stage = strStage,
       phases = strPhases,
+      # Which workflows a run was allowed to execute is as much a part of what
+      # happened as which ones failed. Without it, a cadence that ran three
+      # workflows is indistinguishable from a projection that lost eight.
+      filters = if (length(lFilters) > 0) study_filters_label(lFilters),
       run_time_utc = format(Sys.time(), tz = "UTC", usetz = TRUE),
       hooks = stats::setNames(
         as.list(sprintf("%s %s", dfTrace$scope, dfTrace$action)[dfTrace$event == "hook"]),

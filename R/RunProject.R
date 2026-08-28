@@ -58,6 +58,12 @@
 #' @param strPhases `character` Optional vector of phase folder names to run. If
 #'   `NULL` (the default), all sorted subdirectories of `strPath` are used.
 #' @param bRecursive `logical` Passed to `MakeWorkflowList()`. Default `FALSE`.
+#' @param lFilters `list` Optional named `meta` filters applied to every phase,
+#'   passed to `MakeWorkflowList()` and through it to `FilterWorkflows()`.
+#'   `list(Cadence = "cadence2")` runs only workflows whose `meta$Cadence`
+#'   includes that value, so one catalog can serve several schedules. A
+#'   workflow that lacks a filtered field is excluded, which makes a filter a
+#'   strict subset rather than a preference. Default `NULL`, i.e. no filtering.
 #' @param bReturnResult `logical` Passed to `RunWorkflows()`. Default `TRUE`.
 #' @param bKeepInputData `logical` Passed to `RunWorkflows()`. Default `FALSE`.
 #' @param strResultNames `character` Vector of length two passed to
@@ -85,6 +91,7 @@ RunProject <- function(
   lConfig = NULL,
   strPhases = NULL,
   bRecursive = FALSE,
+  lFilters = NULL,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
   strResultNames = c("Type", "ID"),
@@ -144,10 +151,19 @@ RunProject <- function(
     phase_path <- file.path(strPath, phase)
     phase_config <- .read_phase_config(phase_path, phase)
 
-    lWorkflows <- MakeWorkflowList(
-      strPath = phase_path,
-      strPackage = NULL,
-      bRecursive = bRecursive
+    # Filters are applied per phase rather than to the project, so a phase the
+    # filter empties is skipped with a warning instead of aborting the run: a
+    # cadence that has no reporting workflows is a legitimate cadence.
+    lWorkflows <- do.call(
+      MakeWorkflowList,
+      c(
+        list(
+          strPath = phase_path,
+          strPackage = NULL,
+          bRecursive = bRecursive
+        ),
+        as.list(lFilters %||% list())
+      )
     )
     lPhaseWorkflows[[phase]] <- lWorkflows
 

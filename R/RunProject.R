@@ -58,6 +58,12 @@
 #' @param strPhases `character` Optional vector of phase folder names to run. If
 #'   `NULL` (the default), all sorted subdirectories of `strPath` are used.
 #' @param bRecursive `logical` Passed to `MakeWorkflowList()`. Default `FALSE`.
+#' @param lFilters `list` Optional named `meta` filters applied to every phase,
+#'   passed to `MakeWorkflowList()` and through it to `FilterWorkflows()`.
+#'   `list(Cadence = "cadence2")` runs only workflows whose `meta$Cadence`
+#'   includes that value, so one catalog can serve several schedules. A
+#'   workflow that lacks a filtered field is excluded, which makes a filter a
+#'   strict subset rather than a preference. Default `NULL`, i.e. no filtering.
 #' @param bReturnResult `logical` Passed to `RunWorkflows()`. Default `TRUE`.
 #' @param bKeepInputData `logical` Passed to `RunWorkflows()`. Default `FALSE`.
 #' @param strResultNames `character` Vector of length two passed to
@@ -85,6 +91,7 @@ RunProject <- function(
   lConfig = NULL,
   strPhases = NULL,
   bRecursive = FALSE,
+  lFilters = NULL,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
   strResultNames = c("Type", "ID"),
@@ -144,10 +151,19 @@ RunProject <- function(
     phase_path <- file.path(strPath, phase)
     phase_config <- .read_phase_config(phase_path, phase)
 
-    lWorkflows <- MakeWorkflowList(
-      strPath = phase_path,
-      strPackage = NULL,
-      bRecursive = bRecursive
+    # Filters are applied per phase rather than to the project, so a phase the
+    # filter empties is skipped with a warning instead of aborting the run: a
+    # cadence that has no reporting workflows is a legitimate cadence.
+    lWorkflows <- do.call(
+      MakeWorkflowList,
+      c(
+        list(
+          strPath = phase_path,
+          strPackage = NULL,
+          bRecursive = bRecursive
+        ),
+        as.list(lFilters %||% list())
+      )
     )
     lPhaseWorkflows[[phase]] <- lWorkflows
 
@@ -271,9 +287,15 @@ RunProject <- function(
     message = "Loading data with `lConfig$project$LoadData`.",
     cli_detail = "h3"
   )
-  loaded_data <- project_config$LoadData(
-    lConfig = project_config,
-    lData = lData
+  loaded_data <- with_hook_trace(
+    scope = "project",
+    action = "load",
+    workflow = NA_character_,
+    provider = hook_provider_label(project_config, "LoadData"),
+    project_config$LoadData(
+      lConfig = project_config,
+      lData = lData
+    )
   )
   stop_if(
     !is.list(loaded_data),
@@ -301,7 +323,13 @@ RunProject <- function(
     message = "Saving project data with `lConfig$project$SaveData`.",
     cli_detail = "h3"
   )
-  project_config$SaveData(lProject = lProject, lConfig = project_config)
+  with_hook_trace(
+    scope = "project",
+    action = "save",
+    workflow = NA_character_,
+    provider = hook_provider_label(project_config, "SaveData"),
+    project_config$SaveData(lProject = lProject, lConfig = project_config)
+  )
   invisible(TRUE)
 }
 
@@ -321,6 +349,11 @@ RunProject <- function(
   phase_config <- lConfig$phases[[strPhase]]
   if (!is.null(phase_config)) {
     workflow_config <- utils::modifyList(workflow_config, phase_config)
+    # Tag the merged config so the hook trace can tell a phase-scoped override
+    # apart from the top-level hook it replaced.
+    if (any(c("LoadData", "SaveData") %in% names(phase_config))) {
+      workflow_config$HookScope <- "phase"
+    }
   }
 
   if (

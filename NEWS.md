@@ -1,3 +1,13 @@
+# workr (development version)
+
+* `RunProject()` and `RunStudy()` gain `lFilters`, a named list of workflow
+  `meta` filters applied to every phase and passed through to
+  `FilterWorkflows()`. `RunStudy()` merges it over a `project$filters` block in
+  the study configuration, so a study declares a default cadence and a caller
+  overrides it: `RunStudy(lFilters = list(Cadence = "cadence2"))` runs only the
+  workflows whose `meta$Cadence` includes `cadence2`. The cadence a run used is
+  recorded in `run-status.yaml`.
+
 # workr 1.1.0
 
 ## Highlights

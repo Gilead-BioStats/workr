@@ -10,6 +10,7 @@ RunProject(
   lConfig = NULL,
   strPhases = NULL,
   bRecursive = FALSE,
+  lFilters = NULL,
   bReturnResult = TRUE,
   bKeepInputData = FALSE,
   strResultNames = c("Type", "ID"),
@@ -33,6 +34,13 @@ belong in per-phase \verb{_config.yaml} files, not in \code{lConfig$phases}.}
 \code{NULL} (the default), all sorted subdirectories of \code{strPath} are used.}
 
 \item{bRecursive}{\code{logical} Passed to \code{MakeWorkflowList()}. Default \code{FALSE}.}
+
+\item{lFilters}{\code{list} Optional named \code{meta} filters applied to every phase,
+passed to \code{MakeWorkflowList()} and through it to \code{FilterWorkflows()}.
+\code{list(Cadence = "cadence2")} runs only workflows whose \code{meta$Cadence}
+includes that value, so one catalog can serve several schedules. A
+workflow that lacks a filtered field is excluded, which makes a filter a
+strict subset rather than a preference. Default \code{NULL}, i.e. no filtering.}
 
 \item{bReturnResult}{\code{logical} Passed to \code{RunWorkflows()}. Default \code{TRUE}.}
 
